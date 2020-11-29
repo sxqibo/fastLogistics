@@ -1,0 +1,33 @@
+{
+  "name": "sxqibo/fastLogistics",
+  "description": "跨境电商物流的接口，包含杰航物流、三态物流、云途物流的接口！",
+  "keywords": [
+    "杰航物流",
+    "三态物流",
+    "云途物流"
+  ],
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://github.com/sxqibo/fastLogistics/issues",
+    "source": "https://github.com/sxqibo/fastLogistics"
+  },
+  "authors": [
+    {
+      "name": "sxqibo",
+      "email": "hongweizhiyuan@qq.com"
+    }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-soap": "*",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "autoload": {
+        "files": [],
+        "psr-4": {
+            "Sxqibo\\Logistics\\": "src/"
+        }
+    },
+  "license": "MIT"
+}

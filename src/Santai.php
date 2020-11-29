@@ -1,0 +1,311 @@
+<?php
+
+namespace Sxqibo\Logistics;
+
+use SoapClient;
+
+/**
+ * 三态物流 类库
+ */
+class Santai
+{
+    private $appKey;
+    private $token;
+    private $userId;
+
+    /**
+     * 三态 constructor.
+     *
+     * @param string $appKey SFC提供给用户的密钥key
+     * @param string $token SFC提供给用户的密钥token
+     * @param string $userId 用户 code
+     */
+    public function __construct($appKey, $token, $userId)
+    {
+        try {
+            $this->appKey = trim($appKey);
+            $this->token  = trim($token);
+            $this->userId = trim($userId);
+
+            if (empty($appKey)) {
+                throw new \Exception("appKey is empty");
+            }
+            if (empty($token)) {
+                throw new \Exception("token is empty");
+            }
+            if (empty($userId)) {
+                throw new \Exception("userId is empty");
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+
+    public function soapClient()
+    {
+        $client = new SoapClient('http://www.sfcservice.com/ishipsvc/web-service?wsdl');
+
+        return $client;
+
+    }
+
+    public function headerParam()
+    {
+        //每个接口固定必填参数HeaderRequest
+        $header = [
+            'appKey' => $this->appKey,
+            'token'  => $this->token,
+            'userId' => $this->userId,
+        ];
+
+
+        return $header;
+    }
+
+    /**
+     * 01、获取运输方式列表  （说明：目前在用，栏目：物流公司-运输方式）
+     *
+     * @return mixed
+     */
+    public function getShipTypes()
+    {
+        $parameter['HeaderRequest'] = $this->headerParam();
+        $parameter['divisionId']    = 1; //分拨中心ID，不填则默认等于1 (即:深圳分拨中心的ID)
+
+        $result = ($this->soapClient())->getShipTypes($parameter);
+
+        return $result;
+    }
+
+    /**
+     * 02、获取费率列表 （说明：目前在用，栏目：物流公司-物流优选）
+     *
+     * @param array $param 参数
+     * @return mixed
+     */
+    public function getRates($param = [])
+    {
+        $parameter['HeaderRequest']    = $this->headerParam();
+        $parameter['ratesRequestInfo'] = $param;
+
+        $result = ($this->soapClient())->getRates($parameter);
+        return $result;
+    }
+
+    /**
+     * 03、添加订单
+     *
+     * @param array $param 参数
+     * @return mixed
+     */
+    public function addOrder($param = [])
+    {
+        $parameter['HeaderRequest']       = $this->headerParam();
+        $parameter['addOrderRequestInfo'] = $param;
+
+        $result = ($this->soapClient())->addOrder($parameter);
+        return $result;
+    }
+
+    /**
+     * 04、修改订单重量和长宽高
+     *
+     * @param array $param 参数
+     * @return mixed
+     */
+    public function updateOrderVolumeWeight($param = [])
+    {
+        $parameter['HeaderRequest']           = $this->headerParam();
+        $parameter['updateOrderVolumeWeight'] = $param;
+
+        $result = ($this->soapClient())->updateOrderVolumeWeight($parameter);
+        return $result;
+    }
+
+    /**
+     * 05、删除订单 deleteOrder
+     *
+     * @param string $orderNo 订单号
+     * @return mixed
+     */
+    public function deleteOrder($orderNo)
+    {
+        $parameter['HeaderRequest']                    = $this->headerParam();
+        $parameter['delOrderRequestInfo']['orderCode'] = $orderNo;
+
+        $result = ($this->soapClient())->deleteOrder($parameter);
+        return $result;
+    }
+
+    /**
+     * 06、修改订单状态
+     *
+     * @param string $orderNo 订单号
+     * @param string $orderStatus 订单状态，修改状态:preprocess(预处理)、confirmed(已确认)、sumbmitted(已交寄)、send(已发货)、delete(已删除)
+     * @return mixed
+     */
+    public function updateOrderStatus($orderNo, $orderStatus)
+    {
+        $parameter['HeaderRequest']                   = $this->headerParam();
+        $parameter['orderCode']                       = $orderNo;
+        $parameter['updateOrderInfo']['orderStatus']  = $orderStatus;
+        $parameter['updateOrderInfo']['authenticate'] = md5($orderNo . $this->userId); // 单号+客户code
+        $result                                       = ($this->soapClient())->updateOrderStatus($parameter);
+        return $result;
+    }
+
+    /**
+     * 07、通过订单号获取费用 getFeeByOrderCode
+     *
+     * @param array $orderNo 订单号
+     * @return mixed
+     */
+    public function getFeeByOrderCode($orderNo)
+    {
+        $parameter['HeaderRequest'] = $this->headerParam();
+        $parameter['orderCode']     = $orderNo;
+        $result                     = ($this->soapClient())->getFeeByOrderCode($parameter);
+        return $result;
+    }
+
+    /**
+     * PHP发送Json对象数据
+     *
+     * @param $url string 请求url
+     * @return array
+     */
+    public function httpGetJson($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $header = [
+            'Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic ' . base64_encode($this->code . '&' . $this->apiSecret), //Authorization 对应用户的认证码，也就是用户认证的 Token。
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return array($httpCode, $response);
+    }
+
+    /**
+     * 08、地址标签打印
+     *
+     * @param string $orderNo SFC单号
+     * @param string $printType 打印类型
+     * @param string $printType2 标签类型
+     * @param string $printSize 标签尺寸
+     * @return array
+     */
+    public function addressPrint($orderNo, $printType, $printType2, $printSize)
+    {
+        $url = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
+        //http请求
+        $result = $this->httpGetJson($url);
+        return $result;
+    }
+
+    /**
+     * 09、获取订单信息
+     *
+     * @param string $orderNo 订单号
+     * @return mixed
+     */
+    public function searchOrder($orderNo)
+    {
+        $parameter['HeaderRequest']                       = $this->headerParam();
+        $parameter['searchOrderRequestInfo']['orderCode'] = $orderNo;
+
+        $result = ($this->soapClient())->searchOrder($parameter);
+        return $result;
+    }
+
+    /**
+     * 10、获取时间段订单信息
+     *
+     * @param string $startTime 开始日期Y-m-d
+     * @param string $endTime 结束时间Y-m-d
+     * @return mixed
+     */
+    public function searchTimeOrder($startTime, $endTime)
+    {
+        $parameter['HeaderRequest']                           = $this->headerParam();
+        $parameter['searchTimeOrderRequestInfo']['startTime'] = $startTime;
+        $parameter['searchTimeOrderRequestInfo']['endTime']   = $endTime;
+
+        $result = ($this->soapClient())->searchTimeOrder($parameter);
+        return $result;
+    }
+
+    /**
+     * 11、获取时间段订单费用信息
+     * 说明：接口文档说是 startTime和endTime,其实是 startime,endtime
+     *
+     * @param string $startTime 开始日期Y-m-d H:i:s
+     * @param string $endTime 结束时间Y-m-d H:i:s
+     * @return mixed
+     */
+    public function getFeeByTime($startTime, $endTime)
+    {
+        $parameter['HeaderRequest'] = $this->headerParam();
+        $parameter['startime']      = $startTime;
+        $parameter['endtime']       = $endTime;
+        $parameter['page']          = 1;
+
+        $result = ($this->soapClient())->getFeeByTime($parameter);
+        return $result;
+    }
+
+    /**
+     * 12、获取批量订单跟踪信息
+     * 说明：接口有这个，但实际上没有这个接口，垃圾接口文档
+     *
+     * @param array $param 订单号数组，如：['LE0000009779','LE0000009778']
+     * @return mixed
+     */
+    public function batchGetTrackingInfo($param)
+    {
+        $parameter['HeaderRequest']                         = $this->headerParam();
+        $parameter['batchGetTrackingInfoRequest']['number'] = $param;
+
+        $result = ($this->soapClient())->batchGetTrackingInfo($parameter);
+        return $result;
+    }
+
+    /**
+     * 13、获取跟踪信息（新接口）
+     *
+     * @param array $data 订单跟踪号组成的数组，如：'UWQ817779901000930307', 'LO971629672CN'
+     * @return mixed
+     */
+    public function getTrack($data)
+    {
+        $url = "http://tracking.sfcservice.com/tracking/track-api/get-track?data=$data";
+
+        $result = $this->httpGetJson($url);
+        return $result;
+    }
+
+    /**
+     * 14、新建国内快递交货单
+     *
+     * @param string $companyName 快递公司
+     * @param string $packageId 快递单号
+     * @param int $sfcNumber SFC包裹数量
+     * @return mixed
+     */
+    public function createExpressWaybill($companyName, $packageId, $sfcNumber)
+    {
+        $parameter['HeaderRequest']        = $this->headerParam();
+        $parameter['data']['company_name'] = $companyName;
+        $parameter['data']['package_id']   = $packageId;
+        $parameter['data']['sfc_number']   = $sfcNumber;
+
+        $result = ($this->soapClient())->createExpressWaybill($parameter);
+        return $result;
+    }
+}

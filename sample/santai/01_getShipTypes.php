@@ -1,0 +1,16 @@
+<?php
+//命名空间
+use Sxqibo\Logistics\Santai;
+
+require_once '../vendor/autoload.php';
+require 'config.php';
+
+$data   = new Santai($appKey, $token, $userId);
+
+/**
+ * 01、获取运输方式列表  （说明：目前在用，栏目：物流公司-运输方式）
+ * @doc https://www.sfcservice.com/api-doc
+ */
+$result = $data->getShipTypes();
+print_r($result);
+
