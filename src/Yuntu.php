@@ -237,6 +237,7 @@ class Yuntu
      *
      * @param string $orderNo  客户订单号
      * @param string $channelCode  运输方式代码
+     * @param string $totalValue  总申报价值(云途这个参数没用到)
      * @param string $receiverCountryCode  收件人所在国家
      * @param string $receiverName  收件人姓
      * @param string $receiverAddress  收件人详细地址
@@ -249,7 +250,7 @@ class Yuntu
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
-        $orderNo, $channelCode,
+        $orderNo, $channelCode,$totalValue,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {

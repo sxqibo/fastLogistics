@@ -118,24 +118,24 @@ class Jiehang
      * 01、 创建快件订单,仓储订单,快递制单
      * 15个参数
      *
-     * @param string $orderNo 客户本地订单号(可传入贵公司内部单号)
-     * @param string $channelCode 渠道代码
-     * @param string $countryCode 国家二字代码
-     * @param string $totalValue 订单总申报价值
-     * @param string $number 件数
-     * @param string $name 名称
-     * @param string $address 地址
-     * @param string $mobile 手机
-     * @param string $province 省州
-     * @param string $city 城市
-     * @param string $postCode 邮编
-     * @param string $cnname 产品中文名
-     * @param string $enname 产品英文名
-     * @param string $price 单价
-     * @param string $weight 重量
+     * @param string $orderNo 客户订单号
+     * @param string $channelCode 运输方式代码
+     * @param string $totalValue 总申报价值
+     * @param string $receiverCountryCode 收件人所在国家
+     * @param string $receiverName 收件人姓
+     * @param string $receiverAddress 收件人详细地址
+     * @param string $receiverCity 收件人所在城市
+     * @param string $rProvince 收件人所在省
+     * @param string $receiverPostCode 发件人邮编
+     * @param string $receiverMobile 发件人手机号
+     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createOrder($orderNo, $channelCode, $countryCode, $totalValue, $number, $name, $address, $mobile, $province, $city, $postCode, $cnname, $enname, $price, $weight)
+    public function createOrder(
+        $orderNo, $channelCode, $totalValue,
+        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
+        $goods = [])
     {
         // step1.1:（参数）
         $data['Verify'] = $this->paramVerify();
@@ -153,12 +153,16 @@ class Jiehang
         // step1.3:（参数）订单数据
         $data['OrderDatas'] = [
             [
-                'CustomerNumber' => $orderNo,        //客户订单号(可传入贵公司内部单号)
-                'ChannelCode'    => $channelCode,       //渠道代码
-                'CountryCode'    => $countryCode,       //国家二字代码
-                'TotalWeight'    => $weight * $number,  //订单总重量
-                'TotalValue'     => $totalValue,         //订单总申报价值
-                'Number'         => $number                 //件数
+                'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
+                'ChannelCode'    => $channelCode,           //渠道代码
+                'CountryCode'    => $receiverCountryCode,   //国家二字代码
+                'TotalWeight'    => array_sum(array_map(function ($val) {
+                    return ($val['goods_number'] * $val['goods_single_weight']);
+                }, $goods)),  //订单总重量
+                'TotalValue'     => $totalValue,            //订单总申报价值
+                'Number'         => array_sum(array_map(function ($val) {
+                    return ($val['goods_number']);
+                }, $goods))  //件数
             ]
         ];
 
@@ -173,25 +177,26 @@ class Jiehang
 
         // step1.7:（参数）收件人信息
         $data['Recipient'] = [
-            'Name'     => $name,        //名称
-            'Addres1'  => $address,     //地址
-            'Mobi'     => $mobile,      //手机
-            'Province' => $province,    //省州
-            'City'     => $city,        //城市
-            'Post'     => $postCode,    //邮编
+            'Name'     => $receiverName,        //名称
+            'Addres1'  => $receiverAddress,     //地址
+            'Mobi'     => $receiverMobile,      //手机
+            'Province' => $rProvince,    //省州
+            'City'     => $receiverCity,        //城市
+            'Post'     => $receiverPostCode,    //邮编
         ];
 
         // step1.8:（参数）寄件人信息，不是必填信息，我们这里不传
         $data['Sender'] = [];
 
         // step1.9:（参数）订单明细产品信息
-        $data['OrderItems'] = [
-            'Cnname' => $cnname,    //产品中文名
-            'Enname' => $enname,    //产品英文名
-            'Price'  => $price,     //单价
-            'Weight' => $weight,    //重量
-            'Num'    => $number,    //数量
-        ];
+        $data['OrderItems'];   //array, 申报信息
+        foreach ($goods as $k => $v) {
+            $data['OrderItems'][$k]['Enname'] = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
+            $data['OrderItems'][$k]['Cnname'] = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
+            $data['OrderItems'][$k]['Num']    = $v['goods_number'];         //int,申报数量,必填
+            $data['OrderItems'][$k]['Price']  = $v['goods_single_price'];   //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $data['OrderItems'][$k]['Weight'] = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+        }
 
         // step1.10:（参数）材积明细 (OrderType 为快递制单必传)，不是必填信息，我们这里不传
         $data['Volumes'] = [];
@@ -410,7 +415,7 @@ class Jiehang
         $data['Verify'] = $this->paramVerify();
 
         // step1.2:参数
-        $data['CorpBillidDatas']  = [
+        $data['CorpBillidDatas'] = [
             [
                 'CorpBillid' => trim($corpBillid)
             ]
