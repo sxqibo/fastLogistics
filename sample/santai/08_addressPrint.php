@@ -3,9 +3,12 @@
 use Sxqibo\Logistics\Santai;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
-$data = new Santai($appKey, $token, $userId);
+$appKey = $config['sanTai']['appKey'];
+$token  = $config['sanTai']['token'];
+$userId = $config['sanTai']['userId'];
+$data   = new Santai($appKey, $token, $userId);
 
 /**
  * 08、地址标签打印

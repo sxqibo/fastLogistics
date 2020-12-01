@@ -3,10 +3,11 @@
 use Sxqibo\Logistics\Jiehang;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
-$data = new Jiehang($clientId, $token);
-
+$clientId = $config['jieHang']['clientId'];
+$token    = $config['jieHang']['token'];
+$data     = new Jiehang($clientId, $token);
 /**
  * 07、 打印地址标签
  */

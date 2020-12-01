@@ -3,43 +3,55 @@
 use Sxqibo\Logistics\Santai;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
-$data = new Santai($appKey, $token, $userId);
+$appKey = $config['sanTai']['appKey'];
+$token  = $config['sanTai']['token'];
+$userId = $config['sanTai']['userId'];
+$data   = new Santai($appKey, $token, $userId);
 
 /**
  * 03、添加订单
  * @doc https://www.sfcservice.com/api-doc
  */
-$param  = [
+//step1:订单
+$orderNo     = time();   //客户订单号
+$channelCode = 'USPE';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
+$totalValue  = 50;      //云途不用填,填上也没关系
 
-    //step1（2）
-    'opDivision'        => 1,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
-    'orderStatus'       => 'preprocess',    // required, 订单状态:confirmed(已确认)、preprocess(预处理)、sumbmitted(已交寄)
+//step2:收件人
+$rCountryCode = 'US';           //收件人所在国家
+$rName        = 'tom';          //收件人姓
+$rAddress     = '02638-1915';   //收件人详细地址
+$rCity        = 'DENNIS';       //收件人所在城市
+$rProvince    = 'MA';           //收件人所在省
+$rCode        = '04222';        //发件人邮编,必填项,5位数字
+$rMobile      = '415-851-9136'; //发件人手机
 
-    //step2:收件人信息（8）
-    'recipientName'     => 'tom',           // required, （传参）收件人
-    'recipientCountry'  => 'US',            // required, （传参）国家
-    'shippingMethod'    => 'USPE',          // required, （传参）运输方式
-    'recipientState'    => 'MA',            // required, （传参）收件州省
-    'recipientCity'     => 'DENNIS',        // required, （传参）收件城市
-    'recipientAddress'  => '203 MAIN ST',   // required, （传参）收件地址
-    'recipientZipCode'  => '02638-1915',    // required, （传参）收件地址
-    'recipientPhone'    => '415-851-9136',  // required, （传参）收件电话
-
-    //step3:各种配置信息（1）
-    'goodsDeclareWorth' => 8,               // required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
-
-    //step4:商品信息（4）
-    'goodsDetails'      => [                //required
-        [
-            'detailDescription'   => 'en desc',   // required, （传参）物品描述/英文描述
-            'detailDescriptionCN' => '中文描述',   // required, （传参）物品描述/中文描述
-            'detailQuantity'      => 2,           // required, （传参）数量 int
-            'detailWorth'         => 4,           // required, （传参）单个物品申报价
-        ]
-    ]
+//step3:商品
+$goods = [
+    [
+        'goods_cn_name'       => '商品1',
+        'goods_en_name'       => 'shangpin1',
+        'goods_number'        => 2,    //申报数量,商品数量
+        'goods_single_weight' => 1,    //运单包裹的件数
+        'goods_currency_code' => 'USD',      //币种（云途需要）
+        'goods_hsCode'        => '01041010', //海关（三态需要）
+    ],
+    [
+        'goods_cn_name'       => '商品2',
+        'goods_en_name'       => 'shangpin2',
+        'goods_number'        => 3,    //申报数量,商品数量
+        'goods_single_weight' => 1,    //运单包裹的件数
+        'goods_currency_code' => 'USD',      //币种（云途需要）
+        'goods_hsCode'        => '01041010', //海关（三态需要）
+    ],
 ];
-$result = $data->addOrder($param);
-print_r($result);
 
+$result = $data->createOrder(
+    $orderNo, $channelCode, $totalValue,
+    $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
+    $goods);
+
+
+print_r($result);

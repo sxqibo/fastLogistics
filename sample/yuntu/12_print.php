@@ -2,9 +2,11 @@
 use Sxqibo\Logistics\Yuntu;
 
 require_once '../vendor/autoload.php';
-require_once './config.php';
+require_once '../config.php';
 
-$data = new Yuntu($code, $apiSecret);
+$code      = $config['yunTu']['code'];
+$apiSecret = $config['yunTu']['apiSecret'];
+$data      = new Yuntu($code, $apiSecret);
 /**
  * 12.标签打印
  * $orderNo 可以是 本地订单号 或 运单号

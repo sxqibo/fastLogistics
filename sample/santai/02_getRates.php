@@ -3,8 +3,11 @@
 use Sxqibo\Logistics\Santai;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
+$appKey = $config['sanTai']['appKey'];
+$token  = $config['sanTai']['token'];
+$userId = $config['sanTai']['userId'];
 $data   = new Santai($appKey, $token, $userId);
 
 /**
@@ -22,5 +25,5 @@ $param = [
     'divisionId' => '1',
     'zip_code'   => '12345' //请求参数2：配送邮编
 ];
-$result          = $data->getRates($param);
+$result          = $data->getPrice($param);
 print_r($result);

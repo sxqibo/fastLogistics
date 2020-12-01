@@ -3,9 +3,12 @@
 use Sxqibo\Logistics\Santai;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
-$data = new Santai($appKey, $token, $userId);
+$appKey = $config['sanTai']['appKey'];
+$token  = $config['sanTai']['token'];
+$userId = $config['sanTai']['userId'];
+$data   = new Santai($appKey, $token, $userId);
 
 /**
  * 09、获取订单信息
@@ -23,6 +26,6 @@ $data = new Santai($appKey, $token, $userId);
  * 参数5：实际重量
  */
 $orderNo = 'SFC2WW4159011190015';
-$result  = $data->searchOrder($orderNo);
+$result  = $data->getOrder($orderNo);
 print_r($result);
 

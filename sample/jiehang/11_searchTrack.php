@@ -3,15 +3,17 @@
 use Sxqibo\Logistics\Jiehang;
 
 require_once '../vendor/autoload.php';
-require 'config.php';
+require_once '../config.php';
 
-$data = new Jiehang($clientId, $token);
+$clientId = $config['jieHang']['clientId'];
+$token    = $config['jieHang']['token'];
+$data     = new Jiehang($clientId, $token);
 
 /**
  * 11、 查轨迹
  */
 $trackNumber = '564654858493';
 
-$result = $data->searchTrack($trackNumber);
+$result = $data->getTrack($trackNumber);
 print_r($result);
 
