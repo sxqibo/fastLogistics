@@ -254,9 +254,7 @@ class Yuntu
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
-
-
-        $url = 'http://oms.api.yunexpress.com/api/WayBill/CreateOrder';
+        $url = ($this->arrUrl())['07'];
 
         //step1:订单
         $order = [
