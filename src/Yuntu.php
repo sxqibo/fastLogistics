@@ -238,37 +238,51 @@ class Yuntu
      * @param array $data 请求的数据包
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * //$orderNo, $channelCode, $countryCode, $totalValue 111, $number, $name, $address, $mobile, $province, $city, $postCode, $cnname, $enname, $price, $weight
      */
-    public function createOrder($orderNo, $channelCode, $packageNumber,  $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $receiverPostCode, $goodsCnName, $goodsEnName, $goodsNumber, $goodsSinglePrice, $goodsSingleWeight)
+    public function createOrder(
+        $orderNo, $channelCode, $packageNumber,
+        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
+        $goods = [])
     {
-        $url               = 'http://oms.api.yunexpress.com/api/WayBill/CreateOrder';
+
+
+        $url = 'http://oms.api.yunexpress.com/api/WayBill/CreateOrder';
+
+        //step1:订单
+        $order = [
+            'CustomerOrderNumber' => $orderNo,                      //string,客户订单号,不能重复，必填
+            'ShippingMethodCode'  => $channelCode,                  //string,运输方式代码，必填
+            'PackageCount'        => $packageNumber,                //string,运单包裹的件数，必须大于 0 的整数，必填
+            'Weight'              => array_sum(array_map(function($val){return ($val['goods_number'] * $val['goods_single_weight']) ;}, $goods)),   //decimal,预估包裹总重量，单位 kg,最多 3 位小数，必填,两个数字求和
+        ];
+
+        //step2:收件人
+        $order['Receiver'] = [ //array, 收件人信息，必填
+            'CountryCode' => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
+            'FirstName'   => $receiverName,                     //string,收件人姓，必填
+            'Street'      => $receiverAddress,                  //string,收件人详细地址，必填
+            'City'        => $receiverCity,                     //string,收件人所在城市,非必填
+            'State'       => $rProvince,                        //string,发件人省/州,非必填
+            'Zip'         => $receiverPostCode,                 //string,发件人邮编,非必填
+            'Phone'       => $receiverMobile,                   //string,发件人电话,非必填
+        ];
+
+        //step3:产品信息
+        $order['Parcels'] = [];   //array, 申报信息
+        foreach ($goods as $k => $v) {
+            $order['Parcels'][$k]['EName']        = $v['goods_en_name'];   //string,包裹申报名称(英文)必填
+            $order['Parcels'][$k]['CName']        = $v['goods_cn_name'];   //string,包裹申报名称(中文)，不必填
+            $order['Parcels'][$k]['Quantity']     = $v['goods_number'];  //int,申报数量,必填
+            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_price']; //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight']; //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+            $order['Parcels'][$k]['CurrencyCode'] = 'USD';   //string,申报币种，默认：USD,必填
+        }
+
+
+
         $response          = $this->client->request('POST', $url, [
             'json' => [
-                [
-                    'CustomerOrderNumber' => $orderNo,                      //string,客户订单号,不能重复，必填
-                    'ShippingMethodCode'  => $channelCode,                  //string,运输方式代码，必填
-                    'PackageCount'        => $packageNumber,                //string,运单包裹的件数，必须大于 0 的整数，必填
-                    'Weight'              => $goodsSingleWeight * $goodsNumber,   //decimal,运单包裹的重理，必须大于 0 的整数，必填
-                    'Receiver'            => [                              //array, 收件人信息，必填
-                        'CountryCode' => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
-                        'FirstName'   => $receiverName,                     //string,收件人姓，必填
-                        'Street'      => $receiverAddress,                  //string,收件人详细地址，必填
-                        'City'        => $receiverCity,                     //string,收件人所在城市
-                        'Zip'         => $receiverPostCode,                 //发件人邮编,非必填
-                    ],
-
-                    'Parcels' => [   //array, 申报信息
-                        [
-                            'EName'        => $goodsEnName,             //string,包裹申报名称(英文)必填
-                            'CName'        => $goodsCnName,             //string,包裹申报名称(中文)，不必填
-                            'Quantity'     => $goodsNumber,             //int,申报数量,必填
-                            'UnitPrice'    => $goodsSinglePrice,        //decimal( 18,2),申报价格(单价),单位 USD,必填
-                            'UnitWeight'   => $goodsSingleWeight,       //decimal( 18,3),申报重量(单重)，单位 kg,,必填
-                            'CurrencyCode' => 'USD',                    //string,申报币种，默认：USD,必填
-                        ]
-                    ]
-                ]
+                $order
             ],
         ]);
         $returnContent     = $response->getBody()->getContents();
