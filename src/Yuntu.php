@@ -233,14 +233,23 @@ class Yuntu
 
     /**
      * 07.运单申请
-     * 备注：（我们这里先做单个的，不做批量的，以防有些参数他做的不周到）
+     * 备注：支持一个包裹多个商品
      *
-     * @param array $data 请求的数据包
+     * @param string $orderNo  客户订单号
+     * @param string $channelCode  运输方式代码
+     * @param string $receiverCountryCode  收件人所在国家
+     * @param string $receiverName  收件人姓
+     * @param string $receiverAddress  收件人详细地址
+     * @param string $receiverCity  收件人所在城市
+     * @param string $rProvince  收件人所在省
+     * @param string $receiverPostCode  发件人邮编
+     * @param string $receiverMobile  发件人手机号
+     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
-        $orderNo, $channelCode, $packageNumber,
+        $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
@@ -252,7 +261,7 @@ class Yuntu
         $order = [
             'CustomerOrderNumber' => $orderNo,                      //string,客户订单号,不能重复，必填
             'ShippingMethodCode'  => $channelCode,                  //string,运输方式代码，必填
-            'PackageCount'        => $packageNumber,                //string,运单包裹的件数，必须大于 0 的整数，必填
+            'PackageCount'        => 1,                //string,运单包裹的件数，必须大于 0 的整数，必填，这里写成1，一般都是1件，如果有拆包的话，接口会返回正确的
             'Weight'              => array_sum(array_map(function($val){return ($val['goods_number'] * $val['goods_single_weight']) ;}, $goods)),   //decimal,预估包裹总重量，单位 kg,最多 3 位小数，必填,两个数字求和
         ];
 
