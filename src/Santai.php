@@ -80,11 +80,12 @@ class Santai
 
     /**
      * 02、获取费率列表 （说明：目前在用，栏目：物流公司-物流优选）
+     * 注：原来是 getRates
      *
      * @param array $param 参数
      * @return mixed
      */
-    public function getRates($param = [])
+    public function getPrice($param = [])
     {
         $parameter['HeaderRequest']    = $this->headerParam();
         $parameter['ratesRequestInfo'] = $param;
@@ -95,11 +96,12 @@ class Santai
 
     /**
      * 03、添加订单
+     * 注：原来是 addOrder
      *
      * @param array $param 参数
      * @return mixed
      */
-    public function addOrder($param = [])
+    public function createOrder($param = [])
     {
         $parameter['HeaderRequest']       = $this->headerParam();
         $parameter['addOrderRequestInfo'] = $param;
@@ -211,11 +213,12 @@ class Santai
 
     /**
      * 09、获取订单信息
+     * 注：原来是 searchOrder
      *
      * @param string $orderNo 订单号
      * @return mixed
      */
-    public function searchOrder($orderNo)
+    public function getOrder($orderNo)
     {
         $parameter['HeaderRequest']                       = $this->headerParam();
         $parameter['searchOrderRequestInfo']['orderCode'] = $orderNo;

@@ -381,10 +381,11 @@ class Jiehang
 
     /**
      * 06、 查询启用的入仓渠道 （目前在用，栏目：物流公司-运输方式）
+     * 注：原来是：searchStartChannel
      *
      * @return mixed
      */
-    public function searchStartChannel()
+    public function getShipTypes()
     {
         // step1:参数
         $data['Verify'] = $this->paramVerify();
@@ -477,6 +478,7 @@ class Jiehang
 
     /**
      * 10、 查价格 （目前在用，栏目：物流公司-运输方式）
+     * 注：原来是 searchPrice
      *
      * @param string $countryCode 目的地国家(必填)
      * @param double $weight 实重(必填)
@@ -485,7 +487,7 @@ class Jiehang
      *
      * @return mixed
      */
-    public function searchPrice($countryCode, $weight, $goodsType = 'WPX', $postCode = null)
+    public function getPrice($countryCode, $weight, $goodsType = 'WPX', $postCode = null)
     {
         // step1:参数1
         $data['Verify'] = $this->paramVerify();
@@ -509,11 +511,12 @@ class Jiehang
 
     /**
      * 11、 查轨迹
+     * 原来是 searchTrack
      *
      * @param string $trackNumber 运单号,转单号
      * @return mixed
      */
-    public function searchTrack($trackNumber)
+    public function getTrack($trackNumber)
     {
         // step1.1:参数
         $data['Verify'] = $this->paramVerify();

@@ -115,13 +115,13 @@ class Yuntu
 
     /**
      * 02.查询运输方式
-     * 说明：目前在用
+     * 说明：目前在用,原来是： getShippingMethods
      *
      * @param string $countryCode 国家简码，未填写国家代表查询所有运输方式
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getShippingMethods($countryCode = null)
+    public function getShipTypes($countryCode = null)
     {
         $url = ($this->arrUrl())['02'];
         if (!empty($countryCode)) {
@@ -146,6 +146,7 @@ class Yuntu
 
     /**
      * 04.查询价格
+     * 原来是 getPriceTrial
      *
      * @param string $countryCode 必须，国家简码
      * @param int $weight 必须，包裹重量，单位 kg,支持 3 位小数
@@ -156,7 +157,7 @@ class Yuntu
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getPriceTrial($countryCode, $weight, $length = null, $width = null, $height = null, $packageType = null)
+    public function getPrice($countryCode, $weight, $length = null, $width = null, $height = null, $packageType = null)
     {
         $url = ($this->arrUrl())['04'];
         $url = $url . '?CountryCode=' . $countryCode;
