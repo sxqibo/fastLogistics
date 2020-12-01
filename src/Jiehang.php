@@ -156,9 +156,7 @@ class Jiehang
                 'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
                 'ChannelCode'    => $channelCode,           //渠道代码
                 'CountryCode'    => $receiverCountryCode,   //国家二字代码
-                'TotalWeight'    => array_sum(array_map(function ($val) {
-                    return ($val['goods_number'] * $val['goods_single_weight']);
-                }, $goods)),  //订单总重量
+                'TotalWeight'    => array_sum(array_map(function ($val) {return ($val['goods_number'] * $val['goods_single_weight']);}, $goods)),  //订单总重量
                 'TotalValue'     => $totalValue,            //订单总申报价值
                 'Number'         => array_sum(array_map(function ($val) {
                     return ($val['goods_number']);
@@ -190,11 +188,12 @@ class Jiehang
 
         // step1.9:（参数）订单明细产品信息
         $data['OrderItems'];   //array, 申报信息
+        $totalGoodsNumber = array_sum(array_map(function ($val) {return ($val['goods_number']);}, $goods));
         foreach ($goods as $k => $v) {
             $data['OrderItems'][$k]['Enname'] = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
             $data['OrderItems'][$k]['Cnname'] = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
             $data['OrderItems'][$k]['Num']    = $v['goods_number'];         //int,申报数量,必填
-            $data['OrderItems'][$k]['Price']  = $v['goods_single_price'];   //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $data['OrderItems'][$k]['Price']  = $totalValue / $totalGoodsNumber ;   //decimal( 18,2),申报价格(单价),必填
             $data['OrderItems'][$k]['Weight'] = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
         }
 

@@ -98,11 +98,55 @@ class Santai
      * 03、添加订单
      * 注：原来是 addOrder
      *
-     * @param array $param 参数
+     * @param string $orderNo 客户订单号
+     * @param string $channelCode 运输方式代码
+     * @param string $totalValue 总申报价值(云途这个参数没用到)
+     * @param string $receiverCountryCode 收件人所在国家
+     * @param string $receiverName 收件人姓
+     * @param string $receiverAddress 收件人详细地址
+     * @param string $receiverCity 收件人所在城市
+     * @param string $rProvince 收件人所在省
+     * @param string $receiverPostCode 发件人邮编
+     * @param string $receiverMobile 发件人手机号
+     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createOrder($param = [])
+    public function createOrder(
+        $orderNo, $channelCode, $totalValue,
+        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
+        $goods = [])
     {
+        $param = [
+            //step1（2）
+            'opDivision'        => 1,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
+            'orderStatus'       => 'preprocess',    // required, 订单状态:confirmed(已确认)、preprocess(预处理)、sumbmitted(已交寄)
+
+            //step2:收件人信息（8）
+            'recipientName'     => $receiverName,           // required, （传参）收件人
+            'recipientCountry'  => $receiverCountryCode,            // required, （传参）国家
+            'shippingMethod'    => $channelCode,          // required, （传参）运输方式
+            'recipientState'    => $rProvince,            // required, （传参）收件州省
+            'recipientCity'     => $receiverCity,        // required, （传参）收件城市
+            'recipientAddress'  => $receiverAddress,   // required, （传参）收件地址
+            'recipientZipCode'  => $receiverPostCode,    // required, （传参）收件邮编
+            'recipientPhone'    => $receiverMobile,  // required, （传参）收件电话
+
+            //step3:各种配置信息（1）
+            'goodsDeclareWorth' => $totalValue,  // required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
+        ];
+
+        //step4:商品信息（4）
+        $param['goodsDetails'] = [];   //array, 申报信息
+        $totalGoodsNumber = array_sum(array_map(function ($val) {return ($val['goods_number']);}, $goods));
+        foreach ($goods as $k => $v) {
+            $param['goodsDetails'][$k]['detailDescription']   = $v['goods_en_name'];      //string,包裹申报名称(英文)必填
+            $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
+            $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
+            $param['goodsDetails'][$k]['detailWorth']         = $totalValue / $totalGoodsNumber; //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $param['goodsDetails'][$k]['hsCode']              = $v['goods_hsCode'];               //海关编码,option,填写时必须让写，先参照写个固定值吧
+        }
+
         $parameter['HeaderRequest']       = $this->headerParam();
         $parameter['addOrderRequestInfo'] = $param;
 
