@@ -229,11 +229,6 @@ class Santai
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $header = [
-            'Content-Type: application/json; charset=utf-8',
-            'Authorization: Basic ' . base64_encode($this->code . '&' . $this->apiSecret), //Authorization 对应用户的认证码，也就是用户认证的 Token。
-        ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
@@ -341,7 +336,7 @@ class Santai
 
         $result['code']    = $content[0];
         $result['content'] = $content[1]['data'][0];
-        
+
         return $result;
     }
 
