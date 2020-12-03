@@ -190,7 +190,7 @@ class Jiehang
             $data['OrderItems'][$k]['Enname'] = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
             $data['OrderItems'][$k]['Cnname'] = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
             $data['OrderItems'][$k]['Num']    = $v['goods_number'];         //int,申报数量,必填
-            $data['OrderItems'][$k]['Price']  = $v['goods_worth'] ;         //decimal( 18,2),申报价格(单价),必填
+            $data['OrderItems'][$k]['Price']  = $v['goods_single_worth'] ;         //decimal( 18,2),申报价格(单价),必填
             $data['OrderItems'][$k]['Weight'] = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
         }
 
