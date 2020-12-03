@@ -332,9 +332,10 @@ class Santai
         $url  = "http://tracking.sfcservice.com/tracking/track-api/get-track?data=$data";
 
         $content    = $this->httpGetJson($url);
+
         $content[1] = json_decode($content[1], true);
 
-        $result['code']    = $content[0];
+        $result['code']    = $content[1]['code'];
         $result['content'] = $content[1]['data'][0];
 
         return $result;
