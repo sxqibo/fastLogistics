@@ -76,6 +76,42 @@ class Yuntu
     }
 
     /**
+     * 外汇转换接口
+     * 说明：易源数据-外汇牌价汇率查询转换
+     *
+     * @return mixed
+     */
+    public function waihuiTransform()
+    {
+        $host = "https://ali-waihui.showapi.com";
+        $path = "/waihui-transform";
+        $appcode = "2f0ac9e5cac84eb08e645715a2aba909";
+        $querys = "fromCode=CNY&money=1&toCode=USD";
+        $url = $host . $path . "?" . $querys;
+        $headers = [
+            'Authorization:APPCODE ' . $appcode,
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_HEADER, true); //这个会输出头部的很多信息不需要
+        if (1 == strpos("$".$host, "https://"))
+        {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
+        $response = curl_exec($ch);
+        $response = json_decode($response, true);
+        curl_close($ch);
+        $result = $response['showapi_res_body']['money'];
+        return $result;
+    }
+
+    /**
      * 获取数据的方式
      *
      * @param string $url 请求的URL
@@ -235,16 +271,16 @@ class Yuntu
      * 07.运单申请
      * 备注：支持一个包裹多个商品
      *
-     * @param string $orderNo  客户订单号
-     * @param string $channelCode  运输方式代码
-     * @param string $totalValue  总申报价值(云途这个参数没用到)
-     * @param string $receiverCountryCode  收件人所在国家
-     * @param string $receiverName  收件人姓
-     * @param string $receiverAddress  收件人详细地址
-     * @param string $receiverCity  收件人所在城市
-     * @param string $rProvince  收件人所在省
-     * @param string $receiverPostCode  发件人邮编
-     * @param string $receiverMobile  发件人手机号
+     * @param string $orderNo 客户订单号
+     * @param string $channelCode 运输方式代码
+     * @param string $totalValue 总申报价值(云途这个参数没用到)
+     * @param string $receiverCountryCode 收件人所在国家
+     * @param string $receiverName 收件人姓
+     * @param string $receiverAddress 收件人详细地址
+     * @param string $receiverCity 收件人所在城市
+     * @param string $rProvince 收件人所在省
+     * @param string $receiverPostCode 发件人邮编
+     * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -261,7 +297,9 @@ class Yuntu
             'CustomerOrderNumber' => $orderNo,                      //string,客户订单号,不能重复，必填
             'ShippingMethodCode'  => $channelCode,                  //string,运输方式代码，必填
             'PackageCount'        => 1,                //string,运单包裹的件数，必须大于 0 的整数，必填，这里写成1，一般都是1件，如果有拆包的话，接口会返回正确的
-            'Weight'              => array_sum(array_map(function($val){return ($val['goods_number'] * $val['goods_single_weight']) ;}, $goods)),   //decimal,预估包裹总重量，单位 kg,最多 3 位小数，必填,两个数字求和
+            'Weight'              => array_sum(array_map(function ($val) {
+                return ($val['goods_number'] * $val['goods_single_weight']);
+            }, $goods)),   //decimal,预估包裹总重量，单位 kg,最多 3 位小数，必填,两个数字求和
         ];
 
         //step2:收件人
@@ -281,9 +319,9 @@ class Yuntu
             $order['Parcels'][$k]['EName']        = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
             $order['Parcels'][$k]['CName']        = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
             $order['Parcels'][$k]['Quantity']     = $v['goods_number'];         //int,申报数量,必填
-            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'];   //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'] * $this->waihuiTransform();   //decimal( 18,2),申报价格(单价),单位 USD,必填
             $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
-            $order['Parcels'][$k]['CurrencyCode'] = $v['goods_currency_code'];  //string,申报币种，默认：USD,必填
+            $order['Parcels'][$k]['CurrencyCode'] = 'USD';                      //string,申报币种，默认：USD,必填
         }
 
         $response          = $this->client->request('POST', $url, [
