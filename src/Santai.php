@@ -145,7 +145,7 @@ class Santai
             $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
             $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
             $param['goodsDetails'][$k]['detailWorth']         = $v['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
-            $param['goodsDetails'][$k]['hsCode']              =  rand(100000,99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
+            $param['goodsDetails'][$k]['hsCode']              = rand(100000, 99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
         }
 
         $parameter['HeaderRequest']       = $this->headerParam();
@@ -252,8 +252,7 @@ class Santai
      */
     public function addressPrint($orderNo, $printType, $printType2, $printSize)
     {
-        $url = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
-        //http请求
+        $url    = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
         $result = $this->httpGetJson($url);
         return $result;
     }
@@ -334,9 +333,16 @@ class Santai
      */
     public function getTrack($data)
     {
-        $url = "http://tracking.sfcservice.com/tracking/track-api/get-track?data=$data";
+        $data = json_encode($data, true);
+        $url  = "http://tracking.sfcservice.com/tracking/track-api/get-track?data=$data";
 
-        $result = $this->httpGetJson($url);
+        $content    = $this->httpGetJson($url);
+        $content[1] = json_decode($content[1], true);
+
+        $result['code']    = $content[0];
+        $result['content'] = $content[1]['data'];
+
+
         return $result;
     }
 
