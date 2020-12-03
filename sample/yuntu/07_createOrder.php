@@ -32,6 +32,7 @@ $goods = [
         'goods_cn_name'       => '商品1',
         'goods_en_name'       => 'shangpin1',
         'goods_number'        => 2,    //申报数量,商品数量
+        'goods_single_worth'  => 3,    //单个产品的申报价值
         'goods_single_weight' => 1,    //运单包裹的件数
         'goods_currency_code' => 'USD', //币种（云途需要）
         'goods_hsCode'        => '01041010', //海关（三态需要）
@@ -40,6 +41,7 @@ $goods = [
         'goods_cn_name'       => '商品2',
         'goods_en_name'       => 'shangpin2',
         'goods_number'        => 3,    //申报数量,商品数量
+        'goods_single_worth'  => 3,    //单个产品的申报价值
         'goods_single_weight' => 1,    //运单包裹的件数
         'goods_currency_code' => 'USD', //币种（云途需要）
         'goods_hsCode'        => '01041010', //海关（三态需要）
@@ -47,7 +49,7 @@ $goods = [
 ];
 
 $result = $data->createOrder(
-    $orderNo, $channelCode, $totalValue,
+    $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
     $goods);
 

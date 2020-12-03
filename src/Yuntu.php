@@ -250,7 +250,7 @@ class Yuntu
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
-        $orderNo, $channelCode,$totalValue,
+        $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
@@ -277,14 +277,13 @@ class Yuntu
 
         //step3:产品信息
         $order['Parcels'] = [];   //array, 申报信息
-        $totalGoodsNumber = array_sum(array_map(function ($val) {return ($val['goods_number']);}, $goods));
         foreach ($goods as $k => $v) {
-            $order['Parcels'][$k]['EName']        = $v['goods_en_name'];   //string,包裹申报名称(英文)必填
-            $order['Parcels'][$k]['CName']        = $v['goods_cn_name'];   //string,包裹申报名称(中文)，不必填
-            $order['Parcels'][$k]['Quantity']     = $v['goods_number'];  //int,申报数量,必填
-            $order['Parcels'][$k]['UnitPrice']    = $totalValue / $totalGoodsNumber; //decimal( 18,2),申报价格(单价),单位 USD,必填
-            $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight']; //decimal( 18,3),申报重量(单重)，单位 kg,,必填
-            $order['Parcels'][$k]['CurrencyCode'] = $v['goods_currency_code']; //string,申报币种，默认：USD,必填
+            $order['Parcels'][$k]['EName']        = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
+            $order['Parcels'][$k]['CName']        = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
+            $order['Parcels'][$k]['Quantity']     = $v['goods_number'];         //int,申报数量,必填
+            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'];   //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+            $order['Parcels'][$k]['CurrencyCode'] = $v['goods_currency_code'];  //string,申报币种，默认：USD,必填
         }
 
         $response          = $this->client->request('POST', $url, [

@@ -113,7 +113,7 @@ class Santai
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
-        $orderNo, $channelCode, $totalValue,
+        $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
@@ -133,24 +133,27 @@ class Santai
             'recipientPhone'    => $receiverMobile,  // required, （传参）收件电话
 
             //step3:各种配置信息（1）
-            'goodsDeclareWorth' => $totalValue,  // required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
+            'goodsDeclareWorth' => array_sum(array_map(function ($val) {
+                return ($val['goods_number'] * $val['goods_single_worth']);
+            }, $goods)),   //订单总申报价值 required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
         ];
 
         //step4:商品信息（4）
         $param['goodsDetails'] = [];   //array, 申报信息
-        $totalGoodsNumber = array_sum(array_map(function ($val) {return ($val['goods_number']);}, $goods));
         foreach ($goods as $k => $v) {
             $param['goodsDetails'][$k]['detailDescription']   = $v['goods_en_name'];      //string,包裹申报名称(英文)必填
             $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
             $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
-            $param['goodsDetails'][$k]['detailWorth']         = $totalValue / $totalGoodsNumber; //decimal( 18,2),申报价格(单价),单位 USD,必填
-            $param['goodsDetails'][$k]['hsCode']              = $v['goods_hsCode'];               //海关编码,option,填写时必须让写，先参照写个固定值吧
+            $param['goodsDetails'][$k]['detailWorth']         = $v['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $param['goodsDetails'][$k]['hsCode']              = $v['goods_hsCode'];       //海关编码,option,填写时必须让写，先参照写个固定值吧
         }
 
         $parameter['HeaderRequest']       = $this->headerParam();
         $parameter['addOrderRequestInfo'] = $param;
 
         $result = ($this->soapClient())->addOrder($parameter);
+        $result = json_decode(json_encode($result), true); //对象转数组
+
         return $result;
     }
 
