@@ -145,7 +145,7 @@ class Santai
             $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
             $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
             $param['goodsDetails'][$k]['detailWorth']         = $v['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
-            $param['goodsDetails'][$k]['hsCode']              = $v['goods_hsCode'];       //海关编码,option,填写时必须让写，先参照写个固定值吧
+            $param['goodsDetails'][$k]['hsCode']              =  rand(100000,99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
         }
 
         $parameter['HeaderRequest']       = $this->headerParam();
