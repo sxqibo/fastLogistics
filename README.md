@@ -146,7 +146,7 @@ $goods  = [
     ],
 ];
 $result = $data->createOrder(
-    $orderNo, $channelCode, $totalValue,
+    $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
     $goods);
 
