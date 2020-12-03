@@ -340,9 +340,8 @@ class Santai
         $content[1] = json_decode($content[1], true);
 
         $result['code']    = $content[0];
-        $result['content'] = $content[1]['data'];
-
-
+        $result['content'] = $content[1]['data'][0];
+        
         return $result;
     }
 
