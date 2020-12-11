@@ -65,6 +65,9 @@ class Yuntu
             '11' => $url . 'WayBill/Intercept',              //11.订单拦截
             '12' => $url . 'Label/Print',                    //12.标签打印
             '13' => $url . 'Freight/GetShippingFeeDetail',   //13.查询物流运费明细
+            '14' => $url . 'Common/Register',                //14.用户注册
+            '15' => $url . 'Tracking/GetTrackInfo',          //15.查询物流轨迹信息
+            '16' => $url . 'Waybill/GetCarrier',             //16.查询末端派送商
         ];
         return $arr;
     }
@@ -83,11 +86,11 @@ class Yuntu
      */
     public function waihuiTransform()
     {
-        $host = "https://ali-waihui.showapi.com";
-        $path = "/waihui-transform";
+        $host    = "https://ali-waihui.showapi.com";
+        $path    = "/waihui-transform";
         $appcode = "2f0ac9e5cac84eb08e645715a2aba909";
-        $querys = "fromCode=CNY&money=1&toCode=USD";
-        $url = $host . $path . "?" . $querys;
+        $querys  = "fromCode=CNY&money=1&toCode=USD";
+        $url     = $host . $path . "?" . $querys;
         $headers = [
             'Authorization:APPCODE ' . $appcode,
         ];
@@ -99,8 +102,7 @@ class Yuntu
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_HEADER, true); //这个会输出头部的很多信息不需要
-        if (1 == strpos("$".$host, "https://"))
-        {
+        if (1 == strpos("$" . $host, "https://")) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
@@ -116,8 +118,8 @@ class Yuntu
      *
      * @param string $url 请求的URL
      * @param array $data 语求的参数
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getData($url, $data = null)
     {
@@ -139,8 +141,8 @@ class Yuntu
      * 01.查询国家简码
      * 说明：我这里带不带countryCode都是268个国家
      *
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getCountry()
     {
@@ -154,8 +156,8 @@ class Yuntu
      * 说明：目前在用,原来是： getShippingMethods
      *
      * @param string $countryCode 国家简码，未填写国家代表查询所有运输方式
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getShipTypes($countryCode = null)
     {
@@ -170,8 +172,8 @@ class Yuntu
     /**
      * 03.查询货品类型
      *
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getGoodsType()
     {
@@ -190,8 +192,8 @@ class Yuntu
      * @param int $width 包裹宽度,单位 cm,不带小数，不填写默认 1
      * @param int $height 包裹高度,单位 cm,不带小数，不填写默认 1
      * @param int $packageType 包裹类型，1-包裹，2-文件，3-防水袋，默认 1
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getPrice($countryCode, $weight, $length = null, $width = null, $height = null, $packageType = null)
     {
@@ -239,8 +241,8 @@ class Yuntu
      * 05.查询跟踪号
      *
      * @param string $customerOrderNumber 客户订单号,多个以逗号分开
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getTrackingNumber($customerOrderNumber)
     {
@@ -255,8 +257,8 @@ class Yuntu
      * 06. 查询发件人信息
      *
      * @param string $orderNumber 查询号码，可输入运单号、订单号、跟踪号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getSender($orderNumber)
     {
@@ -282,8 +284,8 @@ class Yuntu
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
@@ -342,8 +344,8 @@ class Yuntu
      * 08.查询运单
      *
      * @param string $orderNo 订单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getOrder($orderNo)
     {
@@ -359,8 +361,8 @@ class Yuntu
      *
      * @param string $orderNo 订单号
      * @param float $weight 修改重量
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function updateWeight($orderNo, $weight)
@@ -378,8 +380,8 @@ class Yuntu
      * 10.订单删除
      *
      * @param string $orderNo 订单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function delete($orderNo)
@@ -398,8 +400,8 @@ class Yuntu
      *
      * @param string $orderNo 订单号
      * @param string $remark 拦截原因
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function intercept($orderNo, $remark)
@@ -418,8 +420,8 @@ class Yuntu
      * 12.标签打印
      *
      * @param string $orderNo 订单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function labelPrint($orderNo)
@@ -436,8 +438,8 @@ class Yuntu
      * 13.查询物流运费明细
      *
      * @param string $wayBillNumber 运单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo
      */
     public function getShippingFeeDetail($wayBillNumber)
@@ -446,6 +448,59 @@ class Yuntu
         $url = $url . '?wayBillNumber=' . $wayBillNumber;
 
         $result = $this->getData($url);
+        return $result;
+    }
+
+    /**
+     * 14. 用户注册
+     *
+     * @param array $params
+     * @return mixed
+     */
+    public function register(array $params)
+    {
+        $url = ($this->arrUrl())['14'];
+        $response          = $this->client->request('POST', $url, [
+            'json' => [
+                $params
+            ],
+        ]);
+        $returnContent     = $response->getBody()->getContents();
+        $returnContent     = json_decode($returnContent, true);
+        $result['code']    = $returnContent['Code'];
+        $result['content'] = $returnContent['Item'];
+
+
+        return $result;
+    }
+    /**
+     * 15. 查询物流轨迹信息
+     * @param string $OrderNumber  物流系统运单号，客户订单或跟踪号
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
+     */
+    public function getTrackInfo($OrderNumber)
+    {
+        $url = ($this->arrUrl())['15'];
+        $url = trim($url . "?OrderNumber=$OrderNumber");
+
+        $result = $this->getData($url);
+        return $result;
+    }
+
+    /**
+     * 16. 查询末端派送商
+     *
+     * @param $OrderNumber string 查询号码，可输入运单号、订单号、跟踪号
+     * @return mixed
+     */
+    public function getCarrier($OrderNumber)
+    {
+        $url = ($this->arrUrl())['16'];
+        $data   = [
+            'OrderNumbers' => $OrderNumber
+        ];
+        $result = $this->getData($url, $data);
         return $result;
     }
 }

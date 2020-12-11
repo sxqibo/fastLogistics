@@ -13,10 +13,8 @@ $config = [
         'userId' => '',
     ],
     'yunTu'   => [
-        'api_url'       => '',
-        'customer_code' => '',
-        'customer_key'  => ''
+        'code' => 'C37872',
+        'apiSecret'  => 'vgBuniL0KE0'
     ]
 ];
-
 return $config;
