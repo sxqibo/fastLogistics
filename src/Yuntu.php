@@ -418,19 +418,21 @@ class Yuntu
 
     /**
      * 12.标签打印
-     *
      * @param string $orderNo 订单号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
-     * @todo 待测试
      */
     public function labelPrint($orderNo)
     {
-        $data   = [
-            'OrderNumbers' => $orderNo
-        ];
         $url    = ($this->arrUrl())['12'];
-        $result = $this->getData($url, $data);
+        $response          = $this->client->request('POST', $url, [
+            'json' => [
+                json_encode($orderNo)
+            ],
+        ]);
+        $returnContent     = $response->getBody()->getContents();
+        $returnContent     = json_decode($returnContent, true);
+        $result['code']    = $returnContent['Code'];
+        $result['content'] = $returnContent['Item'];
         return $result;
     }
 
