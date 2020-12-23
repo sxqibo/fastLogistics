@@ -426,7 +426,7 @@ class Yuntu
         $url    = ($this->arrUrl())['12'];
         $response          = $this->client->request('POST', $url, [
             'json' => [
-                json_encode($orderNo)
+                $orderNo
             ],
         ]);
         $returnContent     = $response->getBody()->getContents();
