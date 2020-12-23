@@ -243,13 +243,12 @@ class Santai
      * @param string $printType 打印类型
      * @param string $printType2 标签类型
      * @param string $printSize 标签尺寸
-     * @return array
+     * @return string
      */
     public function addressPrint($orderNo, $printType, $printType2, $printSize)
     {
         $url    = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
-        $result = $this->httpGetJson($url);
-        return $result;
+        return $url;
     }
 
     /**
