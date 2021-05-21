@@ -134,7 +134,7 @@ class Jiehang
      */
     public function createOrder(
         $orderNo, $channelCode,
-        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
+        $receiverCountryCode, $receiverName, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
         // step1.1:（参数）
@@ -180,7 +180,8 @@ class Jiehang
         // step1.7:（参数）收件人信息
         $data['Recipient'] = [
             'Name'     => $receiverName,        //名称
-            'Addres1'  => $receiverAddress,     //地址
+            'Addres1'  => $receiverAddress1,     //地址
+            'Addres2'  => $receiverAddress2,     //地址
             'Mobi'     => $receiverMobile,      //手机
             'Province' => $rProvince,    //省州
             'City'     => $receiverCity,        //城市

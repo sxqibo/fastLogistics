@@ -20,7 +20,8 @@ $channelCode = 'GNPS';  //运输方式代码(三种物流的方式是不一样�
 //step2:收件人
 $rCountryCode = 'DE';           //收件人所在国家
 $rName        = 'Juan';          //收件人姓
-$rAddress     = 'August-cueni-strasse 5';          //收件人详细地址
+$rAddress1    = 'August-cueni-strasse 1';          //收件人详细地址1
+$rAddress2    = 'August-cueni-strasse 2';          //收件人详细地址2
 $rCity        = 'Zwingen';     //收件人所在城市
 $rProvince    = 'Zwingen';             //收件人所在省
 $rCode        = '04222';       //发件人邮编,必填项,5位数字
@@ -45,7 +46,7 @@ $goods  = [
 ];
 $result = $data->createOrder(
     $orderNo, $channelCode,
-    $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
+    $rCountryCode, $rName, $rAddress1, $rAddress2, $rCity, $rProvince, $rCode, $rMobile,
     $goods);
 
 
