@@ -289,7 +289,7 @@ class Yuntu
      */
     public function createOrder(
         $orderNo, $channelCode,
-        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
+        $receiverCountryCode, $receiverName, $receiverAddress, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
         $goods = [])
     {
         $url = ($this->arrUrl())['07'];
@@ -306,13 +306,15 @@ class Yuntu
 
         //step2:收件人
         $order['Receiver'] = [ //array, 收件人信息，必填
-            'CountryCode' => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
-            'FirstName'   => $receiverName,                     //string,收件人姓，必填
-            'Street'      => $receiverAddress,                  //string,收件人详细地址，必填
-            'City'        => $receiverCity,                     //string,收件人所在城市,非必填
-            'State'       => $rProvince,                        //string,发件人省/州,非必填
-            'Zip'         => $receiverPostCode,                 //string,发件人邮编,非必填
-            'Phone'       => $receiverMobile,                   //string,发件人电话,非必填
+            'CountryCode'    => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
+            'FirstName'      => $receiverName,                     //string,收件人姓，必填
+            'Street'         => $receiverAddress,                  //string,收件人详细地址，必填
+            'StreetAddress1' => $receiverAddress1,                  //string,收件人详细地址1，必填
+            'StreetAddress2' => $receiverAddress2,                  //string,收件人详细地址2，必填
+            'City'           => $receiverCity,                     //string,收件人所在城市,非必填
+            'State'          => $rProvince,                        //string,发件人省/州,非必填
+            'Zip'            => $receiverPostCode,                 //string,发件人邮编,非必填
+            'Phone'          => $receiverMobile,                   //string,发件人电话,非必填
         ];
 
         //step3:产品信息
@@ -423,7 +425,7 @@ class Yuntu
      */
     public function labelPrint($orderNo)
     {
-        $url    = ($this->arrUrl())['12'];
+        $url               = ($this->arrUrl())['12'];
         $response          = $this->client->request('POST', $url, [
             'json' => [
                 $orderNo
@@ -461,7 +463,7 @@ class Yuntu
      */
     public function register(array $params)
     {
-        $url = ($this->arrUrl())['14'];
+        $url               = ($this->arrUrl())['14'];
         $response          = $this->client->request('POST', $url, [
             'json' => [
                 $params
@@ -475,9 +477,10 @@ class Yuntu
 
         return $result;
     }
+
     /**
      * 15. 查询物流轨迹信息
-     * @param string $OrderNumber  物流系统运单号，客户订单或跟踪号
+     * @param string $OrderNumber 物流系统运单号，客户订单或跟踪号
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
@@ -498,7 +501,7 @@ class Yuntu
      */
     public function getCarrier($OrderNumber)
     {
-        $url = ($this->arrUrl())['16'];
+        $url    = ($this->arrUrl())['16'];
         $data   = [
             'OrderNumbers' => $OrderNumber
         ];
