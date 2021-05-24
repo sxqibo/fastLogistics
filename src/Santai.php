@@ -109,8 +109,8 @@ class Santai
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
@@ -119,21 +119,22 @@ class Santai
     {
         $param = [
             //step1（2）
-            'opDivision'        => 1,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
-            'orderStatus'       => 'preprocess',    // required, 订单状态:confirmed(已确认)、preprocess(预处理)、sumbmitted(已交寄)
+            'opDivision'         => 1,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
+            'orderStatus'        => 'preprocess',    // required, 订单状态:confirmed(已确认)、preprocess(预处理)、sumbmitted(已交寄)
 
             //step2:收件人信息（8）
-            'recipientName'     => $receiverName,           // required, （传参）收件人
-            'recipientCountry'  => $receiverCountryCode,            // required, （传参）国家
-            'shippingMethod'    => $channelCode,          // required, （传参）运输方式
-            'recipientState'    => $rProvince,            // required, （传参）收件州省
-            'recipientCity'     => $receiverCity,        // required, （传参）收件城市
-            'recipientAddress'  => $receiverAddress,   // required, （传参）收件地址
-            'recipientZipCode'  => $receiverPostCode,    // required, （传参）收件邮编
-            'recipientPhone'    => $receiverMobile,  // required, （传参）收件电话
-
+            'recipientName'      => $receiverName,           // required, （传参）收件人
+            'recipientCountry'   => $receiverCountryCode,            // required, （传参）国家
+            'shippingMethod'     => $channelCode,          // required, （传参）运输方式
+            'recipientState'     => $rProvince,            // required, （传参）收件州省
+            'recipientCity'      => $receiverCity,        // required, （传参）收件城市
+            'recipientAddress'   => $receiverAddress,   // required, （传参）收件地址
+            'recipientZipCode'   => $receiverPostCode,    // required, （传参）收件邮编
+            'recipientPhone'     => $receiverMobile,  // required, （传参）收件电话
+            //寄件人
+            'shipperAddressType' => 1, //是否取寄件人默认地址0/1
             //step3:各种配置信息（1）
-            'goodsDeclareWorth' => array_sum(array_map(function ($val) {
+            'goodsDeclareWorth'  => array_sum(array_map(function ($val) {
                 return ($val['goods_number'] * $val['goods_single_worth']);
             }, $goods)),   //订单总申报价值 required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
         ];
@@ -247,7 +248,7 @@ class Santai
      */
     public function addressPrint($orderNo, $printType, $printType2, $printSize)
     {
-        $url    = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
+        $url = 'http://www.sfcservice.com/order/print/index/?orderCodeList=' . $orderNo . '&printType=' . $printType . '&isPrintDeclare=1&declare=0&ismerge=1&urluserid=OTY5&print_type=' . $printType2 . '&printSize=' . $printSize;
         return $url;
     }
 
@@ -330,7 +331,7 @@ class Santai
         $data = json_encode($data, true);
         $url  = "http://tracking.sfcservice.com/tracking/track-api/get-track?data=$data";
 
-        $content    = $this->httpGetJson($url);
+        $content = $this->httpGetJson($url);
 
         $content[1] = json_decode($content[1], true);
 
