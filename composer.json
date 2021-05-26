@@ -18,16 +18,18 @@
     }
   ],
   "require": {
+    "php": ">=7.0",
     "ext-curl": "*",
     "ext-json": "*",
     "ext-soap": "*",
-    "guzzlehttp/guzzle": "~6.0"
+    "guzzlehttp/guzzle": "~6.0",
+    "spatie/array-to-xml": " ^2.1"
   },
   "autoload": {
-        "files": [],
-        "psr-4": {
-            "Sxqibo\\Logistics\\": "src/"
-        }
-    },
+    "files": [],
+    "psr-4": {
+      "Sxqibo\\Logistics\\": "src/"
+    }
+  },
   "license": "MIT"
 }
