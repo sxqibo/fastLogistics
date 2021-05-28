@@ -75,6 +75,193 @@ class Yanwen
     }
 
     /**
+     * 3.根据条件查询快件信息
+     *
+     * @param $params
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function getOrder($params, $isDebug = false)
+    {
+        $query = [
+            'page'     => $params['page'] ?? 1, // 页码数
+            'code'     => $params['code'] ?? '', // 运单号
+            'receiver' => $params['receiver'] ?? '', // 收货人姓名
+            'channel'  => $params['channel'] ?? '', // 发货方式
+            'start'    => $params['start'] ?? '', // 开始时间
+            'end'      => $params['end'] ?? '', // 结束时间
+            'isstatus' => $params['isstatus'] ?? ''
+        ];
+
+        $endPoint = $this->getEndPoint('getOrder', $isDebug);
+        $result   = $this->client->requestApi($endPoint, $query, [], $this->headers);
+
+        if ($result['CallSuccess'] == true) {
+            $newResult = ['code' => 0, 'message' => '成功', 'data' => $result['ExpressCollection'] ?? []];
+        } else {
+            $newResult = ['code' => -1, 'message' => '获取失败', 'data' => []];
+        }
+
+        return $newResult;
+    }
+
+    /**
+     * 4.标签打印
+     *
+     * @param $epCode string 运单号
+     * @param string $labelSize {LabelSize}：标签大小。支持的值为：A4L, A4LI, A4LC, A4LCI, A6L, A6LI, A6LC, A6LCI, A10x10L, A10x10LI, A10x10LC, A10x10LCI。
+     * (注：L为运单，C为报关签条，I为拣货单。)
+     * @param false $isDebug 是否测试环境
+     * @throws Exception
+     */
+    public function labelPrint($epCode, $labelSize = 'A4L', $isDebug = false)
+    {
+        $endPoint        = $this->getEndPoint('labelPrint', $isDebug);
+        $uri             = $endPoint['uri'];
+        $endPoint['uri'] = sprintf($uri, $epCode, $labelSize);
+
+        $result = $this->client->requestApi($endPoint, [], [], $this->headers);
+
+        return ['code' => 0, 'message' => '成功', 'data' => $result];
+    }
+
+    /**
+     * 5.多标签打印
+     *
+     * @param $epCodes string 运单号,分割，如：YW862913494CN,RQ150332025SG
+     * @param string $labelSize
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function multipleLabelPrint($epCodes, $labelSize = 'A4L', $isDebug = false)
+    {
+        $endPoint = $this->getEndPoint('multipleLabelPrint', $isDebug);
+
+        if (is_array($epCodes)) {
+            $epCodes = implode(',', $epCodes);
+        }
+
+        $uri             = $endPoint['uri'];
+        $endPoint['uri'] = sprintf($uri, $labelSize);
+
+        $body = "<string>" . $epCodes . "</string>";
+
+        $result = $this->client->requestApi($endPoint, [], $body, $this->headers);
+
+        return ['code' => 0, 'message' => '成功', 'data' => $result];
+    }
+
+    /**
+     * 6.创建线上数据信息
+     *
+     * @param $data
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function createOnlineData($data, $isDebug = false)
+    {
+        $newData = [
+            'Epcode'      => $data['ep_code'] ?? '',
+            'Userid'      => $this->userId,
+            'ChannelType' => $data['channelCode'] ?? '',
+            'Country'     => $data['receiverCountryCode'] ?? '',
+            'SendDate'    => $data['sendDate'],
+            'Postcode'    => $data['receiverPostCode'],
+        ];
+
+        $goods = $data['goods'];
+        foreach ($goods as $item) {
+            $goodsNames[] = [
+                'NameCh'           => $item['goods_cn_name'], // 商品中文品名
+                'NameEn'           => $item['goods_en_name'], // 商品英文品名
+                'DeclaredValue'    => $item['goods_single_worth'], // 申报价值
+                'DeclaredCurrency' => isset($item['currency']) ?? 'USD', // 申报币种
+            ];
+        }
+
+        $newData['GoodNames'] = $goodsNames;
+        $endPoint             = $this->getEndPoint('createOnlineData', $isDebug);
+
+        $body = Utility::arrayToXml($newData, 'OnlineDataType');
+
+        $result = $this->client->requestApi($endPoint, [], $body, $this->headers);
+
+        return $result;
+    }
+
+    /**
+     * 7.更改运单状态
+     *
+     * @param $epCode string 运单号 每次请求只允许调整一个运单的快件状态
+     * @param $status integer 快件状态。支持的值为：1 正常；0 删除。
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function changeStatus($epCode, $status, $isDebug = false)
+    {
+        $endPoint = $this->getEndPoint('changeStatus', $isDebug);
+
+        $uri             = $endPoint['uri'];
+        $endPoint['uri'] = sprintf($uri, $status);
+
+        $body = "<string>" . $epCode . "</string>";
+
+        $result = $this->client->requestApi($endPoint, [], $body, $this->headers);
+
+        if ($result['CallSuccess'] == 'false') {
+            $newResult = ['code' => -1, 'message' => $result['Message'] ?? ''];
+        } else {
+            $newResult = ['code' => 0, 'message' => '操作成功'];
+        }
+
+        return $newResult;
+    }
+
+    /**
+     * 8.获取产品可达国家
+     *
+     * @param $channelId
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function getCountry($channelId, $isDebug = false)
+    {
+        $endPoint        = $this->getEndPoint('getCountry', $isDebug);
+        $uri             = $endPoint['uri'];
+        $endPoint['uri'] = sprintf($uri, $channelId);
+
+        $result = $this->client->requestApi($endPoint, [], [], $this->headers);
+
+        $list = $result['CountryCollection'] ?? [];
+        $list = $list['CountryType'] ?? [];
+
+        return ['code' => 0, 'message' => '成功', 'data' => $list];
+    }
+
+    /**
+     * 获取线上发货渠道
+     *
+     * @param false $isDebug
+     * @return array|mixed
+     * @throws Exception
+     */
+    public function getOnlineChannels($isDebug = false)
+    {
+        $endPoint = $this->getEndPoint('getOnlineChannels', $isDebug);
+        $result   = $this->client->requestApi($endPoint, [], [], $this->headers);
+
+        $list = $result['OnlineChannelCollection'] ?? [];
+        $list = $list['ChannelType'] ?? [];
+
+        return ['code' => 0, 'message' => '成功', 'data' => $list];
+    }
+
+    /**
      * 格式化数据
      *
      * @param $data
@@ -145,7 +332,7 @@ class Yanwen
 
         return $body;
     }
-
+    
     /**
      * 获取请求节点信息
      *
@@ -174,12 +361,12 @@ class Yanwen
             ],
             'labelPrint'         => [
                 'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/{EPCODE}/{LabelSize}Label',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/%s/%sLabel',
                 'remark' => '单个标签生成'
             ],
             'multipleLabelPrint' => [
                 'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/{LabelSize}Label',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/%sLabel',
                 'remark' => '多标签生成'
             ],
             'createOnlineData'   => [
@@ -189,12 +376,12 @@ class Yanwen
             ],
             'changeStatus'       => [
                 'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/ChangeStatus',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/ChangeStatus/%d',
                 'remark' => '调整快件状态'
             ],
             'getCountry'         => [
                 'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/channels/{ChannelId}/countries',
+                'uri'    => '/Users/' . $this->userId . '/channels/%s/countries',
                 'remark' => '获取产品可达国家：{ channelId }：渠道编号。必填'
             ],
             'getOnlineChannels'  => [

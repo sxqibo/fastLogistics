@@ -17,8 +17,6 @@ class Utility
         return ArrayToXml::convert($array, $customRoot, true, 'UTF-8');
     }
 
-
-    // todo
     public static function validateData($data)
     {
 
