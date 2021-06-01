@@ -42,11 +42,18 @@ class Client
             }
 
             $options['timeout'] = $this->timeout;
-            !empty($body) && $options['body'] = $body;
+
+            if (!empty($body)) {
+                $contentType = $headers['Content-Type'] ?? '';
+                if ($contentType == 'application/x-www-form-urlencoded') {
+                    $options['form_params'] = $body;
+                } else {
+                    $options['body'] = $body;
+                }
+            }
 
             $client   = $this->getClient();
             $response = $client->request($endPoint['method'], $endPoint['uri'], $options);
-
 
             $body = $response->getBody();
             if ($raw) {

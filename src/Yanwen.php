@@ -14,7 +14,6 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Yanwen
 {
-
     private $serviceEndPoint     = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
     private $testServiceEndPoint = 'HTTP://47.96.220.163:802/SERVICE';
     private $userId              = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
@@ -33,6 +32,81 @@ class Yanwen
         ];
 
         $this->client = new Client();
+    }
+
+    /**
+     * 获取请求节点信息
+     *
+     * @param $key
+     * @param false $isDebug
+     * @return string[]
+     * @throws Exception
+     */
+    protected function getEndPoint($key, $isDebug = false)
+    {
+        $endpoints = [
+            'getShipTypes'       => [
+                'method' => 'GET',
+                'uri'    => '/Users/' . $this->userId . '/GetChannels',
+                'remark' => '获取发货渠道'
+            ],
+            'createOrder'        => [
+                'method' => 'POST',
+                'uri'    => '/Users/' . $this->userId . '/Expresses',
+                'remark' => '新建快件信息'
+            ],
+            'getOrder'           => [
+                'method' => 'GET',
+                'uri'    => '/Users/' . $this->userId . '/Expresses',
+                'remark' => '按条件查询快件信息'
+            ],
+            'labelPrint'         => [
+                'method' => 'GET',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/%s/%sLabel',
+                'remark' => '单个标签生成'
+            ],
+            'multipleLabelPrint' => [
+                'method' => 'POST',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/%sLabel',
+                'remark' => '多标签生成'
+            ],
+            'createOnlineData'   => [
+                'method' => 'POST',
+                'uri'    => '/Users/' . $this->userId . '/OnlineData',
+                'remark' => '新建线上数据信息'
+            ],
+            'changeStatus'       => [
+                'method' => 'POST',
+                'uri'    => '/Users/' . $this->userId . '/Expresses/ChangeStatus/%d',
+                'remark' => '调整快件状态'
+            ],
+            'getCountry'         => [
+                'method' => 'GET',
+                'uri'    => '/Users/' . $this->userId . '/channels/%s/countries',
+                'remark' => '获取产品可达国家：{ channelId }：渠道编号。必填'
+            ],
+            'getOnlineChannels'  => [
+                'method' => 'GET',
+                'uri'    => '/Users/' . $this->userId . '/GetOnlineChannels',
+                'remark' => '获取线上发货渠道'
+            ]
+        ];
+
+        if (isset($endpoints[$key])) {
+
+            if ($isDebug) {
+                $path = $this->testServiceEndPoint;
+            } else {
+                $path = $this->serviceEndPoint;
+            }
+
+            $temp                   = $endpoints[$key]['uri'];
+            $endpoints[$key]['uri'] = $path . $temp;
+
+            return $endpoints[$key];
+        } else {
+            throw new Exception('未找到对应的接口信息 ' . $key);
+        }
     }
 
     /**
@@ -269,8 +343,8 @@ class Yanwen
      */
     protected function formatData($data)
     {
-        $goods    = $data['goods'];
-        $receiver = [
+        $goods         = $data['goods'];
+        $receiver      = [
             // 必填
             'Userid'   => $this->userId, // 客户号
             'Name'     => $data['receiverName'], // 收货人-姓名
@@ -282,7 +356,7 @@ class Yanwen
 
             // 收货人-座机，手机。美国专线至少填一项
             'Phone'    => $data['phone'] ?? '',
-            'Mobile'   => $data['mobile'] ?? '',
+            'Mobile'   => $data['receiverMobile'] ?? '',
             'Company'  => $data['company'] ?? '', // 收货人-公司
 
             // 选填
@@ -293,9 +367,11 @@ class Yanwen
             'NationalId' => '' // 护照Id （当Channel为燕特快不含电，国家为巴西时，此属性必填）
         ];
 
-        $goodsNames = [];
+        $goodsNames    = [];
+        $totalQuantity = 0; // 货品总数量
+
         foreach ($goods as $item) {
-            $goodsNames[] = [
+            $goodsNames[]  = [
                 'Userid'           => $this->userId, // 客户号
                 'NameCh'           => $item['goods_cn_name'], // 商品中文品名
                 'NameEn'           => $item['goods_en_name'], // 商品英文品名
@@ -309,6 +385,8 @@ class Yanwen
                 'MoreGoodsName'    => $item['extra'] ?? '', // 多品名 会出现在拣货单上
                 'HsCode'           => $item['hs_code'] ?? '', // 商品海关编码（当Channel为【香港FedEx经济，中邮广州挂号小包，中邮广州平邮小包(专用)】时，该属性HsCode必填）
             ];
+            $goodsNumber   = $item['goods_number'] ?? 0;
+            $totalQuantity += $goodsNumber;
         }
 
         $body = [
@@ -316,7 +394,7 @@ class Yanwen
             'Userid'          => $this->userId,     // 客户号,
             'Channel'         => $data['channelCode'],     // 发货方式
             'UserOrderNumber' => $data['orderNo'],    // 客户订单号
-            'Quantity'        => count($goods), // 货品数量
+            'Quantity'        => $totalQuantity, // 货品数量
             'SendDate'        => $data['sendDate'], // 发货日期，datetime类型
 
             // 可选项
@@ -332,82 +410,6 @@ class Yanwen
 
         return $body;
     }
-    
-    /**
-     * 获取请求节点信息
-     *
-     * @param $key
-     * @param false $isDebug
-     * @return string[]
-     * @throws Exception
-     */
-    protected function getEndPoint($key, $isDebug = false)
-    {
-        $endpoints = [
-            'getShipTypes'       => [
-                'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/GetChannels',
-                'remark' => '获取发货渠道'
-            ],
-            'createOrder'        => [
-                'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/Expresses',
-                'remark' => '新建快件信息'
-            ],
-            'getOrder'           => [
-                'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/Expresses',
-                'remark' => '按条件查询快件信息'
-            ],
-            'labelPrint'         => [
-                'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/%s/%sLabel',
-                'remark' => '单个标签生成'
-            ],
-            'multipleLabelPrint' => [
-                'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/%sLabel',
-                'remark' => '多标签生成'
-            ],
-            'createOnlineData'   => [
-                'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/OnlineData',
-                'remark' => '新建线上数据信息'
-            ],
-            'changeStatus'       => [
-                'method' => 'POST',
-                'uri'    => '/Users/' . $this->userId . '/Expresses/ChangeStatus/%d',
-                'remark' => '调整快件状态'
-            ],
-            'getCountry'         => [
-                'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/channels/%s/countries',
-                'remark' => '获取产品可达国家：{ channelId }：渠道编号。必填'
-            ],
-            'getOnlineChannels'  => [
-                'method' => 'GET',
-                'uri'    => '/Users/' . $this->userId . '/GetOnlineChannels',
-                'remark' => '获取线上发货渠道'
-            ]
-        ];
-
-        if (isset($endpoints[$key])) {
-
-            if ($isDebug) {
-                $path = $this->testServiceEndPoint;
-            } else {
-                $path = $this->serviceEndPoint;
-            }
-
-            $temp                   = $endpoints[$key]['uri'];
-            $endpoints[$key]['uri'] = $path . $temp;
-
-            return $endpoints[$key];
-        } else {
-            throw new Exception('未找到对应的接口信息 ' . $key);
-        }
-    }
-
 
     /**
      * 处理返回结果

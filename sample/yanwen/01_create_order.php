@@ -2,8 +2,8 @@
 require __DIR__ . '/vendor/autoload.php';
 
 try {
-    $appKey = 'D6140AA383FD8515B09028C586493DDB';
-    $userId = '100000';
+    $appKey = '';
+    $userId = '';
 
     $client  = new \Sxqibo\Logistics\Yanwen($appKey, $userId);
     $goods[] =
