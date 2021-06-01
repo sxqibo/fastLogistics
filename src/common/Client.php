@@ -53,7 +53,7 @@ class Client
             }
 
             $client   = $this->getClient();
-            $response = $client->request($endPoint['method'], $endPoint['uri'], $options);
+            $response = $client->request($endPoint['method'], $endPoint['url'], $options);
 
             $body = $response->getBody();
             if ($raw) {

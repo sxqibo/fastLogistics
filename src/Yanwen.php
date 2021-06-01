@@ -101,7 +101,7 @@ class Yanwen
             }
 
             $temp                   = $endpoints[$key]['uri'];
-            $endpoints[$key]['uri'] = $path . $temp;
+            $endpoints[$key]['url'] = $path . $temp;
 
             return $endpoints[$key];
         } else {
@@ -343,8 +343,8 @@ class Yanwen
      */
     protected function formatData($data)
     {
-        $goods         = $data['goods'];
-        $receiver      = [
+        $goods    = $data['goods'];
+        $receiver = [
             // 必填
             'Userid'   => $this->userId, // 客户号
             'Name'     => $data['receiverName'], // 收货人-姓名

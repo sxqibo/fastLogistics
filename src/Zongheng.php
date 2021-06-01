@@ -23,7 +23,7 @@ class Zongheng
     {
         $this->endPoint = [
             'method' => 'POST',
-            'uri'    => $this->serviceEndPoint,
+            'url'    => $this->serviceEndPoint,
         ];
 
         $this->body = [
