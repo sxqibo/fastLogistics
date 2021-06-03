@@ -73,7 +73,7 @@ class Client
             }
         } catch (GuzzleException $e) {
             $paramString = json_encode($options, JSON_UNESCAPED_UNICODE);
-            $errorMsg    = "请求API失败，API:{$endPoint['uri']}，参数:{$paramString}，错误信息:[{$e->getMessage()}]";
+            $errorMsg    = "请求API失败，API:{$endPoint['url']}，参数:{$paramString}，错误信息:[{$e->getMessage()}]";
 
             throw new Exception($errorMsg);
         }

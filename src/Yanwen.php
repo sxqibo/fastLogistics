@@ -163,9 +163,9 @@ class Yanwen
             'code'     => $params['code'] ?? '', // 运单号
             'receiver' => $params['receiver'] ?? '', // 收货人姓名
             'channel'  => $params['channel'] ?? '', // 发货方式
-            'start'    => $params['start'] ?? '', // 开始时间
-            'end'      => $params['end'] ?? '', // 结束时间
-            'isstatus' => $params['isstatus'] ?? ''
+            'start'    => $params['start_time'] ?? '', // 开始时间
+            'end'      => $params['end_time'] ?? '', // 结束时间
+            'isstatus' => $params['status'] ?? ''
         ];
 
         $endPoint = $this->getEndPoint('getOrder', $isDebug);

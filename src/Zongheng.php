@@ -358,7 +358,7 @@ class Zongheng
      * @return array
      * @throws Exception
      */
-    public function feeTrail($params)
+    public function getPrice($params)
     {
         $data = [
             'country_code'    => $params['country_code'] ?? '', //目的国家二字代码 - 必填
@@ -565,7 +565,7 @@ class Zongheng
                 'consignee_province'    => $data['rProvince'], // 收件人州/省
                 'consignee_city'        => $data['receiverCity'], // 收件人城市
                 'consignee_street'      => $data['receiverAddress'], // 收件人区/县
-                'consignee_postcode'    => $data['receiverPostCode'], // 收件人街道地址
+                'consignee_postcode'    => $data['receiverPostCode'] ?? '', // 收件人邮编
                 'consignee_telephone'   => $data['receiverPhone'] ?? '', // 收件人电话
                 'consignee_mobile'      => $data['receiverMobile'] ?? '', // 收件人手机
 
