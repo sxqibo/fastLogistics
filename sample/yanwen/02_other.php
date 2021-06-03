@@ -30,6 +30,14 @@ try {
     // 获取线上发货渠道
     // $result = $client->getOnlineChannels(true);
 
+    // 获取订单跟踪记录
+    // $result = $client->getTrack('6A1672374181622');
+
+    // 获取跟踪记录状态码信息
+    $result = $client->getTrackingStatusCodeInfo('PU10');
+
+    dd($result);
+
 } catch (\Exception $e) {
     print_r($e->getMessage());
     exit;

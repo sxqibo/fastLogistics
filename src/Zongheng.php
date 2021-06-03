@@ -542,13 +542,14 @@ class Zongheng
 
             // 发件人信息
             'shipper'            => [
+                // todo 必填
                 'shipper_name'        => $data['shipper_name'] ?? '.', // 发件人姓名
                 'shipper_countrycode' => $data['shipper_countrycode'] ?? 'CN', // 发件人国家二字代码
                 'shipper_street'      => $data['shipper_street'] ?? '..', // 发件人街道地址
                 'shipper_mobile'      => $data['shipper_mobile'] ?? '..', // 发件人手机 手机|电话 至少传一项
                 'shipper_telephone'   => $data['shipper_telephone'] ?? '..', // 发件人电话 手机|电话 至少传一项
 
-                // 非必填
+                // todo 非必填
                 'shipper_province'    => '', // 发件人州/省
                 'shipper_city'        => '', // 发件人城市
                 'shipper_district'    => '', // 发件人区/县

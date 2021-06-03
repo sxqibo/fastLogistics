@@ -89,7 +89,7 @@ class Yanwen
                 'method' => 'GET',
                 'uri'    => '/Users/' . $this->userId . '/GetOnlineChannels',
                 'remark' => '获取线上发货渠道'
-            ]
+            ],
         ];
 
         if (isset($endpoints[$key])) {
@@ -134,8 +134,6 @@ class Yanwen
      */
     public function createOrder($data, $isDebug = false)
     {
-        // 1.验证数据
-        Utility::validateData($data);
 
         // 2.格式化数据
         $newData = $this->formatData($data);
@@ -336,6 +334,430 @@ class Yanwen
     }
 
     /**
+     * 获取订单跟踪记录
+     *
+     * @param $trackNumber
+     * @param false $isDebug
+     * @return array
+     * @throws Exception
+     */
+    public function getTrack($trackNumber)
+    {
+        $endPoint = [
+            'url'    => 'http://trackapi.yanwentech.com/api/tracking',
+            'method' => 'GET'
+        ];
+
+        $header = [
+            'Authorization' => $this->userId,
+        ];
+
+        $params = [
+            'nums' => $trackNumber
+        ];
+
+        $result = $this->client->requestApi($endPoint, $params, [], $header, true);
+
+        if ($result['code'] == 0) {
+            return ['code' => 0, 'message' => '成功', 'data' => $result['result']];
+        } else {
+            return ['code' => -1, 'message' => $result['message'], 'data' => []];
+        }
+    }
+
+    /**
+     * 获取订单跟踪记录状态码信息
+     *
+     * @param $code
+     * @return string|string[]
+     */
+    public function getTrackingStatusCodeInfo($code)
+    {
+        $arr = array(
+            'OR10'  =>
+                array(
+                    'code' => 'OR10',
+                    'cn'   => '订单已生成',
+                    'en'   => 'Order processed by shipper',
+                ),
+            'OR30'  =>
+                array(
+                    'code' => 'OR30',
+                    'cn'   => '订单已取消',
+                    'en'   => 'Order cancelled by shipper',
+                ),
+            'PU10'  =>
+                array(
+                    'code' => 'PU10',
+                    'cn'   => '燕文已揽收',
+                    'en'   => 'Yanwen Pickup Scan',
+                ),
+            'PU30'  =>
+                array(
+                    'code' => 'PU30',
+                    'cn'   => '揽收失败',
+                    'en'   => 'Yanwen Pickup failed',
+                ),
+            'SC10'  =>
+                array(
+                    'code' => 'SC10',
+                    'cn'   => '快件处理',
+                    'en'   => 'Processing information input',
+                ),
+            'SC20'  =>
+                array(
+                    'code' => 'SC20',
+                    'cn'   => '离开燕文处理中心',
+                    'en'   => 'Yanwen facility - Outbound',
+                ),
+            'SC30'  =>
+                array(
+                    'code' => 'SC30',
+                    'cn'   => '退件组包',
+                    'en'   => 'Returned by Yanwen',
+                ),
+            'SC35'  =>
+                array(
+                    'code' => 'SC35',
+                    'cn'   => '快递退回或客户自取',
+                    'en'   => 'Returned by Yanwen, Process completed',
+                ),
+            'SC36'  =>
+                array(
+                    'code' => 'SC36',
+                    'cn'   => '退件签收',
+                    'en'   => 'Returned by Yanwen, Delivered with signature',
+                ),
+            'SC37'  =>
+                array(
+                    'code' => 'SC37',
+                    'cn'   => '退件件签收失败',
+                    'en'   => 'Returned by Yanwen, Delivered without signature',
+                ),
+            'SC40'  =>
+                array(
+                    'code' => 'SC40',
+                    'cn'   => '目的国承运商：xxx，追踪单号：xxxx',
+                    'en'   => 'Destination country carrier：xxx， Parcel tracking number：xxx',
+                ),
+            'SC45'  =>
+                array(
+                    'code' => 'SC45',
+                    'cn'   => '收到预录单电子信息',
+                    'en'   => 'Pre-shipment Info sent to carrier',
+                ),
+            'SC65'  =>
+                array(
+                    'code' => 'SC65',
+                    'cn'   => '到达物流商仓库',
+                    'en'   => 'Carrier facility - Inbound',
+                ),
+            'SC70'  =>
+                array(
+                    'code' => 'SC70',
+                    'cn'   => '离开物流商仓库',
+                    'en'   => 'Carrier facility - Outbound',
+                ),
+            'EC10'  =>
+                array(
+                    'code' => 'EC10',
+                    'cn'   => '提交出口报关信息',
+                    'en'   => 'Customs declaration information - Export',
+                ),
+            'EC20'  =>
+                array(
+                    'code' => 'EC20',
+                    'cn'   => '出口报关放行',
+                    'en'   => 'International shipment release - Export',
+                ),
+            'EC30'  =>
+                array(
+                    'code' => 'EC30',
+                    'cn'   => '出口报关异常',
+                    'en'   => 'Custom clearance failed - Export',
+                ),
+            'LH10'  =>
+                array(
+                    'code' => 'LH10',
+                    'cn'   => '航空/班轮/铁路公司接收',
+                    'en'   => 'Port of departure - Received by carrier',
+                ),
+            'LH20'  =>
+                array(
+                    'code' => 'LH20',
+                    'cn'   => '航班起飞/班轮起航',
+                    'en'   => 'Port of departure - Departure',
+                ),
+            'LH21'  =>
+                array(
+                    'code' => 'LH21',
+                    'cn'   => '中转港接收',
+                    'en'   => 'In transit - Arrival',
+                ),
+            'LH22'  =>
+                array(
+                    'code' => 'LH22',
+                    'cn'   => '中转港起飞/起航',
+                    'en'   => 'In transit - Departure',
+                ),
+            'LH35'  =>
+                array(
+                    'code' => 'LH35',
+                    'cn'   => '航班/班轮延误原因',
+                    'en'   => 'Flight/Voyage delay',
+                ),
+            'LH30'  =>
+                array(
+                    'code' => 'LH30',
+                    'cn'   => '到达铁路运输终点站',
+                    'en'   => 'Station of destination - Arrival',
+                ),
+            'LH40'  =>
+                array(
+                    'code' => 'LH40',
+                    'cn'   => '到达物流商仓库',
+                    'en'   => 'Carrier facility - Inbound',
+                ),
+            'LH45'  =>
+                array(
+                    'code' => 'LH45',
+                    'cn'   => '离开目的港',
+                    'en'   => 'Port of destination - Departure',
+                ),
+            'LH23'  =>
+                array(
+                    'code' => 'LH23',
+                    'cn'   => '到达铁路运输途径站',
+                    'en'   => 'Enroute - Arrival',
+                ),
+            'LH24'  =>
+                array(
+                    'code' => 'LH24',
+                    'cn'   => '离开铁路运输途径站',
+                    'en'   => 'Enroute - Departure',
+                ),
+            'LH26'  =>
+                array(
+                    'code' => 'LH26',
+                    'cn'   => '到达铁路运输途径站',
+                    'en'   => 'Enroute - Arrival',
+                ),
+            'LH27'  =>
+                array(
+                    'code' => 'LH27',
+                    'cn'   => '离开铁路运输途径站',
+                    'en'   => 'Enroute - Departure',
+                ),
+            'LH28'  =>
+                array(
+                    'code' => 'LH28',
+                    'cn'   => '到达铁路运输途径站',
+                    'en'   => 'Enroute - Arrival',
+                ),
+            'LH29'  =>
+                array(
+                    'code' => 'LH29',
+                    'cn'   => '离开铁路运输途径站',
+                    'en'   => 'Enroute - Departure',
+                ),
+            'LH31'  =>
+                array(
+                    'code' => 'LH31',
+                    'cn'   => '离开铁路运输终点站',
+                    'en'   => 'Station of destination - Departure',
+                ),
+            'LH33'  =>
+                array(
+                    'code' => 'LH33',
+                    'cn'   => '抵达目的地仓库',
+                    'en'   => 'LOCATION，Arrived at international hub',
+                ),
+            'IC50'  =>
+                array(
+                    'code' => 'IC50',
+                    'cn'   => '开始进口清关',
+                    'en'   => 'Custom Clearance in process',
+                ),
+            'IC60'  =>
+                array(
+                    'code' => 'IC60',
+                    'cn'   => '进口清关完成',
+                    'en'   => 'International shipment release - Import',
+                ),
+            'IC70'  =>
+                array(
+                    'code' => 'IC70',
+                    'cn'   => '进口清关失败',
+                    'en'   => 'Custom clearance failed - Import',
+                ),
+            'LH50'  =>
+                array(
+                    'code' => 'LH50',
+                    'cn'   => '到达派送目的国',
+                    'en'   => 'Destination Country - Arrival',
+                ),
+            'LM10'  =>
+                array(
+                    'code' => 'LM10',
+                    'cn'   => '到达目的国派送处理中心',
+                    'en'   => 'LOCATION，Distribution center - Inbound',
+                ),
+            'LM11'  =>
+                array(
+                    'code' => 'LM11',
+                    'cn'   => '离开目的国派送处理中心，开始转运',
+                    'en'   => 'LOCATION，Distribution center - Outbound',
+                ),
+            'LM15'  =>
+                array(
+                    'code' => 'LM15',
+                    'cn'   => '目的国国内中转',
+                    'en'   => 'In transit to next facility',
+                ),
+            'LM12'  =>
+                array(
+                    'code' => 'LM12',
+                    'cn'   => '包裹到达目的国中转中心',
+                    'en'   => 'In transit - Inbound',
+                ),
+            'LM13'  =>
+                array(
+                    'code' => 'LM13',
+                    'cn'   => '包裹离开目的国中转中心',
+                    'en'   => 'In transit - Outbound',
+                ),
+            'LM20'  =>
+                array(
+                    'code' => 'LM20',
+                    'cn'   => '到达目的国最后派送点',
+                    'en'   => 'Destination Scan',
+                ),
+            'LM25'  =>
+                array(
+                    'code' => 'LM25',
+                    'cn'   => '离开目的国最后派送点',
+                    'en'   => 'Out for delivery',
+                ),
+            'LM40'  =>
+                array(
+                    'code' => 'LM40',
+                    'cn'   => '派送成功/妥投/签收，POD',
+                    'en'   => 'Delivered with POD',
+                ),
+            'LM50'  =>
+                array(
+                    'code' => 'LM50',
+                    'cn'   => '派送失败',
+                    'en'   => 'Delivery failed',
+                ),
+            'LM51'  =>
+                array(
+                    'code' => 'LM51',
+                    'cn'   => '妥投失败，再次尝试投递',
+                    'en'   => 'Delivery attempt failed, will be arranged again',
+                ),
+            'LM52'  =>
+                array(
+                    'code' => 'LM52',
+                    'cn'   => '妥投失败，收件人联系不上',
+                    'en'   => 'Delivery failed, Consignee is not available',
+                ),
+            'LM53'  =>
+                array(
+                    'code' => 'LM53',
+                    'cn'   => '妥投失败，包裹损坏',
+                    'en'   => 'Delivery failed, Package damaged',
+                ),
+            'LM60'  =>
+                array(
+                    'code' => 'LM60',
+                    'cn'   => '派送延迟',
+                    'en'   => 'Delivery delay',
+                ),
+            'LM61'  =>
+                array(
+                    'code' => 'LM61',
+                    'cn'   => '预约派送',
+                    'en'   => 'Delivery delay and appointment',
+                ),
+            'LM65'  =>
+                array(
+                    'code' => 'LM65',
+                    'cn'   => '签收延迟，会再次派送',
+                    'en'   => 'Sign-off delay and will be delivered again',
+                ),
+            'LM30'  =>
+                array(
+                    'code' => 'LM30',
+                    'cn'   => '到达待取',
+                    'en'   => 'Available for pick up',
+                ),
+            'LM32'  =>
+                array(
+                    'code' => 'LM32',
+                    'cn'   => '等待收件人支付关税',
+                    'en'   => 'Waiting for paying Duty',
+                ),
+            'LM70'  =>
+                array(
+                    'code' => 'LM70',
+                    'cn'   => '需要进⼀步确认收件⼈信息',
+                    'en'   => 'Consignee information is required',
+                ),
+            'LM90'  =>
+                array(
+                    'code' => 'LM90',
+                    'cn'   => '包裹退回',
+                    'en'   => 'Package returned',
+                ),
+            'LM91'  =>
+                array(
+                    'code' => 'LM91',
+                    'cn'   => '派送失败，包裹退回到物流商',
+                    'en'   => 'Delivery failed and package returned to carrier',
+                ),
+            'LM92'  =>
+                array(
+                    'code' => 'LM92',
+                    'cn'   => '派送失败，从海外退回',
+                    'en'   => 'Delivery failed and package returned from overseas',
+                ),
+            'LM93'  =>
+                array(
+                    'code' => 'LM93',
+                    'cn'   => '派送失败，包裹退回，包裹损坏',
+                    'en'   => 'Delivery failed and return, package damaged',
+                ),
+            'LM75'  =>
+                array(
+                    'code' => 'LM75',
+                    'cn'   => '收件⼈拒绝签收',
+                    'en'   => 'Sign-off refused by consignee',
+                ),
+            'LM76'  =>
+                array(
+                    'code' => 'LM76',
+                    'cn'   => '包裹损坏，收件⼈拒绝签收',
+                    'en'   => 'Package damaged, consignee refused',
+                ),
+            'LM85'  =>
+                array(
+                    'code' => 'LM85',
+                    'cn'   => '包裹丢失',
+                    'en'   => 'Package lost',
+                ),
+            'OTHER' =>
+                array(
+                    'code' => 'OTHER',
+                    'cn'   => '其他信息',
+                    'en'   => 'OTHERS',
+                ),
+        );
+
+        return $arr[$code] ?? '';
+    }
+
+    /**
      * 格式化数据
      *
      * @param $data
@@ -375,7 +797,7 @@ class Yanwen
                 'Userid'           => $this->userId, // 客户号
                 'NameCh'           => $item['goods_cn_name'], // 商品中文品名
                 'NameEn'           => $item['goods_en_name'], // 商品英文品名
-                'Weight'           => $item['goods_single_weight'], // 包裹重量
+                'Weight'           => $item['goods_single_weight'] * 1000, // 包裹重量 单位g
                 'DeclaredValue'    => $item['goods_single_worth'], // 申报价值
                 'DeclaredCurrency' => isset($item['currency']) ?? 'USD', // 申报币种
                 'ProductBrand'     => $item['product_brand'] ?? '', // 产品品牌，中俄SPSR专线此项必填

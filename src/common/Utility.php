@@ -17,6 +17,16 @@ class Utility
         return ArrayToXml::convert($array, $customRoot, true, 'UTF-8');
     }
 
+    /**
+     * Convert an xml string to an array
+     * @param string $xmlstring
+     * @return array
+     */
+    public static function xmlToArray($xmlstring)
+    {
+        return json_decode(json_encode(simplexml_load_string($xmlstring)), true);
+    }
+
     public static function validateData($data)
     {
 

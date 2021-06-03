@@ -165,7 +165,7 @@ class DiSIFang
      * 更新订单信息
      *
      * @param $orderNo
-     * @param $orderWeight
+     * @param $orderWeight string 单位KG
      * @param false $isDebug
      * @return array
      * @throws Exception
@@ -176,7 +176,7 @@ class DiSIFang
 
         $newData = json_encode([
             'request_no' => $orderNo, // 请求单号(支持4PX单号/客户单号/服务商单号)
-            'weight'     => $orderWeight, // 预报重量（g）
+            'weight'     => $orderWeight * 1000, // 预报重量（g）
         ]);
 
         return $this->handleRequest($endPoint, $newData);
@@ -468,9 +468,9 @@ class DiSIFang
 
             //  退件信息
             'return_info'            => [
-                'is_return_on_domestic' => 'N', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
+                'is_return_on_domestic' => '', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
                 // 'domestic_return_addr'  => [], // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
-                'is_return_on_oversea'  => 'N', // 境外异常处理策略(退件：Y；销毁：N；其他：U；) 默认值：N；
+                'is_return_on_oversea'  => '', // 境外异常处理策略(退件：Y；销毁：N；其他：U；) 默认值：N；
                 // 'oversea_return_addr'   => [], // 境外退件接收地址信息（处理策略为Y时必须填写地址信息）
             ],
 
@@ -482,9 +482,9 @@ class DiSIFang
 
             // 发件人信息
             'sender'                 => [
-                'first_name' => '.',
-                'country'    => 'CN',
-                'city'       => '.',
+                'first_name' => '',
+                'country'    => '',
+                'city'       => '',
             ],
             // 收件人信息
             'recipient_info'         => [
@@ -511,7 +511,7 @@ class DiSIFang
             // ],
         ];
 
-        $packageWeight = 0; // 包裹重量
+        $packageWeight = 0; // 包裹重量 单位g
         $packagePrice  = 0; // 包裹申报价值（最多4位小数）
 
         $productList        = [];
@@ -542,13 +542,14 @@ class DiSIFang
                 'brand_import'              => '无', // 进口国品牌
             ];
 
-            $packageWeight += ($item['goods_number'] * $item['goods_single_weight']);
+            $singleWeight  = $item['goods_single_weight'] * 1000; // 单位g
+            $packageWeight += ($item['goods_number'] * $singleWeight);
             $packagePrice  += ($item['goods_number'] * $item['goods_single_worth']);
         }
 
         // 包裹信息
         $package                  = [
-            'weight'               => $packageWeight,
+            'weight'               => $packageWeight,// 预报重量（g）
             'parcel_value'         => $packagePrice, // 包裹申报价值（最多4位小数）
             'currency'             => 'USD', // 币别（按照ISO标准三字码，目前只支持USD）
             'include_battery'      => 'N', // todo 是否含电池
