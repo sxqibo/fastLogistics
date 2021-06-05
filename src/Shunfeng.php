@@ -24,7 +24,6 @@ class Shunfeng
     private $checkWord; // 接口校验码
     private $accessCode; // 接入编码(用户名)
     private $headers;
-    private $client;
 
     public function __construct($accessCode, $checkWord)
     {
@@ -124,7 +123,11 @@ class Shunfeng
 
         $endPoint = $this->getEndPoint('labelPrint', $isDebug);
 
-        $result = $client->requestApi($endPoint, $params, [], [], true);
+        $headers = [
+            'Content-Type' => 'application/json'
+        ];
+
+        $result  = $client->requestApi($endPoint, $params, [], $headers, true);
 
         return $result;
     }
@@ -162,16 +165,18 @@ class Shunfeng
 
         foreach ($goods as $item) {
             $productList[] = [
-                'name'       => $item['goods_en_name'], // 商品（英文）报关品名 要求品名明确清楚，简洁明了，如：Earrings, Plastic film, Dress等，不接受无效品名，如：Home Commodities, ATMEGA328P, Outdoor sports等
-                'count'      => $item['goods_number'], // 货物数量
-                'weight'     => $item['goods_single_weight'], // 货物单位重量（不能小于0, 单位KG）
-                'amount'     => $item['goods_single_worth'], // 货物单价（不能小于0）
-                'currency'   => 'USD', // 货物单价的币别：USD: 美元
-                'cname'      => $item['goods_cn_name'],     // 商品（中文）报关品名 必须包含中文
-                'unit'       => 'piece', // 货物单位（英文）如：piece
-                'cargo_desc' => '', // 货物明细描述/拣货信息
-                'hscode'     => '', // hscode 海关编码
-                'order_url'  => '', // 商品网址链接url express_type为23,24，29时必填
+                '_attributes' => [
+                    'name'       => $item['goods_en_name'], // 商品（英文）报关品名 要求品名明确清楚，简洁明了，如：Earrings, Plastic film, Dress等，不接受无效品名，如：Home Commodities, ATMEGA328P, Outdoor sports等
+                    'count'      => $item['goods_number'], // 货物数量
+                    'weight'     => $item['goods_single_weight'], // 货物单位重量（不能小于0, 单位KG）
+                    'amount'     => $item['goods_single_worth'], // 货物单价（不能小于0）
+                    'currency'   => 'USD', // 货物单价的币别：USD: 美元
+                    'cname'      => $item['goods_cn_name'],     // 商品（中文）报关品名 必须包含中文
+                    'unit'       => 'piece', // 货物单位（英文）如：piece
+                    'cargo_desc' => '', // 货物明细描述/拣货信息
+                    'hscode'     => '', // hscode 海关编码
+                    'order_url'  => '', // 商品网址链接url express_type为23,24，29时必填
+                ],
             ];
 
             $packageWeight += ($item['goods_number'] * $item['goods_single_weight']);
@@ -184,26 +189,25 @@ class Shunfeng
                 'Order' => [
                     '_attributes' => [
                         'orderid'           => $data['orderNo'], // 订单号
-                        'platform_order_id' => $data['platform_order_id'] ?? '', // todo 电商平台订单号
+                        'platform_order_id' => $data['orderNo'], // 平台订单号，不能重复（仅限：字母、数字、中划线、下划线 ）。无平台订单号，直接使用客户订单号即可。
                         'platform_code'     => '0003', // 电商平台简称 0003- 亚马逊平台
                         'erp_code'          => '0000', // ERP平台名称 未知ERP（默认值:0000）
                         // 'platform_merchant_id' => '', //电商平台ID字段 非必填
                         'express_type'      => $data['channelCode'], // 快件产品类别
 
-                        // 发件人信息
-                        // todo 必填项
-                        'j_company'         => '.', // 寄方公司
-                        'j_contact'         => '.', // 寄方联系人
-                        'j_mobile'          => '', // 寄方手机号码
-                        'j_tel'             => '', // 寄方电话号码
-                        'j_province'        => '', // 寄方所在省份
-                        'j_city'            => '', // 寄方所在城市
-                        'j_address'         => '', // 寄方详细地址
-                        'j_country'         => '..', // 始发地
-                        'j_post_code'       => '..', // 寄方邮编
+                        // 发件人信息 - 必填项
+                        'j_company'         => $data['senderCompany'] ?? '', // 寄方公司
+                        'j_contact'         => $data['senderContact'], // 寄方联系人
+                        'j_mobile'          => $data['senderMobile'] ?? '', // 寄方手机号码
+                        'j_tel'             => $data['senderPhone'] ?? '', // 寄方电话号码
+                        'j_province'        => $data['senderProvince'] ?? '', // 寄方所在省份 - 英文
+                        'j_city'            => $data['senderCity'] ?? '', // 寄方所在城市 - 英文
+                        'j_address'         => $data['senderAddress'] ?? '', // 寄方详细地址- 校验规则 : a不能包含中文；b只能为英文字母、数字、及以下字符
+                        'j_country'         => 'CN', // 始发地
+                        'j_post_code'       => $data['senderPostCode'] ?? '', // 寄方邮编
 
                         // 非必填
-                        'j_county'          => '..', // todo 寄件人所在县/区
+                        'j_county'          => '', // todo 寄件人所在县/区
 
                         // 收件人信息
                         'd_company'         => $data['receiverName'], // 到件方公司名称，如为空可填写到方联系人
@@ -242,7 +246,9 @@ class Shunfeng
                         'd_email'            => '', // 产品类型23,24必填合法有效邮箱
                         'passport_id'        => '', // 韩国个人清关代码，如P561140689980，只接受英文和数字,长度100字符 专线小包韩国流向为必填
                     ],
-                    'Cargo'       => $productList
+
+                    'Cargo' => $productList
+
                 ]
             ],
         ];
