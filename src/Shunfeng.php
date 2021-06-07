@@ -15,10 +15,10 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Shunfeng
 {
-    private $serviceEndPoint     = 'http://sfapi.trackmeeasy.com/ruserver/webservice/sfexpressService?wsdl'; // 正式环境
+    private $serviceEndPoint = 'http://sfapi.trackmeeasy.com/ruserver/webservice/sfexpressService?wsdl'; // 正式环境
     private $testServiceEndPoint = 'http://kts-api-uat.trackmeeasy.com/webservice/sfexpressService?wsdl'; // 测试环境
 
-    private $labelEndPoint     = 'http://sfapi.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 正式环境
+    private $labelEndPoint = 'http://sfapi.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 正式环境
     private $testLabelEndPoint = 'http://oms.uat.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 测试环境
 
     private $checkWord; // 接口校验码
@@ -41,8 +41,8 @@ class Shunfeng
      *
      * @param $key
      * @param false $isDebug
-     * @return string[]
      * @throws Exception
+     * @return string[]
      */
     public function getEndPoint($key, $isDebug = false)
     {
@@ -71,8 +71,8 @@ class Shunfeng
      *
      * @param $data
      * @param false $isDebug
-     * @return array
      * @throws \SoapFault
+     * @return array
      */
     public function createOrder($data, $isDebug = false)
     {
@@ -127,22 +127,94 @@ class Shunfeng
             'Content-Type' => 'application/json'
         ];
 
-        $result  = $client->requestApi($endPoint, $params, [], $headers, true);
+        $result = $client->requestApi($endPoint, $params, [], $headers, true);
 
         return $result;
     }
 
     /**
-     * 产品类别列表
+     * 查询物流发货渠道
      *
      * @return array[]
      */
-    public function getExpressTypeList()
+    public function getShipTypes()
     {
         $arr = [
-            ['code' => 9, 'name' => '国际小包平邮'],
-            ['code' => 10, 'name' => '国际小包挂号'],
-            //todo
+            [
+                'code' => 9,
+                'name' => '国际小包平邮'
+            ],
+            [
+                'code' => 10,
+                'name' => '国际小包挂号'
+            ],
+            [
+                'code' => 23,
+                'name' => '国际小包陆运平邮'
+            ],
+            [
+                'code' => 24,
+                'name' => '国际小包陆运挂号'
+            ],
+            [
+                'code' => 25,
+                'name' => '国际经济小包平邮'
+            ],
+            [
+                'code' => 26,
+                'name' => '国际经济小包挂号'
+            ],
+            [
+                'code' => 27,
+                'name' => '国际专线小包平邮'
+            ],
+            [
+                'code' => 28,
+                'name' => '国际专线小包挂号'
+            ],
+            [
+                'code' => 29,
+                'name' => '国际电商专递'
+            ],
+            [
+                'code' => 32,
+                'name' => '国际精品小包'
+            ],
+            [
+                'code' => 38,
+                'name' => '国际南美小包挂号'
+            ],
+            [
+                'code' => 44,
+                'name' => '国际卢邮小包挂号'
+            ],
+            [
+                'code' => 47,
+                'name' => '国际比邮小包平邮'
+            ],
+            [
+                'code' => 48,
+                'name' => '国际比邮小包特惠挂号'
+            ], [
+                'code' => 63,
+                'name' => '国际特货小包平邮'
+            ],
+            [
+                'code' => 64,
+                'name' => '国际特货小包挂号'
+            ],
+            [
+                'code' => 72,
+                'name' => '国际电商专递-CD'
+            ],
+            [
+                'code' => 93,
+                'name' => '国际铁路经济小包平邮'
+            ],
+            [
+                'code' => 94,
+                'name' => '国际铁路经济小包挂号'
+            ]
 
         ];
 
