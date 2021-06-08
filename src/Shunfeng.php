@@ -287,7 +287,7 @@ class Shunfeng
                         'd_contact'         => $data['receiverName'], // 到件方联系人
                         'd_tel'             => $data['receiverPhone'] ?? "", // 到方电话号码
                         'd_mobile'          => $data['receiverMobile'] ?? '', // 到方手机号码
-                        'd_province'        => $data['receiverProvince'], //到方所在省份
+                        'd_province'        => $data['rProvince'], //到方所在省份
                         'd_city'            => $data['receiverCity'], //到方所在城市
                         'd_address'         => $data['receiverAddress'], //到方详细地址
                         'd_country'         => $data['receiverCountryCode'], // 到方国家
