@@ -554,7 +554,7 @@ class DiSIFang
                 'product_name'             => $item['goods_en_name'], // 商品名称
                 'product_description'      => $item['product_description'] ?? '', // 商品描述
                 'product_unit_price'       => $item['goods_single_worth'], // 商品单价（按对应币别的法定单位，最多4位小数点）
-                'currency'                 => 'USD', // 币别（按照ISO标准三字码，目前只支持USD）
+                'currency'                 => $item['declared_currency'], // 币别（按照ISO标准三字码，目前只支持USD）
                 'qty'                      => $item['goods_number'], // 数量（单位为pcs）
 
                 // 非必填
@@ -568,8 +568,8 @@ class DiSIFang
                 'declare_product_name_en'   => $item['goods_en_name'], // 申报品名（英语）
                 'declare_product_code_qty'  => $item['goods_number'], // 申报数量
                 'declare_unit_price_export' => $item['goods_single_worth'], // 出口国申报单价（按对应币别的法定单位，最多4位小数点）
-                'currency_export'           => 'USD',// 币别（按照ISO标准，目前只支持USD）
-                'currency_import'           => 'USD', // 币别（按照ISO标准，目前只支持USD）
+                'currency_export'           => $item['declared_currency'] ?? 'USD',// 币别（按照ISO标准，目前只支持USD）
+                'currency_import'           => $item['declared_currency'] ?? 'USD', // 币别（按照ISO标准，目前只支持USD）
                 'declare_unit_price_import' => $item['goods_single_worth'], // 进口国申报单价（按对应币别的法定单位，最多4位小数点）
                 'brand_export '             => '无', // 	出口国品牌
                 'brand_import'              => '无', // 进口国品牌
@@ -584,7 +584,7 @@ class DiSIFang
         $package                  = [
             'weight'               => $packageWeight,// 预报重量（g）
             'parcel_value'         => $packagePrice, // 包裹申报价值（最多4位小数）
-            'currency'             => 'USD', // 币别（按照ISO标准三字码，目前只支持USD）
+            'currency'             => $goods[0]['declared_currency'] ?? 'USD', // 币别（按照ISO标准三字码，目前只支持USD）
             'include_battery'      => 'N', // todo 是否含电池
             'battery_type'         => '', // 带电类型（内置电池PI966：966；配套电池PI967:967）
             'product_list'         => $productList,

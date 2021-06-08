@@ -244,7 +244,7 @@ class Shunfeng
                     'count'      => $item['goods_number'], // 货物数量
                     'weight'     => $item['goods_single_weight'], // 货物单位重量（不能小于0, 单位KG）
                     'amount'     => $item['goods_single_worth'], // 货物单价（不能小于0）
-                    'currency'   => 'USD', // 货物单价的币别：USD: 美元
+                    'currency'   => $item['declared_currency'] ?? '', // 货物单价的币别：USD: 美元
                     'cname'      => $item['goods_cn_name'],     // 商品（中文）报关品名 必须包含中文
                     'unit'       => 'piece', // 货物单位（英文）如：piece
                     'cargo_desc' => '', // 货物明细描述/拣货信息
@@ -300,7 +300,7 @@ class Shunfeng
                         'pay_method'      => 1, // 付款方式：寄方付（固定为1）
 
                         'declared_value'          => $packagePrice, // 订单托寄物声明价值=货物单价*数量（必须为数字且大于零） 产品类型23货物申报价值不能大于2USD（美元）
-                        'declared_value_currency' => 'USD',// 托寄物声明价值币别：USD: 美元
+                        'declared_value_currency' => $goods[0]['declared_currency'] ?? 'USD',// 托寄物声明价值币别：USD: 美元
 
 
                         'cargo_total_weight' => $packageWeight, // 货物总重量 订单货物总重量单位KG，如果提供此值必须大于0且不能超过2KG，且该值要大于货物单位重量X货物数量总和。

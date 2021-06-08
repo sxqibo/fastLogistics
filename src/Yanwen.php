@@ -250,7 +250,7 @@ class Yanwen
                 'NameCh'           => $item['goods_cn_name'], // 商品中文品名
                 'NameEn'           => $item['goods_en_name'], // 商品英文品名
                 'DeclaredValue'    => $item['goods_single_worth'], // 申报价值
-                'DeclaredCurrency' => isset($item['currency']) ?? 'USD', // 申报币种
+                'DeclaredCurrency' => isset($item['declared_currency']) ?? 'USD', // 申报币种
             ];
         }
 
@@ -799,7 +799,7 @@ class Yanwen
                 'NameEn'           => $item['goods_en_name'], // 商品英文品名
                 'Weight'           => $item['goods_single_weight'] * 1000, // 包裹重量 单位g
                 'DeclaredValue'    => $item['goods_single_worth'], // 申报价值
-                'DeclaredCurrency' => isset($item['currency']) ?? 'USD', // 申报币种
+                'DeclaredCurrency' => isset($item['declared_currency']) ?? 'USD', // 申报币种
                 'ProductBrand'     => $item['product_brand'] ?? '', // 产品品牌，中俄SPSR专线此项必填
                 'ProductSize'      => $item['product_size'] ?? '', // 产品尺寸，中俄SPSR专线此项必填
                 'ProductColor'     => $item['product_color'] ?? '', // 产品颜色，中俄SPSR专线此项必填
