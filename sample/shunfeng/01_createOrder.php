@@ -26,7 +26,7 @@ try {
         // 收件人
         'receiverName'        => 'tang', // 收货人-姓名
         'receiverPostCode'    => '25340-1221', // 邮编
-        'rProvince'           => 'FL', // 收货人-州
+        'receiverProvince'           => 'FL', // 收货人-州
         'receiverCity'        => 'City',
         'receiverAddress'     => 'content1content1content1',
         'receiverCountryCode' => 'US', // 收货人-国家

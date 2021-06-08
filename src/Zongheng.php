@@ -90,7 +90,7 @@ class Zongheng
                 'serviceMethod' => 'getbusinessweight',
                 'remark'        => '获取订单重量'
             ],
-            'feeTrail'                  => [
+            'getPrice'                  => [
                 'serviceMethod' => 'feetrail',
                 'remark'        => '费用试算'
             ],
@@ -364,20 +364,20 @@ class Zongheng
             'country_code'    => $params['country_code'] ?? '', //目的国家二字代码 - 必填
             'weight'          => $params['weight'] ?? '', // 重量（KG） - 必填
             'shipping_method' => '', // 运输方式代码
-            'post_code'       => '', // 目的地邮编
+            'post_code'       => $params['postcode'] ?? '', // 目的地邮编
             'location'        => '', // 起运地 默认为：用户绑定的起运地
-            'cargo_type'      => '', // 货物类型（W:包裹 D:文件） 默认为：W
+            'cargo_type'      => 'W', // 货物类型（W:包裹 D:文件） 默认为：W
             'extra_service'   => [], // 额外服务代码集合
             'cargo_volume'    => [   // 材积信息
                 'weight' => $params['weight'] ?? '',// 重量（KG） - 有cargo_volume字段则weight必填
-                'length' => '', // 长（CM）
-                'width'  => '', // 宽（CM）
-                'height' => '', // 高（CM）
+                'length' => $params['length'] ?? '', // 长（CM）
+                'width'  => $params['width'] ?? '', // 宽（CM）
+                'height' => $params['height'] ?? '', // 高（CM）
             ],
         ];
 
         $body = [
-            'serviceMethod' => $this->getEndPoint('feeTrail'),
+            'serviceMethod' => $this->getEndPoint('getPrice'),
             'paramsJson'    => json_encode($data)
         ];
 

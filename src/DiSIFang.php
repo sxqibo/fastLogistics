@@ -13,7 +13,7 @@ use Sxqibo\Logistics\common\Client;
  */
 class DiSIFang
 {
-    private $serviceEndPoint     = 'http://open.4px.com/router/api/service'; // 正式环境
+    private $serviceEndPoint = 'http://open.4px.com/router/api/service'; // 正式环境
     private $testServiceEndPoint = 'http://open.sandbox.4px.com/router/api/service'; // 沙箱环境
 
     private $appKey;
@@ -36,8 +36,8 @@ class DiSIFang
      * 获取请求节点信息
      *
      * @param $key
-     * @return mixed
      * @throws Exception
+     * @return mixed
      */
     protected function getEndPoint($key, $isDebug = false)
     {
@@ -149,8 +149,8 @@ class DiSIFang
      *
      * @param $data
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function createOrder($data, $isDebug = false)
     {
@@ -167,8 +167,8 @@ class DiSIFang
      * @param $orderNo
      * @param $orderWeight string 单位KG
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function updateOrder($orderNo, $orderWeight, $isDebug = false)
     {
@@ -187,8 +187,8 @@ class DiSIFang
      *
      * @param $params
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getPrice($params, $isDebug = false)
     {
@@ -201,7 +201,7 @@ class DiSIFang
             'length'                 => $params['length'] ?? '', // 长(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
             'width'                  => $params['width'] ?? '', // 宽(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
             'height'                 => $params['height'] ?? '', // 高(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
-            'cargocode'              => $params['cargo_type'] ?? '', // 货物类型(包裹：P；文件：D）默认值：P；
+            'cargocode'              => $params['cargo_type'] ?? 'P', // 货物类型(包裹：P；文件：D）默认值：P；
             'logistics_product_code' => $params['logistics_product_code'] ?? '', // 物流产品代码列表；如填写了产品代码，则只会返回填写的产品代码的试算结果，最大200个产品
         ];
 
@@ -216,8 +216,8 @@ class DiSIFang
      * @param $orderNo
      * @param string $cancelReason
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function deleteOrder($orderNo, $cancelReason = 'cancel', $isDebug = false)
     {
@@ -238,8 +238,8 @@ class DiSIFang
      * @param string $isHold
      * @param string $holdReason
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function holdOrder($orderNo, $isHold = 'Y', $holdReason = 'cancel', $isDebug = false)
     {
@@ -259,8 +259,8 @@ class DiSIFang
      *
      * @param $params
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getOrder($params, $isDebug = false)
     {
@@ -281,8 +281,8 @@ class DiSIFang
      *
      * @param int $transportMode 运输方式：1 所有方式；2 国际快递；3 国际小包；4 专线；5 联邮通；6 其他；
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getShipTypes($transportMode = 1, $isDebug = false)
     {
@@ -301,8 +301,8 @@ class DiSIFang
      *
      * @param $orderNo
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function labelPrint($orderNo, $otherParams = [], $isDebug = false)
     {
@@ -340,8 +340,8 @@ class DiSIFang
      * @param $params
      * @param array $otherParams
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function multipleLabelPrint($params, $otherParams = [], $isDebug = false)
     {
@@ -377,8 +377,8 @@ class DiSIFang
      * 查询计量单位
      *
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getMeasureUnit($isDebug = false)
     {
@@ -393,8 +393,8 @@ class DiSIFang
      * @param $serviceCode string 业务类型:F(订单履约)；S(自发服务)；T(转 运服务)；R(退件服务)
      * @param $countryCode string 国家二字码
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getCourseList($serviceCode, $countryCode, $isDebug = false)
     {
@@ -414,8 +414,8 @@ class DiSIFang
      * @param int $parentCode
      * @param string $businessType
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getCategory($parentCode = 0, $businessType = 'E', $isDebug = false)
     {
@@ -434,8 +434,8 @@ class DiSIFang
      *
      * @param $trackNumber
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getTrack($trackNumber, $isDebug = false)
     {
@@ -456,8 +456,10 @@ class DiSIFang
      */
     protected function formatData($data)
     {
-        $goods   = $data['goods'];
-        $newData = [
+        $goods      = $data['goods'];
+        $senderInfo = $data['sender'] ?? [];
+        $returnInfo = $data['return'] ?? [];
+        $newData    = [
             'ref_no'                 => $data['orderNo'], // 客户订单号
             'business_type'          => 'BDS', // 业务类型(4PX内部调度所需，如需对接传值将说明，默认值：BDS。)
             'duty_type'              => 'U', // 税费费用承担方式(可选值：U、P); DDU由收件人支付关税：U; DDP 由寄件方支付关税：P; （如果物流产品只提供其中一种，则以4PX提供的为准）
@@ -468,9 +470,27 @@ class DiSIFang
 
             //  退件信息
             'return_info'            => [
-                'is_return_on_domestic' => '', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
-                // 'domestic_return_addr'  => [], // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
-                'is_return_on_oversea'  => '', // 境外异常处理策略(退件：Y；销毁：N；其他：U；) 默认值：N；
+                'is_return_on_domestic' => $data['is_return'] ?? 'Y', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
+                'domestic_return_addr'  => [
+                    // 必填
+                    'first_name'   => $returnInfo['contact_name'] ?? '',
+                    'phone'        => $returnInfo['phone'] ?? '',
+                    'post_code'    => $returnInfo['postcode'] ?? '',
+                    'country'      => 'CN',
+                    'city'         => $returnInfo['city'] ?? '',
+                    'district'     => $returnInfo['district'] ?? '',
+
+                    // 非必填
+                    'last_name'    => '',
+                    'company'      => $returnInfo['company_name'] ?? '',
+                    'phone2'       => '',
+                    'email'        => '',
+                    'state'        => $returnInfo['province'] ?? '',
+                    'street'       => $returnInfo['street'] ?? '',
+                    'house_number' => '', // 门牌号
+
+                ], // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
+                'is_return_on_oversea'  => 'U', // 境外异常处理策略(退件：Y；销毁：N；其他：U；) 默认值：N；
                 // 'oversea_return_addr'   => [], // 境外退件接收地址信息（处理策略为Y时必须填写地址信息）
             ],
 
@@ -482,9 +502,22 @@ class DiSIFang
 
             // 发件人信息
             'sender'                 => [
-                'first_name' => '',
-                'country'    => '',
-                'city'       => '',
+                // 必填
+                'first_name'   => $senderInfo['contact_name'] ?? '',
+                'country'      => 'CN',
+                'city'         => $senderInfo['city'] ?? '',
+
+                // 非必填
+                'last_name'    => '',
+                'company'      => $senderInfo['company_name'] ?? '',
+                'phone'        => $senderInfo['phone'] ?? '',
+                'phone2'       => '',
+                'email'        => '',
+                'post_code'    => $senderInfo['postcode'],
+                'state'        => $senderInfo['province'] ?? '',
+                'district'     => $senderInfo['district'] ?? '',
+                'street'       => $senderInfo['street'] ?? '',
+                'house_number' => '', // 门牌号
             ],
             // 收件人信息
             'recipient_info'         => [
@@ -567,8 +600,8 @@ class DiSIFang
      *
      * @param $data
      * @param array $params
-     * @return array
      * @throws Exception
+     * @return array
      */
     protected function handleRequest($endPoint, $body)
     {

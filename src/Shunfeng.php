@@ -255,7 +255,8 @@ class Shunfeng
             $packagePrice  += ($item['goods_number'] * $item['goods_single_worth']);
         }
 
-        $newData = [
+        $senderInfo = $data['sender'] ?? []; // 发件人信息
+        $newData    = [
             'Head' => $this->accessCode,
             'Body' => [
                 'Order' => [
@@ -268,15 +269,15 @@ class Shunfeng
                         'express_type'      => $data['channelCode'], // 快件产品类别
 
                         // 发件人信息 - 必填项
-                        'j_company'         => $data['senderCompany'] ?? '', // 寄方公司
-                        'j_contact'         => $data['senderContact'], // 寄方联系人
-                        'j_mobile'          => $data['senderMobile'] ?? '', // 寄方手机号码
-                        'j_tel'             => $data['senderPhone'] ?? '', // 寄方电话号码
-                        'j_province'        => $data['senderProvince'] ?? '', // 寄方所在省份 - 英文
-                        'j_city'            => $data['senderCity'] ?? '', // 寄方所在城市 - 英文
-                        'j_address'         => $data['senderAddress'] ?? '', // 寄方详细地址- 校验规则 : a不能包含中文；b只能为英文字母、数字、及以下字符
+                        'j_company'         => $senderInfo['company_name'] ?? '', // 寄方公司
+                        'j_contact'         => $senderInfo['contact_name'] ?? '', // 寄方联系人
+                        'j_mobile'          => $senderInfo['mobile'] ?? '', // 寄方手机号码
+                        'j_tel'             => $senderInfo['phone'] ?? '', // 寄方电话号码
+                        'j_province'        => $senderInfo['province'] ?? '', // 寄方所在省份 - 英文
+                        'j_city'            => $senderInfo['city'] ?? '', // 寄方所在城市 - 英文
+                        'j_address'         => $senderInfo['street'] ?? '', // 寄方详细地址- 校验规则 : a不能包含中文；b只能为英文字母、数字、及以下字符
                         'j_country'         => 'CN', // 始发地
-                        'j_post_code'       => $data['senderPostCode'] ?? '', // 寄方邮编
+                        'j_post_code'       => $senderInfo['postcode'] ?? '', // 寄方邮编
 
                         // 非必填
                         'j_county'          => '', // todo 寄件人所在县/区
@@ -286,7 +287,7 @@ class Shunfeng
                         'd_contact'         => $data['receiverName'], // 到件方联系人
                         'd_tel'             => $data['receiverPhone'] ?? "", // 到方电话号码
                         'd_mobile'          => $data['receiverMobile'] ?? '', // 到方手机号码
-                        'd_province'        => $data['rProvince'], //到方所在省份
+                        'd_province'        => $data['receiverProvince'], //到方所在省份
                         'd_city'            => $data['receiverCity'], //到方所在城市
                         'd_address'         => $data['receiverAddress'], //到方详细地址
                         'd_country'         => $data['receiverCountryCode'], // 到方国家

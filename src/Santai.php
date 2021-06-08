@@ -109,13 +109,14 @@ class Santai
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $goodsDescription 订单描述
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [])
+        $goods = [],$goodsDescription)
     {
         $param = [
             //step1（2）
@@ -137,6 +138,7 @@ class Santai
             'goodsDeclareWorth'  => array_sum(array_map(function ($val) {
                 return ($val['goods_number'] * $val['goods_single_worth']);
             }, $goods)),   //订单总申报价值 required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
+            'goodsDescription' => $goodsDescription
         ];
 
         //step4:商品信息（4）
