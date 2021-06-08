@@ -612,7 +612,13 @@ class DiSIFang
         if ($result['result'] == 0) {
             return ['code' => -1, 'message' => $result['msg'] ?? '', 'errors' => $result['errors'] ?? []];
         } else {
-            return ['code' => 0, 'message' => '成功', 'data' => $result['data'] ?? []];
+            $data = $result['data'] ?? [];
+
+            if ($data && is_string($data)) {
+                $data = json_decode($data, true);
+            }
+
+            return ['code' => 0, 'message' => '成功', 'data' => $data];
         }
     }
 
