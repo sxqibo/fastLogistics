@@ -65,7 +65,7 @@ class Client
                 }
                 return $content;
             } else {
-                if (strpos(strtolower($response->getHeader('Content-Type')[0]), 'xml') !== false) {
+                if ($response->getHeader('Content-Type') && strpos(strtolower($response->getHeader('Content-Type')[0]), 'xml') !== false) {
                     return $this->xmlToArray($body);
                 } else {
                     return $body;

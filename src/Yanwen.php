@@ -190,8 +190,8 @@ class Yanwen
     public function labelPrint($epCode, $labelSize = 'A4L', $isDebug = false)
     {
         $endPoint        = $this->getEndPoint('labelPrint', $isDebug);
-        $uri             = $endPoint['uri'];
-        $endPoint['uri'] = sprintf($uri, $epCode, $labelSize);
+        $url             = $endPoint['url'];
+        $endPoint['url'] = sprintf($url, $epCode, $labelSize);
 
         $result = $this->client->requestApi($endPoint, [], [], $this->headers);
 
@@ -215,8 +215,8 @@ class Yanwen
             $epCodes = implode(',', $epCodes);
         }
 
-        $uri             = $endPoint['uri'];
-        $endPoint['uri'] = sprintf($uri, $labelSize);
+        $url             = $endPoint['url'];
+        $endPoint['url'] = sprintf($url, $labelSize);
 
         $body = "<string>" . $epCodes . "</string>";
 
@@ -852,9 +852,9 @@ class Yanwen
         }
 
         return [
-            'code'        => $code,
-            'message'     => $message,
-            'data'        => [
+            'code'    => $code,
+            'message' => $message,
+            'data'    => [
                 'ep_code' => $createdExpress['Epcode'] ?? '',
             ],
 //            'origin_data' => json_encode($result)
