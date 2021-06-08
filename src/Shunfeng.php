@@ -98,7 +98,9 @@ class Shunfeng
         if ($result['Head'] == 'ERR') {
             return ['code' => -1, 'message' => $result['ERROR'] ?? '', 'data' => []];
         } else {
-            return ['code' => 0, 'message' => '成功', 'data' => []]; // todo
+            $res  = isset($result['Body']) ? $result['Body']['"OrderResponse'] ?? [] : [];
+            $data = $res['@attributes'] ?? [];
+            return ['code' => 0, 'message' => '成功', 'data' => $data];
         }
     }
 

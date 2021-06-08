@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+require '../../vendor/autoload.php';
+use Sxqibo\Logistics\Yanwen;
 
 try {
     $appKey = '';
@@ -43,9 +44,10 @@ try {
         ]]
     ];
 
-    $result = $client->createOrder($data, true);
+    $result = $client->createOrder($data);
 
-    print_r($result);
+    var_dump($result);
+    exit;
 } catch (\Exception $e) {
     print_r($e->getMessage());
     exit;

@@ -1,6 +1,8 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+use Sxqibo\Logistics\Shunfeng;
+
+require_once '../../vendor/autoload.php';
 
 // 创建顺丰订单
 try {
@@ -46,7 +48,10 @@ try {
             'currency'            => 'USD', // 申报币种
         ]]
     ];
-    dd($client->createOrder($data));
+    $data = $client->createOrder($data);
+
+    var_dump($data);
+    exit;
     // "<Response service="OrderService"><Head>OK</Head><Body><OrderResponse orderid="TE1622875810" mailno="SF6041146470069" agent_mailno="UD343057297NL" direction_code="1P-US-JFK"/></Body></Response>"
 } catch (\Exception $e) {
     file_put_contents('aa.txt', $e->getMessage());

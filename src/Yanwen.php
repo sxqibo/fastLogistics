@@ -14,9 +14,9 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Yanwen
 {
-    private $serviceEndPoint     = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
+    private $serviceEndPoint = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
     private $testServiceEndPoint = 'HTTP://47.96.220.163:802/SERVICE';
-    private $userId              = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
+    private $userId = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
     private $aipToken;
     private $headers;
     private $client;
@@ -39,8 +39,8 @@ class Yanwen
      *
      * @param $key
      * @param false $isDebug
-     * @return string[]
      * @throws Exception
+     * @return string[]
      */
     protected function getEndPoint($key, $isDebug = false)
     {
@@ -112,8 +112,8 @@ class Yanwen
     /**
      * 1.查询物流发货渠道
      *
-     * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return bool
      */
     public function getShipTypes($isDebug = false)
     {
@@ -129,8 +129,8 @@ class Yanwen
      *
      * @param $data
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function createOrder($data, $isDebug = false)
     {
@@ -151,8 +151,8 @@ class Yanwen
      *
      * @param $params
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function getOrder($params, $isDebug = false)
     {
@@ -204,8 +204,8 @@ class Yanwen
      * @param $epCodes string 运单号,分割，如：YW862913494CN,RQ150332025SG
      * @param string $labelSize
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function multipleLabelPrint($epCodes, $labelSize = 'A4L', $isDebug = false)
     {
@@ -230,8 +230,8 @@ class Yanwen
      *
      * @param $data
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function createOnlineData($data, $isDebug = false)
     {
@@ -270,8 +270,8 @@ class Yanwen
      * @param $epCode string 运单号 每次请求只允许调整一个运单的快件状态
      * @param $status integer 快件状态。支持的值为：1 正常；0 删除。
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function changeStatus($epCode, $status, $isDebug = false)
     {
@@ -298,8 +298,8 @@ class Yanwen
      *
      * @param $channelId
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function getCountry($channelId, $isDebug = false)
     {
@@ -319,8 +319,8 @@ class Yanwen
      * 获取线上发货渠道
      *
      * @param false $isDebug
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function getOnlineChannels($isDebug = false)
     {
@@ -338,8 +338,8 @@ class Yanwen
      *
      * @param $trackNumber
      * @param false $isDebug
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getTrack($trackNumber)
     {
@@ -846,7 +846,7 @@ class Yanwen
         $responce       = $result['Response'] ?? '';
         $createdExpress = $result['CreatedExpress'] ?? '';
 
-        if ($callSuccess == false) {
+        if ($callSuccess == 'false') {
             $code    = -1;
             $message = $responce['ReasonMessage'] ?? '';
         }
@@ -857,7 +857,7 @@ class Yanwen
             'data'        => [
                 'ep_code' => $createdExpress['Epcode'] ?? '',
             ],
-            'origin_data' => json_encode($result)
+//            'origin_data' => json_encode($result)
         ];
     }
 }
