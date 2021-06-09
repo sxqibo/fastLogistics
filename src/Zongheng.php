@@ -42,8 +42,8 @@ class Zongheng
      * 获取请求节点信息
      *
      * @param $key
-     * @return string
      * @throws Exception
+     * @return string
      */
     protected function getEndPoint($key)
     {
@@ -148,8 +148,8 @@ class Zongheng
      * 创建订单
      *
      * @param $data
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function createOrder($data)
     {
@@ -167,8 +167,8 @@ class Zongheng
      *
      * @param $orderNo
      * @param $orderWeight
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function submitForecast($orderNo, $orderWeight)
     {
@@ -189,8 +189,8 @@ class Zongheng
      *
      * @param $orderNo
      * @param $orderWeight
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function updateOrder($orderNo, $orderWeight)
     {
@@ -210,8 +210,8 @@ class Zongheng
      * 删除订单
      *
      * @param $orderNo
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function deleteOrder($orderNo)
     {
@@ -228,23 +228,21 @@ class Zongheng
      *
      * @param $orderNos array 多个订单号
      * @param array $params 附加参数
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getOrderLabel($orderNos, $params = [])
     {
         $data = [
             'configInfo' => [
-                'additional_info' => [
-                    'lable_file_type'    => $params['file_type'] ?? 2, // 标签文件类型 1：PNG文件 2：PDF文件
-                    'lable_paper_type'   => $params['paper_type'] ?? 'A4', // 纸张类型 1：标签纸 2：A4纸
-                    'lable_content_type' => $params['content_type'] ?? 1, // 标签内容类型代码 1：标签 2：报关单 3：配货单 4：标签+报关单 5：标签+配货单 6：标签+报关单+配货单
-                    'additional_info'    => [
-                        'lable_print_invoiceinfo'               => $params['print_invoice_info'] ?? 'Y', // 标签上打印配货信息 (Y:打印 N:不打印) 默认 N:不打印
-                        'lable_print_buyerid'                   => $params['print_buyer_id'] ?? 'N', // 标签上是否打印买家ID (Y:打印 N:不打印) 默认 N:不打印
-                        'lable_print_datetime'                  => $params['print_datetime'] ?? 'Y', // 标签上是否打印日期 (Y:打印 N:不打印) 默认 Y:打印
-                        'customsdeclaration_print_actualweight' => $params['print_actual_weight'] ?? 'N', // 报关单上是否打印实际重量 (Y:打印 N:不打印) 默认 N:不打印
-                    ],
+                'lable_file_type'    => $params['file_type'] ?? 2, // 标签文件类型 1：PNG文件 2：PDF文件
+                'lable_paper_type'   => $params['paper_type'] ?? 1, // 纸张类型 1：标签纸 2：A4纸
+                'lable_content_type' => $params['content_type'] ?? 1, // 标签内容类型代码 1：标签 2：报关单 3：配货单 4：标签+报关单 5：标签+配货单 6：标签+报关单+配货单
+                'additional_info'    => [
+                    'lable_print_invoiceinfo'               => $params['print_invoice_info'] ?? 'Y', // 标签上打印配货信息 (Y:打印 N:不打印) 默认 N:不打印
+                    'lable_print_buyerid'                   => $params['print_buyer_id'] ?? 'N', // 标签上是否打印买家ID (Y:打印 N:不打印) 默认 N:不打印
+                    'lable_print_datetime'                  => $params['print_datetime'] ?? 'Y', // 标签上是否打印日期 (Y:打印 N:不打印) 默认 Y:打印
+                    'customsdeclaration_print_actualweight' => $params['print_actual_weight'] ?? 'N', // 报关单上是否打印实际重量 (Y:打印 N:不打印) 默认 N:不打印
                 ],
             ],
         ];
@@ -270,8 +268,8 @@ class Zongheng
      * 获取订单跟踪单号
      *
      * @param $orderNo
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getTrackingNumber($orderNo)
     {
@@ -287,8 +285,8 @@ class Zongheng
      * 获取订单跟踪记录
      *
      * @param $trackNumber  string 服务商单号
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getTrack($trackNumber)
     {
@@ -304,8 +302,8 @@ class Zongheng
      * 获取订单费用(按费用种类分组合计费用)
      *
      * @param $orderNo
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getShippingFee($orderNo)
     {
@@ -321,8 +319,8 @@ class Zongheng
      * 获取订单费用明细(业务的每笔费用变动数据)
      *
      * @param $orderNo
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getShippingFeeDetail($orderNo)
     {
@@ -338,8 +336,8 @@ class Zongheng
      * 获取订单重量
      *
      * @param $orderNo
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getOrderWeight($orderNo)
     {
@@ -355,8 +353,8 @@ class Zongheng
      * 运费试算
      *
      * @param $params
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getPrice($params)
     {
@@ -386,8 +384,8 @@ class Zongheng
 
     /**
      * 获取运输方式
-     * @return array|mixed
      * @throws Exception
+     * @return array|mixed
      */
     public function getShipTypes()
     {
@@ -401,8 +399,8 @@ class Zongheng
 
     /**
      * 获取可用的运输方式
-     * @return array
      * @throws Exception
+     * @return array
      */
     public function getCustomerShippingMethod()
     {
@@ -505,8 +503,8 @@ class Zongheng
      *
      * @param $data
      * @param array $params
-     * @return array
      * @throws Exception
+     * @return array
      */
     protected function handleRequest($data, $params = [])
     {
