@@ -1,5 +1,4 @@
 <?php
-
 use Sxqibo\Logistics\Yuntu;
 
 require_once '../../vendor/autoload.php';
@@ -9,8 +8,9 @@ $code      = $config['yunTu']['code'];
 $apiSecret = $config['yunTu']['apiSecret'];
 $data      = new Yuntu($code, $apiSecret);
 
-//01.查询国家简码
-$result = $data->getCountry();
-
+/**
+ * 17.IOSS号备案
+ */
+$iossNumber = 'xy1234567890';
+$result  = $data->registerIoss($iossNumber);
 print_r($result);
-

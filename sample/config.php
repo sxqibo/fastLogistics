@@ -13,8 +13,8 @@ $config = [
         'userId' => '',
     ],
     'yunTu'   => [
-        'code' => 'C37872',
-        'apiSecret'  => 'vgBuniL0KE0'
+        'code' => '',
+        'apiSecret'  => ''
     ]
 ];
 return $config;

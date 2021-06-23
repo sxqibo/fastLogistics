@@ -1,7 +1,7 @@
 <?php
 use Sxqibo\Logistics\Yuntu;
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once '../config.php';
 
 $code      = $config['yunTu']['code'];
