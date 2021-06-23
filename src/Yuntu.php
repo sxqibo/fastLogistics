@@ -68,6 +68,7 @@ class Yuntu
             '14' => $url . 'Common/Register',                //14.用户注册
             '15' => $url . 'Tracking/GetTrackInfo',          //15.查询物流轨迹信息
             '16' => $url . 'Waybill/GetCarrier',             //16.查询末端派送商
+            '17' => $url . 'WayBill/RegisterIoss',           //17.客户端向OMS请求IOSS
         ];
         return $arr;
     }
@@ -118,8 +119,8 @@ class Yuntu
      *
      * @param string $url 请求的URL
      * @param array $data 语求的参数
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getData($url, $data = null)
     {
@@ -141,8 +142,8 @@ class Yuntu
      * 01.查询国家简码
      * 说明：我这里带不带countryCode都是268个国家
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getCountry()
     {
@@ -156,8 +157,8 @@ class Yuntu
      * 说明：目前在用,原来是： getShippingMethods
      *
      * @param string $countryCode 国家简码，未填写国家代表查询所有运输方式
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getShipTypes($countryCode = null)
     {
@@ -172,8 +173,8 @@ class Yuntu
     /**
      * 03.查询货品类型
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getGoodsType()
     {
@@ -192,8 +193,8 @@ class Yuntu
      * @param int $width 包裹宽度,单位 cm,不带小数，不填写默认 1
      * @param int $height 包裹高度,单位 cm,不带小数，不填写默认 1
      * @param int $packageType 包裹类型，1-包裹，2-文件，3-防水袋，默认 1
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getPrice($countryCode, $weight, $length = null, $width = null, $height = null, $packageType = null)
     {
@@ -241,8 +242,8 @@ class Yuntu
      * 05.查询跟踪号
      *
      * @param string $customerOrderNumber 客户订单号,多个以逗号分开
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getTrackingNumber($customerOrderNumber)
     {
@@ -257,8 +258,8 @@ class Yuntu
      * 06. 查询发件人信息
      *
      * @param string $orderNumber 查询号码，可输入运单号、订单号、跟踪号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getSender($orderNumber)
     {
@@ -284,8 +285,8 @@ class Yuntu
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
@@ -346,8 +347,8 @@ class Yuntu
      * 08.查询运单
      *
      * @param string $orderNo 订单号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getOrder($orderNo)
     {
@@ -363,8 +364,8 @@ class Yuntu
      *
      * @param string $orderNo 订单号
      * @param float $weight 修改重量
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @todo 待测试
      */
     public function updateWeight($orderNo, $weight)
@@ -382,8 +383,8 @@ class Yuntu
      * 10.订单删除
      *
      * @param string $orderNo 订单号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @todo 待测试
      */
     public function delete($orderNo)
@@ -402,8 +403,8 @@ class Yuntu
      *
      * @param string $orderNo 订单号
      * @param string $remark 拦截原因
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @todo 待测试
      */
     public function intercept($orderNo, $remark)
@@ -442,8 +443,8 @@ class Yuntu
      * 13.查询物流运费明细
      *
      * @param string $wayBillNumber 运单号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @todo
      */
     public function getShippingFeeDetail($wayBillNumber)
@@ -481,8 +482,8 @@ class Yuntu
     /**
      * 15. 查询物流轨迹信息
      * @param string $OrderNumber 物流系统运单号，客户订单或跟踪号
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getTrackInfo($OrderNumber)
     {
@@ -498,12 +499,36 @@ class Yuntu
      *
      * @param $OrderNumber string 查询号码，可输入运单号、订单号、跟踪号
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getCarrier($OrderNumber)
     {
         $url    = ($this->arrUrl())['16'];
         $data   = [
             'OrderNumbers' => $OrderNumber
+        ];
+        $result = $this->getData($url, $data);
+        return $result;
+    }
+
+    /**
+     * 客户端向 OMS 请求IOSS
+     */
+    public function registerIoss($iossNumber)
+    {
+        $url    = ($this->arrUrl())['17'];
+        $data   = [
+            'IossType'     => 0,     //(必填）“0”个人 “1”平台
+            'PlatformName' => '',    //(非必填）平台名称，类型为“1”时需提供
+            'IossNumber'   => $iossNumber,   //(必填）2位字母加10位数字，reg: ^[a-zA-Z]{2}[0-9]{10}$
+            'Company'      => '',    //(非必填）IOSS号注册公司名称
+            'Country'      => '',    //(非必填）2位国家简码
+            'Street'       => '',    //(非必填）IOSS号街道地址
+            'City'         => '',    //(非必填）IOSS号所在城市
+            'Province'     => '',    //(非必填）IOSS号所在省/州
+            'PostalCode'   => '',    //(非必填）IOSS号邮编
+            'MobilePhone'  => '',    //(非必填）IOSS号手机号
+            'Email'        => '',    //(非必填）IOSS号电子邮箱
         ];
         $result = $this->getData($url, $data);
         return $result;
