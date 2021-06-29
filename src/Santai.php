@@ -110,13 +110,14 @@ class Santai
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @param string $goodsDescription 订单描述
+     * @param string $iossCode 云途备案识别码或IOSS号
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [],$goodsDescription)
+        $goods = [],$goodsDescription, $iossCode = '')
     {
         $param = [
             //step1（2）
@@ -132,13 +133,18 @@ class Santai
             'recipientAddress'   => $receiverAddress,   // required, （传参）收件地址
             'recipientZipCode'   => $receiverPostCode,    // required, （传参）收件邮编
             'recipientPhone'     => $receiverMobile,  // required, （传参）收件电话
+
             //寄件人
             'shipperAddressType' => 1, //是否取寄件人默认地址0/1
+
             //step3:各种配置信息（1）
             'goodsDeclareWorth'  => array_sum(array_map(function ($val) {
                 return ($val['goods_number'] * $val['goods_single_worth']);
             }, $goods)),   //订单总申报价值 required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
-            'goodsDescription' => $goodsDescription
+            'goodsDescription' => $goodsDescription,
+
+            //step4:2021.7亚马逊新增iosscode
+            'iossNo' => $iossCode
         ];
 
         //step4:商品信息（4）
