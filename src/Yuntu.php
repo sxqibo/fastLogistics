@@ -285,13 +285,14 @@ class Yuntu
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $iossCode 云途备案识别码或IOSS号
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [])
+        $goods = [], $iossCode = '')
     {
         $url = ($this->arrUrl())['07'];
 
@@ -328,6 +329,15 @@ class Yuntu
             $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
             $order['Parcels'][$k]['CurrencyCode'] = 'USD';                      //string,申报币种，默认：USD,必填
         }
+
+        //step4:附加服务
+        //add by hongwei 20210626根据《云途物流API接口开发规范OMS-20210625》
+        $order['OrderExtra']['ExtraCode'] = 'V1'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
+        $order['OrderExtra']['ExtraName'] = '云途预缴IOSS附加服务费'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
+
+        //step5:IossCode
+        //add by hongwei 20210626根据《云途物流API接口开发规范OMS-20210625》
+        $order['IossCode'] = $iossCode; //(非必填）云途备案识别码或IOSS号
 
         $response          = $this->client->request('POST', $url, [
             'json' => [
@@ -520,7 +530,7 @@ class Yuntu
         $data   = [
             'IossType'     => 0,     //(必填）“0”个人 “1”平台
             'PlatformName' => '',    //(非必填）平台名称，类型为“1”时需提供
-            'IossNumber'   => $iossNumber,   //(必填）2位字母加10位数字，reg: ^[a-zA-Z]{2}[0-9]{10}$
+            'IossNumber'   => 'xy1234567890',   //(必填）2位字母加10位数字，reg: ^[a-zA-Z]{2}[0-9]{10}$
             'Company'      => '',    //(非必填）IOSS号注册公司名称
             'Country'      => '',    //(非必填）2位国家简码
             'Street'       => '',    //(非必填）IOSS号街道地址
