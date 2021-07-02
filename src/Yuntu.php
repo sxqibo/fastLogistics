@@ -522,7 +522,8 @@ class Yuntu
     }
 
     /**
-     * 客户端向 OMS 请求IOSS
+     * 17. 客户端向 OMS 请求IOSS，
+     * 说明：这里是进行注册用的，目前没用
      */
     public function registerIoss($iossNumber)
     {
