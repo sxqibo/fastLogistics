@@ -128,14 +128,15 @@ class Jiehang
      * @param string $rProvince 收件人所在省
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
+     * @param string $iossNumber IOSS 增值税识别号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [])
+        $goods = [], $iossNumber = '')
     {
         // step1.1:（参数）
         $data['Verify'] = $this->paramVerify();
@@ -164,7 +165,9 @@ class Jiehang
                 }, $goods)),   //订单总申报价值
                 'Number'         => array_sum(array_map(function ($val) {
                     return ($val['goods_number']);
-                }, $goods))  //件数
+                }, $goods)),  //件数
+                'VatNumber'      => $iossNumber,  //Vat 增值税号（寄件人）
+                'TariffType'     => '',  //说明：目前写空，关税类型（快件订单 对接中邮渠道填写特殊类型。 1300：预缴增值税 IOSS, 1301：预缴增值税 no-IOSS, 1302：预缴增值税 other）
             ]
         ];
 
