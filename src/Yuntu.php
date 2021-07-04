@@ -332,8 +332,9 @@ class Yuntu
 
         //step4:附加服务
         //add by hongwei 20210626根据《云途物流API接口开发规范OMS-20210625》
-        $order['OrderExtra']['ExtraCode'] = 'V1'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
-        $order['OrderExtra']['ExtraName'] = '云途预缴IOSS附加服务费'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
+        //这里说是必填，但是填了会报错
+        //$order['OrderExtra']['ExtraCode'] = 'V1'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
+        //$order['OrderExtra']['ExtraName'] = '云途预缴IOSS附加服务费'; //（必填）额外服务代码，G0代表关税预付，10代表报关件， V1代表云途预缴IOSS附加服务费。
 
         //step5:IossCode
         //add by hongwei 20210626根据《云途物流API接口开发规范OMS-20210625》
