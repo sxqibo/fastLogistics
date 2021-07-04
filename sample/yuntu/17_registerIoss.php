@@ -6,7 +6,7 @@ require_once '../config.php';
 
 $code      = $config['yunTu']['code'];
 $apiSecret = $config['yunTu']['apiSecret'];
-$data      = new Yuntu($code, $apiSecret);
+$data      = new Yuntu('C37872', 'vgBuniL0KE0=');
 
 /**
  * 17.IOSS号备案

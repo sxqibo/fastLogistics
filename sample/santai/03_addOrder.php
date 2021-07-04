@@ -2,7 +2,7 @@
 //命名空间
 use Sxqibo\Logistics\Santai;
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once '../config.php';
 
 $appKey = $config['sanTai']['appKey'];
@@ -46,10 +46,12 @@ $goods = [
     ],
 ];
 
+$iossNumber = 'IM4420001201';
+
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
-    $goods);
+    $goods, $iossNumber);
 
 
 print_r($result);

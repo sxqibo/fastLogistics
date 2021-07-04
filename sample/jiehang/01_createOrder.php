@@ -2,7 +2,7 @@
 //命名空间
 use Sxqibo\Logistics\Jiehang;
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once '../config.php';
 
 $clientId = $config['jieHang']['clientId'];
@@ -44,10 +44,14 @@ $goods  = [
         'goods_single_weight' => 1,          //运单包裹的件数
     ],
 ];
+
+// step4:
+$iossNumber = 'IM4420001201';
+
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress1, $rAddress2, $rCity, $rProvince, $rCode, $rMobile,
-    $goods);
+    $goods, $iossNumber);
 
 
 print_r($result);
