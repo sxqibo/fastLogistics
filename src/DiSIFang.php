@@ -461,6 +461,7 @@ class DiSIFang
         $returnInfo = $data['return'] ?? [];
         $newData    = [
             'ref_no'                 => $data['orderNo'], // 客户订单号
+            'ioss_no'                => $data['iossNumber'], //IOSS 号码
             'business_type'          => 'BDS', // 业务类型(4PX内部调度所需，如需对接传值将说明，默认值：BDS。)
             'duty_type'              => 'U', // 税费费用承担方式(可选值：U、P); DDU由收件人支付关税：U; DDP 由寄件方支付关税：P; （如果物流产品只提供其中一种，则以4PX提供的为准）
             // 物流服务信息
@@ -470,13 +471,13 @@ class DiSIFang
 
             //  退件信息
             'return_info'            => [
-                'is_return_on_domestic' => $data['is_return'] ?? 'Y', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
+                'is_return_on_domestic' => $data['is_return'] ?? 'U', // 境内退件接收地址信息（处理策略为Y时必须填写地址信息）
                 'domestic_return_addr'  => [
                     // 必填
                     'first_name'   => $returnInfo['contact_name'] ?? '',
                     'phone'        => $returnInfo['phone'] ?? '',
                     'post_code'    => $returnInfo['postcode'] ?? '',
-                    'country'      => 'CN',
+                    'country'      => $returnInfo['country'] ?? '',
                     'city'         => $returnInfo['city'] ?? '',
                     'district'     => $returnInfo['district'] ?? '',
 
