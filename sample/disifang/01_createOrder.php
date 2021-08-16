@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 
 // 创建纵横订单
 
@@ -13,6 +13,9 @@ try {
         // 必填项
         'channelCode'         => 'F3',     // 发货方式
         'orderNo'             => 'TE' . time(),    // 客户订单号
+
+        //IOSS号码
+        'ioss_no'             => 'FR-123456',
 
         // 收件人
         'receiverName'        => 'tang', // 收货人-姓名
