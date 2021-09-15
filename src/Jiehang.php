@@ -130,8 +130,8 @@ class Jiehang
      * @param string $receiverMobile 发件人手机号
      * @param string $iossNumber IOSS 增值税识别号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
@@ -151,7 +151,16 @@ class Jiehang
          */
         $data['OrderType'] = 1;  //订单类型，旧系统就用这个
 
-        // step1.3:（参数）订单数据
+        // step1.3:（参数）订单明细产品信息
+        $OrderItems = [];   //array, 申报信息
+        foreach ($goods as $k => $v) {
+            $OrderItems[$k]['Enname'] = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
+            $OrderItems[$k]['Cnname'] = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
+            $OrderItems[$k]['Num']    = $v['goods_number'];         //int,申报数量,必填
+            $OrderItems[$k]['Price']  = $v['goods_single_worth'];         //decimal( 18,2),申报价格(单价),必填
+            $OrderItems[$k]['Weight'] = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+        }
+        // step1.4:（参数）订单数据
         $data['OrderDatas'] = [
             [
                 'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
@@ -168,44 +177,21 @@ class Jiehang
                 }, $goods)),  //件数
                 'VatNumber'      => $iossNumber,  //Vat 增值税号（寄件人）
                 'TariffType'     => '',  //说明：目前写空，关税类型（快件订单 对接中邮渠道填写特殊类型。 1300：预缴增值税 IOSS, 1301：预缴增值税 no-IOSS, 1302：预缴增值税 other）
+                // step1.5:（参数）收件人信息
+                'Recipient'      => [
+                    'Name'     => $receiverName,        //名称
+                    'Addres1'  => $receiverAddress1,     //地址
+                    'Addres2'  => $receiverAddress2,     //地址
+                    'Mobile'   => $receiverMobile,      //手机
+                    'Province' => $rProvince,    //省州
+                    'City'     => $receiverCity,        //城市
+                    'Post'     => $receiverPostCode,    //邮编
+                ],
+                'OrderItems'     => $OrderItems
+
+
             ]
         ];
-
-        // step1.4:（参数）是否购买保险
-        $data['Insurance'] = [];  //这里不是必须，我们暂不填
-
-        // step1.5:（参数）运费支付信息，OrderType 为 [快递制单] 时必传字段，我们用的是“快件订单”
-        $data['FeePayData'] = [];
-
-        // step1.6:（参数）税金/关税支付信息，OrderType 为 [快递制单] 时必传字段
-        $data['TaxPayData'] = [];
-
-        // step1.7:（参数）收件人信息
-        $data['Recipient'] = [
-            'Name'     => $receiverName,        //名称
-            'Addres1'  => $receiverAddress1,     //地址
-            'Addres2'  => $receiverAddress2,     //地址
-            'Mobi'     => $receiverMobile,      //手机
-            'Province' => $rProvince,    //省州
-            'City'     => $receiverCity,        //城市
-            'Post'     => $receiverPostCode,    //邮编
-        ];
-
-        // step1.8:（参数）寄件人信息，不是必填信息，我们这里不传
-        $data['Sender'] = [];
-
-        // step1.9:（参数）订单明细产品信息
-        $data['OrderItems'] = [];   //array, 申报信息
-        foreach ($goods as $k => $v) {
-            $data['OrderItems'][$k]['Enname'] = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
-            $data['OrderItems'][$k]['Cnname'] = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
-            $data['OrderItems'][$k]['Num']    = $v['goods_number'];         //int,申报数量,必填
-            $data['OrderItems'][$k]['Price']  = $v['goods_single_worth'];         //decimal( 18,2),申报价格(单价),必填
-            $data['OrderItems'][$k]['Weight'] = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
-        }
-
-        // step1.10:（参数）材积明细 (OrderType 为快递制单必传)，不是必填信息，我们这里不传
-        $data['Volumes'] = [];
 
         // step2:网址
         $url = $this->arrUrl();
