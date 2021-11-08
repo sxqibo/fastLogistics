@@ -89,7 +89,7 @@ class Yuntu
     {
         $host    = "https://ali-waihui.showapi.com";
         $path    = "/waihui-transform";
-        $appcode = "2f0ac9e5cac84eb08e645715a2aba909";
+        $appcode = "4979dea4ce2f43f2ba046cc297f5414e";
         $querys  = "fromCode=CNY&money=1&toCode=USD";
         $url     = $host . $path . "?" . $querys;
         $headers = [
