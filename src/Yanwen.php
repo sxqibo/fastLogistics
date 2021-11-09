@@ -14,9 +14,9 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Yanwen
 {
-    private $serviceEndPoint = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
+    private $serviceEndPoint     = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
     private $testServiceEndPoint = 'HTTP://47.96.220.163:802/SERVICE';
-    private $userId = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
+    private $userId              = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
     private $aipToken;
     private $headers;
     private $client;
@@ -37,7 +37,7 @@ class Yanwen
     /**
      * 获取请求节点信息
      *
-     * @param $key
+     * @param       $key
      * @param false $isDebug
      * @throws Exception
      * @return string[]
@@ -127,7 +127,7 @@ class Yanwen
     /**
      * 创建订单
      *
-     * @param $data
+     * @param       $data
      * @param false $isDebug
      * @throws Exception
      * @return array|mixed
@@ -149,7 +149,7 @@ class Yanwen
     /**
      * 3.根据条件查询快件信息
      *
-     * @param $params
+     * @param       $params
      * @param false $isDebug
      * @throws Exception
      * @return array|mixed
@@ -181,10 +181,10 @@ class Yanwen
     /**
      * 4.标签打印
      *
-     * @param $epCode string 运单号
+     * @param        $epCode    string 运单号
      * @param string $labelSize {LabelSize}：标签大小。支持的值为：A4L, A4LI, A4LC, A4LCI, A6L, A6LI, A6LC, A6LCI, A10x10L, A10x10LI, A10x10LC, A10x10LCI。
-     * (注：L为运单，C为报关签条，I为拣货单。)
-     * @param false $isDebug 是否测试环境
+     *                          (注：L为运单，C为报关签条，I为拣货单。)
+     * @param false  $isDebug   是否测试环境
      * @throws Exception
      */
     public function labelPrint($epCode, $labelSize = 'A4L', $isDebug = false)
@@ -201,9 +201,9 @@ class Yanwen
     /**
      * 5.多标签打印
      *
-     * @param $epCodes string 运单号,分割，如：YW862913494CN,RQ150332025SG
+     * @param        $epCodes string 运单号,分割，如：YW862913494CN,RQ150332025SG
      * @param string $labelSize
-     * @param false $isDebug
+     * @param false  $isDebug
      * @throws Exception
      * @return array|mixed
      */
@@ -228,7 +228,7 @@ class Yanwen
     /**
      * 6.创建线上数据信息
      *
-     * @param $data
+     * @param       $data
      * @param false $isDebug
      * @throws Exception
      * @return array|mixed
@@ -267,8 +267,8 @@ class Yanwen
     /**
      * 7.更改运单状态
      *
-     * @param $epCode string 运单号 每次请求只允许调整一个运单的快件状态
-     * @param $status integer 快件状态。支持的值为：1 正常；0 删除。
+     * @param       $epCode string 运单号 每次请求只允许调整一个运单的快件状态
+     * @param       $status integer 快件状态。支持的值为：1 正常；0 删除。
      * @param false $isDebug
      * @throws Exception
      * @return array|mixed
@@ -296,7 +296,7 @@ class Yanwen
     /**
      * 8.获取产品可达国家
      *
-     * @param $channelId
+     * @param       $channelId
      * @param false $isDebug
      * @throws Exception
      * @return array|mixed
@@ -336,7 +336,7 @@ class Yanwen
     /**
      * 获取订单跟踪记录
      *
-     * @param $trackNumber
+     * @param       $trackNumber
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -806,6 +806,7 @@ class Yanwen
                 'ProductMaterial'  => $item['product_material'] ?? '', // 产品材质，中俄SPSR专线此项必填
                 'MoreGoodsName'    => $item['extra'] ?? '', // 多品名 会出现在拣货单上
                 'HsCode'           => $item['hs_code'] ?? '', // 商品海关编码（当Channel为【香港FedEx经济，中邮广州挂号小包，中邮广州平邮小包(专用)】时，该属性HsCode必填）
+                'Note'             => $data['remarks'] ?? '', //备注
             ];
             $goodsNumber   = $item['goods_number'] ?? 0;
             $totalQuantity += $goodsNumber;
@@ -857,7 +858,7 @@ class Yanwen
             'data'    => [
                 'ep_code' => $createdExpress['Epcode'] ?? '',
             ],
-//            'origin_data' => json_encode($result)
+            //            'origin_data' => json_encode($result)
         ];
     }
 }

@@ -13,7 +13,7 @@ use Sxqibo\Logistics\common\Client;
  */
 class DiSIFang
 {
-    private $serviceEndPoint = 'http://open.4px.com/router/api/service'; // 正式环境
+    private $serviceEndPoint     = 'http://open.4px.com/router/api/service'; // 正式环境
     private $testServiceEndPoint = 'http://open.sandbox.4px.com/router/api/service'; // 沙箱环境
 
     private $appKey;
@@ -147,7 +147,7 @@ class DiSIFang
     /**
      * 创建订单
      *
-     * @param $data
+     * @param       $data
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -164,8 +164,8 @@ class DiSIFang
     /**
      * 更新订单信息
      *
-     * @param $orderNo
-     * @param $orderWeight string 单位KG
+     * @param       $orderNo
+     * @param       $orderWeight string 单位KG
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -185,7 +185,7 @@ class DiSIFang
     /**
      * 查价格
      *
-     * @param $params
+     * @param       $params
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -213,9 +213,9 @@ class DiSIFang
     /**
      * 删除订单
      *
-     * @param $orderNo
+     * @param        $orderNo
      * @param string $cancelReason
-     * @param false $isDebug
+     * @param false  $isDebug
      * @throws Exception
      * @return array
      */
@@ -234,10 +234,10 @@ class DiSIFang
     /**
      * 拦截订单
      *
-     * @param $orderNo
+     * @param        $orderNo
      * @param string $isHold
      * @param string $holdReason
-     * @param false $isDebug
+     * @param false  $isDebug
      * @throws Exception
      * @return array
      */
@@ -257,7 +257,7 @@ class DiSIFang
     /**
      * 根据条件查询快件信息
      *
-     * @param $params
+     * @param       $params
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -279,7 +279,7 @@ class DiSIFang
     /**
      * 物流产品查询
      *
-     * @param int $transportMode 运输方式：1 所有方式；2 国际快递；3 国际小包；4 专线；5 联邮通；6 其他；
+     * @param int   $transportMode 运输方式：1 所有方式；2 国际快递；3 国际小包；4 专线；5 联邮通；6 其他；
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -299,7 +299,7 @@ class DiSIFang
     /**
      * 打印标签
      *
-     * @param $orderNo
+     * @param       $orderNo
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -337,7 +337,7 @@ class DiSIFang
     /**
      * 多标签打印
      *
-     * @param $params
+     * @param       $params
      * @param array $otherParams
      * @param false $isDebug
      * @throws Exception
@@ -390,8 +390,8 @@ class DiSIFang
     /**
      * 查询仓库信息
      *
-     * @param $serviceCode string 业务类型:F(订单履约)；S(自发服务)；T(转 运服务)；R(退件服务)
-     * @param $countryCode string 国家二字码
+     * @param       $serviceCode string 业务类型:F(订单履约)；S(自发服务)；T(转 运服务)；R(退件服务)
+     * @param       $countryCode string 国家二字码
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -411,9 +411,9 @@ class DiSIFang
     /**
      * 查询申报产品种类
      *
-     * @param int $parentCode
+     * @param int    $parentCode
      * @param string $businessType
-     * @param false $isDebug
+     * @param false  $isDebug
      * @throws Exception
      * @return array
      */
@@ -432,7 +432,7 @@ class DiSIFang
     /**
      * 获取订单跟踪记录
      *
-     * @param $trackNumber
+     * @param       $trackNumber
      * @param false $isDebug
      * @throws Exception
      * @return array
@@ -589,7 +589,8 @@ class DiSIFang
             'include_battery'      => 'N', // todo 是否含电池
             'battery_type'         => '', // 带电类型（内置电池PI966：966；配套电池PI967:967）
             'product_list'         => $productList,
-            'declare_product_info' => $declareProductInfo
+            'declare_product_info' => $declareProductInfo,
+            'package_remarks'      => $data['remarks'], //配货字段（打印标签选择显示配货信息是将会显示
         ];
         $newData['parcel_list'][] = $package;
 
@@ -599,7 +600,7 @@ class DiSIFang
     /**
      * 处理接口请求
      *
-     * @param $data
+     * @param       $data
      * @param array $params
      * @throws Exception
      * @return array

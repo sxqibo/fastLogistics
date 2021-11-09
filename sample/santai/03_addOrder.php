@@ -20,13 +20,14 @@ $channelCode = 'USPE';  //运输方式代码(三种物流的方式是不一样�
 $totalValue  = 50;      //云途不用填,填上也没关系
 
 //step2:收件人
-$rCountryCode = 'US';           //收件人所在国家
-$rName        = 'tom';          //收件人姓
-$rAddress     = '02638-1915';   //收件人详细地址
-$rCity        = 'DENNIS';       //收件人所在城市
-$rProvince    = 'MA';           //收件人所在省
-$rCode        = '04222';        //发件人邮编,必填项,5位数字
-$rMobile      = '415-851-9136'; //发件人手机
+$rCountryCode   = 'US';           //收件人所在国家
+$rName          = 'tom';          //收件人姓
+$rAddress       = '02638-1915';   //收件人详细地址
+$rCity          = 'DENNIS';       //收件人所在城市
+$rProvince      = 'MA';           //收件人所在省
+$rCode          = '04222';        //发件人邮编,必填项,5位数字
+$recipientEmail = 'email@qq.com';        //发件人郵箱,選填项,有的渠道需要
+$rMobile        = '415-851-9136'; //发件人手机
 
 //step3:商品
 $goods = [
@@ -50,7 +51,7 @@ $iossNumber = 'IM4420001201';
 
 $result = $data->createOrder(
     $orderNo, $channelCode,
-    $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $rMobile,
+    $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $recipientEmail, $rMobile,
     $goods, $iossNumber);
 
 

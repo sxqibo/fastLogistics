@@ -16,7 +16,7 @@ class Yuntu
     /**
      * 云途
      *
-     * @param string $code 客户编号：客户新注册时由业务部门提供的客户身份唯一标识编号
+     * @param string $code      客户编号：客户新注册时由业务部门提供的客户身份唯一标识编号
      * @param string $apiSecret ApiSecret：申请 API 接口服务时由业务部门提供的一个密钥
      */
     public function __construct($code, $apiSecret)
@@ -117,10 +117,10 @@ class Yuntu
     /**
      * 获取数据的方式
      *
-     * @param string $url 请求的URL
-     * @param array $data 语求的参数
-     * @return mixed
+     * @param string $url  请求的URL
+     * @param array  $data 语求的参数
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getData($url, $data = null)
     {
@@ -142,8 +142,8 @@ class Yuntu
      * 01.查询国家简码
      * 说明：我这里带不带countryCode都是268个国家
      *
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getCountry()
     {
@@ -157,8 +157,8 @@ class Yuntu
      * 说明：目前在用,原来是： getShippingMethods
      *
      * @param string $countryCode 国家简码，未填写国家代表查询所有运输方式
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getShipTypes($countryCode = null)
     {
@@ -173,8 +173,8 @@ class Yuntu
     /**
      * 03.查询货品类型
      *
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getGoodsType()
     {
@@ -188,13 +188,13 @@ class Yuntu
      * 原来是 getPriceTrial
      *
      * @param string $countryCode 必须，国家简码
-     * @param int $weight 必须，包裹重量，单位 kg,支持 3 位小数
-     * @param int $length 包裹长度,单位 cm,不带小数,不填写默认 1
-     * @param int $width 包裹宽度,单位 cm,不带小数，不填写默认 1
-     * @param int $height 包裹高度,单位 cm,不带小数，不填写默认 1
-     * @param int $packageType 包裹类型，1-包裹，2-文件，3-防水袋，默认 1
-     * @return mixed
+     * @param int    $weight      必须，包裹重量，单位 kg,支持 3 位小数
+     * @param int    $length      包裹长度,单位 cm,不带小数,不填写默认 1
+     * @param int    $width       包裹宽度,单位 cm,不带小数，不填写默认 1
+     * @param int    $height      包裹高度,单位 cm,不带小数，不填写默认 1
+     * @param int    $packageType 包裹类型，1-包裹，2-文件，3-防水袋，默认 1
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getPrice($countryCode, $weight, $length = null, $width = null, $height = null, $packageType = null)
     {
@@ -242,8 +242,8 @@ class Yuntu
      * 05.查询跟踪号
      *
      * @param string $customerOrderNumber 客户订单号,多个以逗号分开
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getTrackingNumber($customerOrderNumber)
     {
@@ -258,8 +258,8 @@ class Yuntu
      * 06. 查询发件人信息
      *
      * @param string $orderNumber 查询号码，可输入运单号、订单号、跟踪号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getSender($orderNumber)
     {
@@ -274,25 +274,25 @@ class Yuntu
      * 07.运单申请
      * 备注：支持一个包裹多个商品
      *
-     * @param string $orderNo 客户订单号
-     * @param string $channelCode 运输方式代码
-     * @param string $totalValue 总申报价值(云途这个参数没用到)
+     * @param string $orderNo             客户订单号
+     * @param string $channelCode         运输方式代码
+     * @param string $totalValue          总申报价值(云途这个参数没用到)
      * @param string $receiverCountryCode 收件人所在国家
-     * @param string $receiverName 收件人姓
-     * @param string $receiverAddress 收件人详细地址
-     * @param string $receiverCity 收件人所在城市
-     * @param string $rProvince 收件人所在省
-     * @param string $receiverPostCode 发件人邮编
-     * @param string $receiverMobile 发件人手机号
-     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @param string $iossCode 云途备案识别码或IOSS号
-     * @return mixed
+     * @param string $receiverName        收件人姓
+     * @param string $receiverAddress     收件人详细地址
+     * @param string $receiverCity        收件人所在城市
+     * @param string $rProvince           收件人所在省
+     * @param string $receiverPostCode    发件人邮编
+     * @param string $receiverMobile      发件人手机号
+     * @param array  $goods               商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $iossCode            云途备案识别码或IOSS号
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [], $iossCode = '')
+        $goods = [], $iossCode = '', $remarks = '')
     {
         $url = ($this->arrUrl())['07'];
 
@@ -308,15 +308,15 @@ class Yuntu
 
         //step2:收件人
         $order['Receiver'] = [ //array, 收件人信息，必填
-            'CountryCode'    => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
-            'FirstName'      => $receiverName,                     //string,收件人姓，必填
-            'Street'         => $receiverAddress,                  //string,收件人详细地址，必填
-            'StreetAddress1' => $receiverAddress1,                  //string,收件人详细地址1，必填
-            'StreetAddress2' => $receiverAddress2,                  //string,收件人详细地址2，必填
-            'City'           => $receiverCity,                     //string,收件人所在城市,非必填
-            'State'          => $rProvince,                        //string,发件人省/州,非必填
-            'Zip'            => $receiverPostCode,                 //string,发件人邮编,非必填
-            'Phone'          => $receiverMobile,                   //string,发件人电话,非必填
+                               'CountryCode'    => $receiverCountryCode,              //string,收件人所在国家，填写国际通用标准 2 位简码， 可通过国家查询服务查询，必填
+                               'FirstName'      => $receiverName,                     //string,收件人姓，必填
+                               'Street'         => $receiverAddress,                  //string,收件人详细地址，必填
+                               'StreetAddress1' => $receiverAddress1,                  //string,收件人详细地址1，必填
+                               'StreetAddress2' => $receiverAddress2,                  //string,收件人详细地址2，必填
+                               'City'           => $receiverCity,                     //string,收件人所在城市,非必填
+                               'State'          => $rProvince,                        //string,发件人省/州,非必填
+                               'Zip'            => $receiverPostCode,                 //string,发件人邮编,非必填
+                               'Phone'          => $receiverMobile,                   //string,发件人电话,非必填
         ];
 
         //step3:产品信息
@@ -327,6 +327,7 @@ class Yuntu
             $order['Parcels'][$k]['Quantity']     = $v['goods_number'];         //int,申报数量,必填
             $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'] * $this->waihuiTransform();   //decimal( 18,2),申报价格(单价),单位 USD,必填
             $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+            $order['Parcels'][$k]['Remark']       = $remarks;                   //订单备注，用于打印配货单
             $order['Parcels'][$k]['CurrencyCode'] = 'USD';                      //string,申报币种，默认：USD,必填
         }
 
@@ -358,8 +359,8 @@ class Yuntu
      * 08.查询运单
      *
      * @param string $orderNo 订单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getOrder($orderNo)
     {
@@ -374,9 +375,9 @@ class Yuntu
      * 09.修改订单预报重量
      *
      * @param string $orderNo 订单号
-     * @param float $weight 修改重量
-     * @return mixed
+     * @param float  $weight  修改重量
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function updateWeight($orderNo, $weight)
@@ -394,8 +395,8 @@ class Yuntu
      * 10.订单删除
      *
      * @param string $orderNo 订单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function delete($orderNo)
@@ -413,9 +414,9 @@ class Yuntu
      * 11.订单拦截
      *
      * @param string $orderNo 订单号
-     * @param string $remark 拦截原因
-     * @return mixed
+     * @param string $remark  拦截原因
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo 待测试
      */
     public function intercept($orderNo, $remark)
@@ -454,8 +455,8 @@ class Yuntu
      * 13.查询物流运费明细
      *
      * @param string $wayBillNumber 运单号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      * @todo
      */
     public function getShippingFeeDetail($wayBillNumber)
@@ -493,8 +494,8 @@ class Yuntu
     /**
      * 15. 查询物流轨迹信息
      * @param string $OrderNumber 物流系统运单号，客户订单或跟踪号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getTrackInfo($OrderNumber)
     {
@@ -509,8 +510,8 @@ class Yuntu
      * 16. 查询末端派送商
      *
      * @param $OrderNumber string 查询号码，可输入运单号、订单号、跟踪号
-     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function getCarrier($OrderNumber)
     {

@@ -13,7 +13,7 @@ class Jiehang
     /**
      * 杰航
      * @param string $clientId 客户编码（由物流商提供）
-     * @param string $token 验证 Token（由物流商提供）
+     * @param string $token    验证 Token（由物流商提供）
      */
     public function __construct($clientId, $token)
     {
@@ -59,7 +59,7 @@ class Jiehang
     /**
      * PHP发送Json对象数据
      *
-     * @param $url string 请求url
+     * @param $url     string 请求url
      * @param $jsonStr string 发送的json字符串
      * @return array
      */
@@ -99,7 +99,7 @@ class Jiehang
     /**
      * 杰航查询相关信息
      * @param string $urlSearch 查询网址
-     * @param array $arr 查询数组
+     * @param array  $arr       查询数组
      * @return mixed
      */
     function getData($urlSearch, $arr = [])
@@ -118,25 +118,25 @@ class Jiehang
      * 01、 创建快件订单,仓储订单,快递制单
      * 15个参数
      *
-     * @param string $orderNo 客户订单号
-     * @param string $channelCode 运输方式代码
-     * @param string $totalValue 总申报价值
+     * @param string $orderNo             客户订单号
+     * @param string $channelCode         运输方式代码
+     * @param string $totalValue          总申报价值
      * @param string $receiverCountryCode 收件人所在国家
-     * @param string $receiverName 收件人姓
-     * @param string $receiverAddress 收件人详细地址
-     * @param string $receiverCity 收件人所在城市
-     * @param string $rProvince 收件人所在省
-     * @param string $receiverPostCode 发件人邮编
-     * @param string $receiverMobile 发件人手机号
-     * @param string $iossNumber IOSS 增值税识别号
-     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $receiverName        收件人姓
+     * @param string $receiverAddress     收件人详细地址
+     * @param string $receiverCity        收件人所在城市
+     * @param string $rProvince           收件人所在省
+     * @param string $receiverPostCode    发件人邮编
+     * @param string $receiverMobile      发件人手机号
+     * @param string $iossNumber          IOSS 增值税识别号
+     * @param array  $goods               商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [], $iossNumber = '')
+        $goods = [], $iossNumber = '', $remarks = '')
     {
         // step1.1:（参数）
         $data['Verify'] = $this->paramVerify();
@@ -175,6 +175,7 @@ class Jiehang
                 'Number'         => array_sum(array_map(function ($val) {
                     return ($val['goods_number']);
                 }, $goods)),  //件数
+                'Note'           => $remarks,
                 'VatNumber'      => $iossNumber,  //Vat 增值税号（寄件人）
                 'TariffType'     => '',  //说明：目前写空，关税类型（快件订单 对接中邮渠道填写特殊类型。 1300：预缴增值税 IOSS, 1301：预缴增值税 no-IOSS, 1302：预缴增值税 other）
                 // step1.5:（参数）收件人信息
@@ -207,22 +208,22 @@ class Jiehang
      *  02、 修改快件订单,仓储订单,快递制单
      * 16个参数，最后一个参数不一样，是创建订单是返回的
      *
-     * @param string $orderNo 客户订单号(可传入贵公司内部单号)
+     * @param string $orderNo     客户订单号(可传入贵公司内部单号)
      * @param string $channelCode 渠道代码
      * @param string $countryCode 国家二字代码
-     * @param string $totalValue 订单总申报价值
-     * @param string $number 件数
-     * @param string $name 名称
-     * @param string $address 地址
-     * @param string $mobile 手机
-     * @param string $province 省州
-     * @param string $city 城市
-     * @param string $postCode 邮编
-     * @param string $cnname 产品中文名
-     * @param string $enname 产品英文名
-     * @param string $price 单价
-     * @param string $weight 重量
-     * @param string $corpBillid 订单号,注意：创建订单后返回，修改订单必传
+     * @param string $totalValue  订单总申报价值
+     * @param string $number      件数
+     * @param string $name        名称
+     * @param string $address     地址
+     * @param string $mobile      手机
+     * @param string $province    省州
+     * @param string $city        城市
+     * @param string $postCode    邮编
+     * @param string $cnname      产品中文名
+     * @param string $enname      产品英文名
+     * @param string $price       单价
+     * @param string $weight      重量
+     * @param string $corpBillid  订单号,注意：创建订单后返回，修改订单必传
      * @return mixed
      */
     public function updateOrder($orderNo, $channelCode, $countryCode, $totalValue, $number, $name, $address, $mobile, $province, $city, $postCode, $cnname, $enname, $price, $weight, $corpBillid)
@@ -478,9 +479,9 @@ class Jiehang
      * 注：原来是 searchPrice
      *
      * @param string $countryCode 目的地国家(必填)
-     * @param double $weight 实重(必填)
-     * @param string $goodsType 货物类型（默认 WPX） WPX：包裹, DOC：文件, PAK：PAK 袋（不必填）
-     * @param null $postCode 目的地邮编（不必填）
+     * @param double $weight      实重(必填)
+     * @param string $goodsType   货物类型（默认 WPX） WPX：包裹, DOC：文件, PAK：PAK 袋（不必填）
+     * @param null   $postCode    目的地邮编（不必填）
      *
      * @return mixed
      */

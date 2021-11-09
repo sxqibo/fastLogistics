@@ -17,7 +17,7 @@ class Santai
      * 三态 constructor.
      *
      * @param string $appKey SFC提供给用户的密钥key
-     * @param string $token SFC提供给用户的密钥token
+     * @param string $token  SFC提供给用户的密钥token
      * @param string $userId 用户 code
      */
     public function __construct($appKey, $token, $userId)
@@ -98,26 +98,26 @@ class Santai
      * 03、添加订单
      * 注：原来是 addOrder
      *
-     * @param string $orderNo 客户订单号
-     * @param string $channelCode 运输方式代码
-     * @param string $totalValue 总申报价值(云途这个参数没用到)
+     * @param string $orderNo             客户订单号
+     * @param string $channelCode         运输方式代码
+     * @param string $totalValue          总申报价值(云途这个参数没用到)
      * @param string $receiverCountryCode 收件人所在国家
-     * @param string $receiverName 收件人姓
-     * @param string $receiverAddress 收件人详细地址
-     * @param string $receiverCity 收件人所在城市
-     * @param string $rProvince 收件人所在省
-     * @param string $receiverPostCode 发件人邮编
-     * @param string $receiverMobile 发件人手机号
-     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @param string $goodsDescription 订单描述
-     * @param string $iossCode 云途备案识别码或IOSS号
+     * @param string $receiverName        收件人姓
+     * @param string $receiverAddress     收件人详细地址
+     * @param string $receiverCity        收件人所在城市
+     * @param string $rProvince           收件人所在省
+     * @param string $receiverPostCode    发件人邮编
+     * @param string $receiverMobile      发件人手机号
+     * @param array  $goods               商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $goodsDescription    订单描述
+     * @param string $iossCode            云途备案识别码或IOSS号
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
     public function createOrder(
         $orderNo, $channelCode,
-        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [],$goodsDescription, $iossCode = '')
+        $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $recipientEmail, $receiverMobile,
+        $goods = [], $goodsDescription, $iossCode = '',$remarks='')
     {
         $param = [
             //step1（2）
@@ -132,6 +132,7 @@ class Santai
             'recipientCity'      => $receiverCity,        // required, （传参）收件城市
             'recipientAddress'   => $receiverAddress,   // required, （传参）收件地址
             'recipientZipCode'   => $receiverPostCode,    // required, （传参）收件邮编
+            'recipientEmail'     => $recipientEmail,    // option, （传参）收件邮箱
             'recipientPhone'     => $receiverMobile,  // required, （传参）收件电话
 
             //寄件人
@@ -141,10 +142,11 @@ class Santai
             'goodsDeclareWorth'  => array_sum(array_map(function ($val) {
                 return ($val['goods_number'] * $val['goods_single_worth']);
             }, $goods)),   //订单总申报价值 required, （目前不知道）总申报价值 float，备注：这个是否是订单价格.注：这个是订单总价格
-            'goodsDescription' => $goodsDescription,
+            'goodsDescription'   => $goodsDescription,
 
             //step4:2021.7亚马逊新增iosscode
-            'iossNo' => $iossCode
+            'iossNo'             => $iossCode,
+            'orderNote'          => $remarks, // 备注
         ];
 
         //step4:商品信息（4）
@@ -199,7 +201,7 @@ class Santai
     /**
      * 06、修改订单状态
      *
-     * @param string $orderNo 订单号
+     * @param string $orderNo     订单号
      * @param string $orderStatus 订单状态，修改状态:preprocess(预处理)、confirmed(已确认)、sumbmitted(已交寄)、send(已发货)、delete(已删除)
      * @return mixed
      */
@@ -248,10 +250,10 @@ class Santai
     /**
      * 08、地址标签打印
      *
-     * @param string $orderNo SFC单号
-     * @param string $printType 打印类型
+     * @param string $orderNo    SFC单号
+     * @param string $printType  打印类型
      * @param string $printType2 标签类型
-     * @param string $printSize 标签尺寸
+     * @param string $printSize  标签尺寸
      * @return string
      */
     public function addressPrint($orderNo, $printType, $printType2, $printSize)
@@ -280,7 +282,7 @@ class Santai
      * 10、获取时间段订单信息
      *
      * @param string $startTime 开始日期Y-m-d
-     * @param string $endTime 结束时间Y-m-d
+     * @param string $endTime   结束时间Y-m-d
      * @return mixed
      */
     public function searchTimeOrder($startTime, $endTime)
@@ -298,7 +300,7 @@ class Santai
      * 说明：接口文档说是 startTime和endTime,其实是 startime,endtime
      *
      * @param string $startTime 开始日期Y-m-d H:i:s
-     * @param string $endTime 结束时间Y-m-d H:i:s
+     * @param string $endTime   结束时间Y-m-d H:i:s
      * @return mixed
      */
     public function getFeeByTime($startTime, $endTime)
@@ -353,8 +355,8 @@ class Santai
      * 14、新建国内快递交货单
      *
      * @param string $companyName 快递公司
-     * @param string $packageId 快递单号
-     * @param int $sfcNumber SFC包裹数量
+     * @param string $packageId   快递单号
+     * @param int    $sfcNumber   SFC包裹数量
      * @return mixed
      */
     public function createExpressWaybill($companyName, $packageId, $sfcNumber)

@@ -226,8 +226,8 @@ class Zongheng
     /**
      * 获取订单标签信息
      *
-     * @param $orderNos array 多个订单号
-     * @param array $params 附加参数
+     * @param       $orderNos array 多个订单号
+     * @param array $params   附加参数
      * @throws Exception
      * @return array
      */
@@ -367,10 +367,10 @@ class Zongheng
             'cargo_type'      => 'W', // 货物类型（W:包裹 D:文件） 默认为：W
             'extra_service'   => [], // 额外服务代码集合
             'cargo_volume'    => [   // 材积信息
-                'weight' => $params['weight'] ?? '',// 重量（KG） - 有cargo_volume字段则weight必填
-                'length' => $params['length'] ?? '', // 长（CM）
-                'width'  => $params['width'] ?? '', // 宽（CM）
-                'height' => $params['height'] ?? '', // 高（CM）
+                                     'weight' => $params['weight'] ?? '',// 重量（KG） - 有cargo_volume字段则weight必填
+                                     'length' => $params['length'] ?? '', // 长（CM）
+                                     'width'  => $params['width'] ?? '', // 宽（CM）
+                                     'height' => $params['height'] ?? '', // 高（CM）
             ],
         ];
 
@@ -501,7 +501,7 @@ class Zongheng
     /**
      * 处理接口请求
      *
-     * @param $data
+     * @param       $data
      * @param array $params
      * @throws Exception
      * @return array
@@ -536,7 +536,7 @@ class Zongheng
             // 非必填
             'shipping_method_no' => '', // 服务商号,
             'order_status'       => $data['order_status'] ?? "P", // 订单状态 - P：已预报 (默认) D：草稿 (如果创建草稿订单，则需要再调用submitforecast【提交预报】接口)
-            'order_info'         => $data['memo'] ?? '', // 订单备注
+            'order_info'         => $data['remarks'] ?? '', // 订单备注
 
             // 发件人信息
             'shipper'            => [

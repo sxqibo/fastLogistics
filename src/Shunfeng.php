@@ -15,10 +15,10 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Shunfeng
 {
-    private $serviceEndPoint = 'http://sfapi.trackmeeasy.com/ruserver/webservice/sfexpressService?wsdl'; // 正式环境
+    private $serviceEndPoint     = 'http://sfapi.trackmeeasy.com/ruserver/webservice/sfexpressService?wsdl'; // 正式环境
     private $testServiceEndPoint = 'http://kts-api-uat.trackmeeasy.com/webservice/sfexpressService?wsdl'; // 测试环境
 
-    private $labelEndPoint = 'http://sfapi.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 正式环境
+    private $labelEndPoint     = 'http://sfapi.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 正式环境
     private $testLabelEndPoint = 'http://oms.uat.trackmeeasy.com/ruserver/api/getLabelUrl.action'; // 测试环境
 
     private $checkWord; // 接口校验码
@@ -39,7 +39,7 @@ class Shunfeng
     /**
      * 获取请求节点信息
      *
-     * @param $key
+     * @param       $key
      * @param false $isDebug
      * @throws Exception
      * @return string[]
@@ -69,7 +69,7 @@ class Shunfeng
     /**
      * 创建订单
      *
-     * @param $data
+     * @param       $data
      * @param false $isDebug
      * @throws \SoapFault
      * @return array
@@ -309,7 +309,7 @@ class Shunfeng
 
                         // 非必填
                         'custid'             => '', // 用户月结卡号
-                        'remark'             => '', // 备注
+                        'remark'             => $data['remarks'] ?? '', // 备注
                         'category'           => '', // 所属品类 订单所属品类，用于海关清关
                         'sendstarttime'      => '', // 要求上门收件时间
                         'cargo_length'       => '', // 货物长

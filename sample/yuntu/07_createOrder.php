@@ -27,7 +27,7 @@ $rCity        = 'Zwingen';     //收件人所在城市
 $rProvince    = 'Zwingen';             //收件人所在省
 $rCode        = '04222';       //发件人邮编,必填项,5位数字
 $rMobile      = '18803415820';  //发件人手机
-
+$remarks      = '备注'; //订单备注，用于打印配货单
 //step3:商品
 $goods = [
     [
@@ -52,7 +52,7 @@ $iossNumber = 'IM4420001201';
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rAddress1, $rAddress2, $rCity, $rProvince, $rCode, $rMobile,
-    $goods, $iossNumber);
+    $goods, $iossNumber, $remarks);
 
 
 print_r($result);
