@@ -13,7 +13,7 @@ use Sxqibo\Logistics\common\Client;
  */
 class DiSIFang
 {
-    private $serviceEndPoint     = 'http://open.4px.com/router/api/service'; // 正式环境
+    private $serviceEndPoint = 'http://open.4px.com/router/api/service'; // 正式环境
     private $testServiceEndPoint = 'http://open.sandbox.4px.com/router/api/service'; // 沙箱环境
 
     private $appKey;
@@ -36,8 +36,8 @@ class DiSIFang
      * 获取请求节点信息
      *
      * @param $key
-     * @throws Exception
      * @return mixed
+     * @throws Exception
      */
     protected function getEndPoint($key, $isDebug = false)
     {
@@ -149,8 +149,8 @@ class DiSIFang
      *
      * @param       $data
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function createOrder($data, $isDebug = false)
     {
@@ -167,8 +167,8 @@ class DiSIFang
      * @param       $orderNo
      * @param       $orderWeight string 单位KG
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function updateOrder($orderNo, $orderWeight, $isDebug = false)
     {
@@ -187,8 +187,8 @@ class DiSIFang
      *
      * @param       $params
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getPrice($params, $isDebug = false)
     {
@@ -197,7 +197,7 @@ class DiSIFang
         $params = [
             'request_no'             => $params['orderNo'] ?? '', // 请求单号(支持4PX单号、面单号、客户单号)； 若填写了请求单号，则其余请求字段将不会生效
             'country_code'           => $params['country_code'] ?? '', // 目的国家二字码（未填写请求单号时，必填）
-            'weight'                 => $params['weight'] ?? '', // 实重(单位g，未填写请求单号时，必填)，填写实重需小于1000000g
+            'weight'                 => $params['weight'] * 1000 ?? '', // 实重(单位KG，未填写请求单号时，必填)，填写实重需小于1000000g
             'length'                 => $params['length'] ?? '', // 长(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
             'width'                  => $params['width'] ?? '', // 宽(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
             'height'                 => $params['height'] ?? '', // 高(单位cm)；长宽高3个字段，填写了其中一个字段，其他2个字段需必填；小于1000cm并且保留2位小数
@@ -215,9 +215,9 @@ class DiSIFang
      *
      * @param        $orderNo
      * @param string $cancelReason
-     * @param false  $isDebug
-     * @throws Exception
+     * @param false $isDebug
      * @return array
+     * @throws Exception
      */
     public function deleteOrder($orderNo, $cancelReason = 'cancel', $isDebug = false)
     {
@@ -237,9 +237,9 @@ class DiSIFang
      * @param        $orderNo
      * @param string $isHold
      * @param string $holdReason
-     * @param false  $isDebug
-     * @throws Exception
+     * @param false $isDebug
      * @return array
+     * @throws Exception
      */
     public function holdOrder($orderNo, $isHold = 'Y', $holdReason = 'cancel', $isDebug = false)
     {
@@ -259,8 +259,8 @@ class DiSIFang
      *
      * @param       $params
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getOrder($params, $isDebug = false)
     {
@@ -279,10 +279,10 @@ class DiSIFang
     /**
      * 物流产品查询
      *
-     * @param int   $transportMode 运输方式：1 所有方式；2 国际快递；3 国际小包；4 专线；5 联邮通；6 其他；
+     * @param int $transportMode 运输方式：1 所有方式；2 国际快递；3 国际小包；4 专线；5 联邮通；6 其他；
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getShipTypes($transportMode = 1, $isDebug = false)
     {
@@ -301,8 +301,8 @@ class DiSIFang
      *
      * @param       $orderNo
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function labelPrint($orderNo, $otherParams = [], $isDebug = false)
     {
@@ -340,8 +340,8 @@ class DiSIFang
      * @param       $params
      * @param array $otherParams
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function multipleLabelPrint($params, $otherParams = [], $isDebug = false)
     {
@@ -377,8 +377,8 @@ class DiSIFang
      * 查询计量单位
      *
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getMeasureUnit($isDebug = false)
     {
@@ -393,8 +393,8 @@ class DiSIFang
      * @param       $serviceCode string 业务类型:F(订单履约)；S(自发服务)；T(转 运服务)；R(退件服务)
      * @param       $countryCode string 国家二字码
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getCourseList($serviceCode, $countryCode, $isDebug = false)
     {
@@ -411,11 +411,11 @@ class DiSIFang
     /**
      * 查询申报产品种类
      *
-     * @param int    $parentCode
+     * @param int $parentCode
      * @param string $businessType
-     * @param false  $isDebug
-     * @throws Exception
+     * @param false $isDebug
      * @return array
+     * @throws Exception
      */
     public function getCategory($parentCode = 0, $businessType = 'E', $isDebug = false)
     {
@@ -434,8 +434,8 @@ class DiSIFang
      *
      * @param       $trackNumber
      * @param false $isDebug
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     public function getTrack($trackNumber, $isDebug = false)
     {
@@ -602,8 +602,8 @@ class DiSIFang
      *
      * @param       $data
      * @param array $params
-     * @throws Exception
      * @return array
+     * @throws Exception
      */
     protected function handleRequest($endPoint, $body)
     {
