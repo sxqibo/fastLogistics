@@ -3,8 +3,8 @@
 require '../../vendor/autoload.php';
 
 try {
-    $appKey   = 'b6d2fed6f95f83579ac753001d9b9297a3351f1f42089c5f49a81b0e9ca4b2e1';
-    $appToken = 'b6d2fed6f95f83579ac753001d9b9297';
+    $appKey   = '';
+    $appToken = '';
     $client   = new \Sxqibo\Logistics\TuYunDa($appToken, $appKey);
 
     // 1.取消订单
