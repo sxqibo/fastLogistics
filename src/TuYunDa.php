@@ -406,6 +406,11 @@ class TuYunDa
             if ($body['service'] == 'getLabelUrl') {
                 $result['data']['url'] = $result['url'];
             }
+            //针对订单创建数据返回
+            if ($body['service'] == 'createOrder') {
+                $result['data']['reference_no'] = $result['reference_no'];
+                $result['data']['order_code'] = $result['order_code'];
+            }
             return ['code' => 0, 'message' => '成功', 'data' => $result['data'] ?? []];
         }
     }
