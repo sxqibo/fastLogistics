@@ -411,7 +411,13 @@ class TuYunDa
                 $result['data']['reference_no'] = $result['reference_no'];
                 $result['data']['order_code'] = $result['order_code'];
             }
-            return ['code' => 0, 'message' => '成功', 'data' => $result['data'] ?? []];
+            //兼容返回data格式
+            if (!empty($result['data'])) {
+                $dataInfo = $result['data'];
+            } else if (!empty($result['Data'])) {
+                $dataInfo = $result['Data'];
+            }
+            return ['code' => 0, 'message' => '成功', 'data' => $dataInfo ?? []];
         }
     }
 
