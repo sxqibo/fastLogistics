@@ -17,15 +17,17 @@ class Santai
      * 三态 constructor.
      *
      * @param string $appKey SFC提供给用户的密钥key
-     * @param string $token  SFC提供给用户的密钥token
+     * @param string $token SFC提供给用户的密钥token
      * @param string $userId 用户 code
+     * @param int $divisionId 分拨中心id,不填默认为1（深圳分公司）
      */
-    public function __construct($appKey, $token, $userId)
+    public function __construct($appKey, $token, $userId, $divisionId = 1)
     {
         try {
-            $this->appKey = trim($appKey);
-            $this->token  = trim($token);
-            $this->userId = trim($userId);
+            $this->appKey     = trim($appKey);
+            $this->token      = trim($token);
+            $this->userId     = trim($userId);
+            $this->divisionId = trim($divisionId);
 
             if (empty($appKey)) {
                 throw new \Exception("appKey is empty");
@@ -71,7 +73,7 @@ class Santai
     public function getShipTypes()
     {
         $parameter['HeaderRequest'] = $this->headerParam();
-        $parameter['divisionId']    = 1; //分拨中心ID，不填则默认等于1 (即:深圳分拨中心的ID)
+        $parameter['divisionId']    = $this->divisionId; //分拨中心ID，不填则默认等于1 (即:深圳分拨中心的ID)
 
         $result = ($this->soapClient())->getShipTypes($parameter);
 
@@ -98,30 +100,30 @@ class Santai
      * 03、添加订单
      * 注：原来是 addOrder
      *
-     * @param string $orderNo             客户订单号
-     * @param string $channelCode         运输方式代码
-     * @param string $totalValue          总申报价值(云途这个参数没用到)
+     * @param string $orderNo 客户订单号
+     * @param string $channelCode 运输方式代码
+     * @param string $totalValue 总申报价值(云途这个参数没用到)
      * @param string $receiverCountryCode 收件人所在国家
-     * @param string $receiverName        收件人姓
-     * @param string $receiverAddress     收件人详细地址
-     * @param string $receiverCity        收件人所在城市
-     * @param string $rProvince           收件人所在省
-     * @param string $receiverPostCode    发件人邮编
-     * @param string $receiverMobile      发件人手机号
-     * @param array  $goods               商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
-     * @param string $goodsDescription    订单描述
-     * @param string $iossCode            云途备案识别码或IOSS号
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param string $receiverName 收件人姓
+     * @param string $receiverAddress 收件人详细地址
+     * @param string $receiverCity 收件人所在城市
+     * @param string $rProvince 收件人所在省
+     * @param string $receiverPostCode 发件人邮编
+     * @param string $receiverMobile 发件人手机号
+     * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $goodsDescription 订单描述
+     * @param string $iossCode 云途备案识别码或IOSS号
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $recipientEmail, $receiverMobile,
-        $goods = [], $goodsDescription, $iossCode = '',$remarks='')
+        $goods = [], $goodsDescription, $iossCode = '', $remarks = '')
     {
         $param = [
             //step1（2）
-            'opDivision'         => 1,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
+            'opDivision'         => $this->divisionId,               // required, 操作分拨中心 int, 详细请看：https://www.sfcservice.com/api-doc/right/lang/cn#division_list
             'orderStatus'        => 'preprocess',    // required, 订单状态:confirmed(已确认)、preprocess(预处理)、sumbmitted(已交寄)
 
             //step2:收件人信息（8）
@@ -201,7 +203,7 @@ class Santai
     /**
      * 06、修改订单状态
      *
-     * @param string $orderNo     订单号
+     * @param string $orderNo 订单号
      * @param string $orderStatus 订单状态，修改状态:preprocess(预处理)、confirmed(已确认)、sumbmitted(已交寄)、send(已发货)、delete(已删除)
      * @return mixed
      */
@@ -250,10 +252,10 @@ class Santai
     /**
      * 08、地址标签打印
      *
-     * @param string $orderNo    SFC单号
-     * @param string $printType  打印类型
+     * @param string $orderNo SFC单号
+     * @param string $printType 打印类型
      * @param string $printType2 标签类型
-     * @param string $printSize  标签尺寸
+     * @param string $printSize 标签尺寸
      * @return string
      */
     public function addressPrint($orderNo, $printType, $printType2, $printSize)
@@ -282,7 +284,7 @@ class Santai
      * 10、获取时间段订单信息
      *
      * @param string $startTime 开始日期Y-m-d
-     * @param string $endTime   结束时间Y-m-d
+     * @param string $endTime 结束时间Y-m-d
      * @return mixed
      */
     public function searchTimeOrder($startTime, $endTime)
@@ -300,7 +302,7 @@ class Santai
      * 说明：接口文档说是 startTime和endTime,其实是 startime,endtime
      *
      * @param string $startTime 开始日期Y-m-d H:i:s
-     * @param string $endTime   结束时间Y-m-d H:i:s
+     * @param string $endTime 结束时间Y-m-d H:i:s
      * @return mixed
      */
     public function getFeeByTime($startTime, $endTime)
@@ -355,8 +357,8 @@ class Santai
      * 14、新建国内快递交货单
      *
      * @param string $companyName 快递公司
-     * @param string $packageId   快递单号
-     * @param int    $sfcNumber   SFC包裹数量
+     * @param string $packageId 快递单号
+     * @param int $sfcNumber SFC包裹数量
      * @return mixed
      */
     public function createExpressWaybill($companyName, $packageId, $sfcNumber)
