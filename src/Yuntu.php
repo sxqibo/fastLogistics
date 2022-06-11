@@ -80,41 +80,6 @@ class Yuntu
     }
 
     /**
-     * 外汇转换接口
-     * 说明：易源数据-外汇牌价汇率查询转换
-     *
-     * @return mixed
-     */
-    public function waihuiTransform()
-    {
-        $host    = "https://ali-waihui.showapi.com";
-        $path    = "/waihui-transform";
-        $appcode = "4979dea4ce2f43f2ba046cc297f5414e";
-        $querys  = "fromCode=CNY&money=1&toCode=USD";
-        $url     = $host . $path . "?" . $querys;
-        $headers = [
-            'Authorization:APPCODE ' . $appcode,
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_FAILONERROR, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_HEADER, true); //这个会输出头部的很多信息不需要
-        if (1 == strpos("$" . $host, "https://")) {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        }
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-        curl_close($ch);
-        $result = $response['showapi_res_body']['money'];
-        return $result;
-    }
-
-    /**
      * 获取数据的方式
      *
      * @param string $url  请求的URL
@@ -325,7 +290,7 @@ class Yuntu
             $order['Parcels'][$k]['EName']        = $v['goods_en_name'];        //string,包裹申报名称(英文)必填
             $order['Parcels'][$k]['CName']        = $v['goods_cn_name'];        //string,包裹申报名称(中文)，不必填
             $order['Parcels'][$k]['Quantity']     = $v['goods_number'];         //int,申报数量,必填
-            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'] * $this->waihuiTransform();   //decimal( 18,2),申报价格(单价),单位 USD,必填
+            $order['Parcels'][$k]['UnitPrice']    = $v['goods_single_worth'];   //decimal( 18,2),申报价格(单价),单位 USD,必填
             $order['Parcels'][$k]['UnitWeight']   = $v['goods_single_weight'];  //decimal( 18,3),申报重量(单重)，单位 kg,,必填
             $order['Parcels'][$k]['Remark']       = $remarks;                   //订单备注，用于打印配货单
             $order['Parcels'][$k]['CurrencyCode'] = 'USD';                      //string,申报币种，默认：USD,必填
