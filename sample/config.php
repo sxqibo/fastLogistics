@@ -7,6 +7,10 @@ $config = [
         'clientId' => '',
         'token'    => '',
     ],
+    'jimai' => [
+        'clientId' => '',
+        'token'    => '',
+    ],
     'sanTai'  => [
         'appKey' => '',
         'token'  => '',
