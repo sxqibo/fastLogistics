@@ -16,7 +16,7 @@ $data     = new Jimai($clientId, $token);
 
 //step1:订单
 $orderNo     = time();  //客户订单号
-$channelCode = 'GNPS';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
+$channelCode = 'JM025';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
 
 //step2:收件人
 $rCountryCode = 'DE';           //收件人所在国家

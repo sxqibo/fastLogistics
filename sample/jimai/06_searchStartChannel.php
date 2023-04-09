@@ -2,7 +2,7 @@
 //命名空间
 use Sxqibo\Logistics\Jimai;
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once '../config.php';
 
 $clientId = $config['jimai']['clientId'];
