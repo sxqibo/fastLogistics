@@ -128,15 +128,17 @@ class Jiehang
      * @param string $rProvince 收件人所在省
      * @param string $receiverPostCode 发件人邮编
      * @param string $receiverMobile 发件人手机号
-     * @param string $iossNumber IOSS 增值税识别号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $iossNumber IOSS 增值税识别号
+     * @param string $remarks 备注
+     * @param string $numberIsOne 是否为一个数量
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [], $iossNumber = '', $remarks = '')
+        $goods = [], $iossNumber = '', $remarks = '', $numberIsOne = 0)
     {
         // step1.1:（参数）
         $data['Verify'] = $this->paramVerify();
@@ -194,6 +196,17 @@ class Jiehang
 
             ]
         ];
+
+        // 当数量为1的判断，客户的特殊要求
+        if ($numberIsOne == 1) {
+            $data['OrderDatas'] = [
+                [
+                    'TotalWeight' => $goods[0]['goods_number'] * $goods[0]['goods_single_weight'], //订单总重量
+                    'TotalValue'  => $goods[0]['goods_single_worth'],  //订单总申报价值
+                    'Number'      => 1, // 件数,后来B要求的
+                ]
+            ];
+        }
 
         // step2:网址
         $url = $this->arrUrl();
