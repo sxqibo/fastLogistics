@@ -163,50 +163,44 @@ class Jiehang
             $OrderItems[$k]['Weight'] = $v['goods_single_weight'];        //decimal( 18,3),申报重量(单重)，单位 kg,,必填
         }
         // step1.4:（参数）订单数据
-        $data['OrderDatas'] = [
-            [
-                'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
-                'ChannelCode'    => $channelCode,           //渠道代码
-                'CountryCode'    => $receiverCountryCode,   //国家二字代码
-                'TotalWeight'    => array_sum(array_map(function ($val) {
-                    return ($val['goods_number'] * $val['goods_single_weight']);
-                }, $goods)),  //订单总重量
-                'TotalValue'     => array_sum(array_map(function ($val) {
-                    return ($val['goods_number'] * $val['goods_single_worth']);
-                }, $goods)),   //订单总申报价值
-                'Number'         => array_sum(array_map(function ($val) {
-                    return ($val['goods_number']);
-                }, $goods)),  //件数
-                'Note'           => $remarks,
-                'VatNumber'      => $iossNumber,  //Vat 增值税号（寄件人）
-                'TariffType'     => '',           //说明：目前写空，关税类型（快件订单 对接中邮渠道填写特殊类型。 1300：预缴增值税 IOSS, 1301：预缴增值税 no-IOSS, 1302：预缴增值税 other）
-                // step1.5:（参数）收件人信息
-                'Recipient'      => [
-                    'Name'     => $receiverName,         //名称
-                    'Addres1'  => $receiverAddress1,     //地址
-                    'Addres2'  => $receiverAddress2,     //地址
-                    'Mobile'   => $receiverMobile,       //手机
-                    'Tel'      => $receiverMobile,       //电话
-                    'Province' => $rProvince,            //省州
-                    'City'     => $receiverCity,         //城市
-                    'Post'     => $receiverPostCode,     //邮编
-                ],
-                'OrderItems'     => $OrderItems
-
-
-            ]
+        $datas = [
+            'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
+            'ChannelCode'    => $channelCode,           //渠道代码
+            'CountryCode'    => $receiverCountryCode,   //国家二字代码
+            'TotalWeight'    => array_sum(array_map(function ($val) {
+                return ($val['goods_number'] * $val['goods_single_weight']);
+            }, $goods)),  //订单总重量
+            'TotalValue'     => array_sum(array_map(function ($val) {
+                return ($val['goods_number'] * $val['goods_single_worth']);
+            }, $goods)),   //订单总申报价值
+            'Number'         => array_sum(array_map(function ($val) {
+                return ($val['goods_number']);
+            }, $goods)),  //件数
+            'Note'           => $remarks,
+            'VatNumber'      => $iossNumber,  //Vat 增值税号（寄件人）
+            'TariffType'     => '',           //说明：目前写空，关税类型（快件订单 对接中邮渠道填写特殊类型。 1300：预缴增值税 IOSS, 1301：预缴增值税 no-IOSS, 1302：预缴增值税 other）
+            // step1.5:（参数）收件人信息
+            'Recipient'      => [
+                'Name'     => $receiverName,         //名称
+                'Addres1'  => $receiverAddress1,     //地址
+                'Addres2'  => $receiverAddress2,     //地址
+                'Mobile'   => $receiverMobile,       //手机
+                'Tel'      => $receiverMobile,       //电话
+                'Province' => $rProvince,            //省州
+                'City'     => $receiverCity,         //城市
+                'Post'     => $receiverPostCode,     //邮编
+            ],
+            'OrderItems'     => $OrderItems
         ];
 
         // 当数量为1的判断，客户的特殊要求
         if ($numberIsOne == 1) {
-            $data['OrderDatas'] = [
-                [
-                    'TotalWeight' => $goods[0]['goods_number'] * $goods[0]['goods_single_weight'], //订单总重量
-                    'TotalValue'  => $goods[0]['goods_single_worth'],  //订单总申报价值
-                    'Number'      => 1, // 件数,后来B要求的
-                ]
-            ];
+            $datas['TotalWeight'] = $goods[0]['goods_number'] * $goods[0]['goods_single_weight']; //订单总重量
+            $datas['TotalValue'] = $goods[0]['goods_single_worth']; //订单总申报价值
+            $datas['Number'] = 1; // 件数,后来B要求的
         }
+
+        $data['OrderDatas'] = [$datas];
 
         // step2:网址
         $url = $this->arrUrl();
