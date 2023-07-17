@@ -130,13 +130,15 @@ class Jimai
      * @param string $receiverMobile 发件人手机号
      * @param string $iossNumber IOSS 增值税识别号
      * @param array $goods 商品属性，二维数组， 有5个必填项，包裹申报名称(中文)，包裹申报名称(英文)，申报数量，申报价格(单价)，申报重量(单重)
+     * @param string $remarks 备注
+     * @param string $numberIsOne 是否为一个数量
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress1, $receiverAddress2, $receiverCity, $rProvince, $receiverPostCode, $receiverMobile,
-        $goods = [], $iossNumber = '', $remarks = '')
+        $goods = [], $iossNumber = '', $remarks = '', $numberIsOne = 0)
     {
         // step1.1:（参数）
         $data['Verify'] = $this->paramVerify();
@@ -161,8 +163,7 @@ class Jimai
             $OrderItems[$k]['Weight'] = $v['goods_single_weight'];        //decimal( 18,3),申报重量(单重)，单位 kg,,必填
         }
         // step1.4:（参数）订单数据
-        $data['OrderDatas'] = [
-            [
+        $datas = [
                 'CustomerNumber' => $orderNo,               //客户订单号(可传入贵公司内部单号)
                 'ChannelCode'    => $channelCode,           //渠道代码
                 'CountryCode'    => $receiverCountryCode,   //国家二字代码
@@ -190,10 +191,16 @@ class Jimai
                     'Post'     => $receiverPostCode,     //邮编
                 ],
                 'OrderItems'     => $OrderItems
-
-
-            ]
         ];
+
+        // 当数量为1的判断，客户的特殊要求
+        if($numberIsOne == 1) {
+            $datas['TotalWeight'] = ''; //订单总重量
+            $datas['TotalValue'] = $goods[0]['goods_single_worth']; //订单总申报价值
+            $datas['Number'] = 1; // 件数,后来B要求的
+        }
+
+        $data['OrderDatas'][] = $datas;
 
         // step2:网址
         $url = $this->arrUrl();

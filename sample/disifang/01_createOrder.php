@@ -10,6 +10,7 @@ try {
     $client    = new \Sxqibo\Logistics\DiSIFang($appKey, $appSecret);
 
     $data = [
+        'numberIsOne'         => 1, //是否为一个包裹
         // 必填项
         'channelCode'         => 'F3',     // 发货方式
         'orderNo'             => 'TE' . time(),    // 客户订单号

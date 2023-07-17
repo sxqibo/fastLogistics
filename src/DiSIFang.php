@@ -456,6 +456,7 @@ class DiSIFang
      */
     protected function formatData($data)
     {
+        $numberIsOne = $data['numberIsOne'] ?? 0; // 是否为一个数量
         $goods      = $data['goods'];
         $senderInfo = $data['sender'] ?? [];
         $returnInfo = $data['return'] ?? [];
@@ -579,6 +580,12 @@ class DiSIFang
             $singleWeight  = $item['goods_single_weight'] * 1000; // 单位g
             $packageWeight += ($item['goods_number'] * $singleWeight);
             $packagePrice  += ($item['goods_number'] * $item['goods_single_worth']);
+        }
+
+        // 当数量为1的判断，客户的特殊要求
+        if($numberIsOne == 1) {
+            $packageWeight = ''; // 总重量
+            $packagePrice = $goods[0]['goods_single_worth']; // 总价值
         }
 
         // 包裹信息

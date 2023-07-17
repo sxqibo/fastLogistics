@@ -28,6 +28,7 @@ $rProvince      = 'MA';           //收件人所在省
 $rCode          = '04222';        //发件人邮编,必填项,5位数字
 $recipientEmail = 'email@qq.com';        //发件人郵箱,選填项,有的渠道需要
 $rMobile        = '415-851-9136'; //发件人手机
+$remarks      = ''; //订单备注，用于打印配货单
 
 //step3:商品
 $goods = [
@@ -52,7 +53,6 @@ $iossNumber = 'IM4420001201';
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $recipientEmail, $rMobile,
-    $goods, $iossNumber);
-
+    $goods, '', $iossNumber, $remarks, 1);
 
 print_r($result);

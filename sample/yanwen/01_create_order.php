@@ -10,6 +10,7 @@ try {
     $goods[] =
 
     $data = [
+        'numberIsOne' => 1, // 包裹为1个
         // 必填项
         'channelCode' => 140,     // 发货方式
         'orderNo'     => time(),    // 客户订单号

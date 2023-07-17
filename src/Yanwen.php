@@ -812,6 +812,12 @@ class Yanwen
             $totalQuantity += $goodsNumber;
         }
 
+        // 当数量为1的判断，客户的特殊要求
+        if ($data['numberIsOne'] == 1) {
+            $totalQuantity = 1;
+        }
+
+
         $body = [
             // 必填项
             'Userid'          => $this->userId,     // 客户号,

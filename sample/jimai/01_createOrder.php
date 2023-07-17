@@ -53,7 +53,7 @@ $iossNumber = 'IM4420001201';
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress1, $rAddress2, $rCity, $rProvince, $rCode, $rMobile,
-    $goods, $iossNumber, $remarks);
+    $goods, $iossNumber, $remarks, 1);
 
 
 print_r($result);
