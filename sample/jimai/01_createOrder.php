@@ -16,24 +16,24 @@ $data     = new Jimai($clientId, $token);
 
 //step1:订单
 $orderNo     = time();  //客户订单号
-$channelCode = 'JM025';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
+$channelCode = 'JM160';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
 
 //step2:收件人
-$rCountryCode = 'DE';           //收件人所在国家
-$rName        = 'Juan';          //收件人姓
-$rAddress1    = 'August-cueni-strasse 1';          //收件人详细地址1
-$rAddress2    = 'August-cueni-strasse 2';          //收件人详细地址2
-$rCity        = 'Zwingen';     //收件人所在城市
-$rProvince    = 'Zwingen';             //收件人所在省
-$rCode        = '04222';       //发件人邮编,必填项,5位数字
-$rMobile      = '18803415820';  //发件人手机
+$rCountryCode = 'FR';           //收件人所在国家
+$rName        = 'madi IDAROUSSE';          //收件人姓
+$rAddress1    = '29 rue Michel ange apt C01';          //收件人详细地址1
+$rAddress2    = '';          //收件人详细地址2
+$rCity        = 'Toulouse';     //收件人所在城市
+$rProvince    = '';             //收件人所在省
+$rCode        = '31200';       //发件人邮编,必填项,5位数字
+$rMobile      = '0769288353';  //发件人手机
 $remarks      = '备注'; //订单备注，用于打印配货单
 
 //step3:商品
 $goods = [
     [
-        'goods_cn_name'       => '商品1',
-        'goods_en_name'       => 'shangpin1',
+        'goods_cn_name'       => '尾翼',
+        'goods_en_name'       => 'tail unit',
         'goods_number'        => 2,          //申报数量,商品数量
         'goods_single_worth'  => 3,          //单个产品的申报价值
         'goods_single_weight' => 1,          //运单包裹的件数
