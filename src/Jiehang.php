@@ -165,17 +165,17 @@ class Jiehang
 
 	    // 总重量
 	    $totalWeight = array_sum(array_map(function ($val) {
-		    return ($val['goods_number'] * $val['goods_single_weight']);
+		    return ((int)$val['goods_number'] * (int)$val['goods_single_weight']);
 	    }, $goods));
 
 	    // 总价值
 	    $totalValue = array_sum(array_map(function ($val) {
-		    return ($val['goods_number'] * $val['goods_single_worth']);
+		    return ((int)$val['goods_number'] * (int)$val['goods_single_worth']);
 	    }, $goods));
 
 	    // 总数量
 	    $totalNumber = array_sum(array_map(function ($val) {
-		    return ($val['goods_number']);
+		    return ((int)$val['goods_number']);
 	    }, $goods));
 
         // step1.4:（参数）订单数据
