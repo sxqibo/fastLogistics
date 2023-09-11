@@ -205,8 +205,6 @@ class Jiehang
 
         // 当数量为1的判断，客户的特殊要求
         if ($numberIsOne == 1) {
-            $datas['TotalWeight'] = $totalWeight;                   // 订单总重量
-            $datas['TotalValue'] = $goods[0]['goods_single_worth']; // 订单总申报价值
             $datas['Number'] = 1;                                   // 件数,后来客户的要求
         }
 
