@@ -121,7 +121,7 @@ class Santai
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $recipientEmail, $receiverMobile,
-        $goods = [], $goodsDescription, $iossCode = '', $remarks = '', $numberIsOne = 0)
+        $goods = [], $goodsDescription, $iossCode = '', $remarks = '')
     {
         $param = [
             //step1（2）
@@ -154,24 +154,13 @@ class Santai
         ];
 
         //step4:商品信息（4）
-        if($numberIsOne == 1) {
-            $datas = [];
-            $datas['detailDescription']   = $goods[0]['goods_en_name'];      //string,包裹申报名称(英文)必填
-            $datas['detailDescriptionCN'] = $goods[0]['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
-            $datas['detailQuantity']      = 1;       //int,申报数量,必填
-            $datas['detailWorth']         = $goods[0]['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
-            $datas['hsCode']              = rand(100000, 99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
-
-            $param['goodsDetails'][] = $datas;   //array, 申报信息
-        } else {
-            $param['goodsDetails'] = [];   //array, 申报信息
-            foreach ($goods as $k => $v) {
-                $param['goodsDetails'][$k]['detailDescription']   = $v['goods_en_name'];      //string,包裹申报名称(英文)必填
-                $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
-                $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
-                $param['goodsDetails'][$k]['detailWorth']         = $v['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
-                $param['goodsDetails'][$k]['hsCode']              = rand(100000, 99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
-            }
+	    $param['goodsDetails'] = [];   //array, 申报信息
+	    foreach ($goods as $k => $v) {
+		    $param['goodsDetails'][$k]['detailDescription']   = $v['goods_en_name'];      //string,包裹申报名称(英文)必填
+		    $param['goodsDetails'][$k]['detailDescriptionCN'] = $v['goods_cn_name'];      //string,包裹申报名称(中文)，不必填
+		    $param['goodsDetails'][$k]['detailQuantity']      = $v['goods_number'];       //int,申报数量,必填
+		    $param['goodsDetails'][$k]['detailWorth']         = $v['goods_single_worth']; //decimal( 18,2),申报价格(单价),单位 USD,必填
+		    $param['goodsDetails'][$k]['hsCode']              = rand(100000, 99999999);       //海关编码,option,填写时必须让写，先参照写个固定值吧
         }
 
         $parameter['HeaderRequest']       = $this->headerParam();
