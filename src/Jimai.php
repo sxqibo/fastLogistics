@@ -156,11 +156,12 @@ class Jimai
         // step1.3:（参数）订单明细产品信息
         $OrderItems = [];        //array, 申报信息
         foreach ($goods as $k => $v) {
-            $OrderItems[$k]['Enname'] = $v['goods_en_name'];              //string,包裹申报名称(英文)必填
-            $OrderItems[$k]['Cnname'] = $v['goods_cn_name'];              //string,包裹申报名称(中文)，不必填
-            $OrderItems[$k]['Num']    = $v['goods_number'];               //int,申报数量,必填
-            $OrderItems[$k]['Price']  = $v['goods_single_worth'];         //decimal( 18,2),申报价格(单价),必填
-            $OrderItems[$k]['Weight'] = $v['goods_single_weight'];        //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+            $OrderItems[$k]['Enname']       = $v['goods_en_name'];              //string,包裹申报名称(英文)必填
+            $OrderItems[$k]['Cnname']       = $v['goods_cn_name'];              //string,包裹申报名称(中文)，不必填
+            $OrderItems[$k]['Num']          = $v['goods_number'];               //int,申报数量,必填
+            $OrderItems[$k]['Price']        = $v['goods_single_worth'];         //decimal( 18,2),申报价格(单价),必填
+            $OrderItems[$k]['Weight']       = $v['goods_single_weight'];        //decimal( 18,3),申报重量(单重)，单位 kg,,必填
+            $OrderItems[$k]['CustomsCode']  = $v['goods_customs_code'] ?? '';         // 海关编码码，不必填，但加拿大必填
         }
 
 		// 总重量
