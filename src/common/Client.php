@@ -11,7 +11,8 @@ use Exception;
 
 class Client
 {
-    private       $timeout = 30;
+    private $timeout = 30;
+    private $baseUri = '';
     public static $clientInstance;
 
     public function __construct()
@@ -22,58 +23,51 @@ class Client
     /**
      * 请求API接口
      *
-     * @param $endPoint
-     * @param array $query
-     * @param array $body
-     * @param array $headers
-     * @param false $raw
+     * @param string $url 请求地址
+     * @param array $params 请求参数
+     * @param array|null $body 请求体
+     * @param array $headers 请求头
+     * @param bool $raw 是否返回原始响应
      * @return array|mixed
      * @throws Exception
      */
-    public function requestApi($endPoint, $query = [], $body = null, $headers = [], $raw = false)
+    public function requestApi($url, $params = [], $body = null, $headers = [], $raw = false)
     {
         try {
+            // 设置默认请求头
+            $defaultHeaders = [
+                'Content-Type' => 'application/json'
+            ];
+            $headers = array_merge($defaultHeaders, $headers);
+            
             $options = [
-                'query' => $query,
+                'headers' => $headers,
+                'timeout' => $this->timeout,
             ];
 
-            if (!empty($headers)) {
-                $options['headers'] = $headers;
-            }
-
-            $options['timeout'] = $this->timeout;
-
-            if (!empty($body)) {
-                $contentType = $headers['Content-Type'] ?? '';
-                if ($contentType == 'application/x-www-form-urlencoded') {
-                    $options['form_params'] = $body;
-                } else {
-                    $options['body'] = $body;
-                }
+            // 如果是 GET 请求，使用 query 参数
+            if (empty($body)) {
+                $options['json'] = $params;
+            } else {
+                $options['json'] = $body;
+                $options['query'] = $params;
             }
 
             $client   = $this->getClient();
-            $response = $client->request($endPoint['method'], $endPoint['url'], $options);
+            $response = $client->request('POST', $url, $options);
 
             $body = $response->getBody();
+            $content = $body->getContents();
+            
             if ($raw) {
-                $content = $body->getContents();
-
-                $json = json_decode($content, true);
-                if ($json && $content != $json) {
-                    return $json;
-                }
                 return $content;
-            } else {
-                if ($response->getHeader('Content-Type') && strpos(strtolower($response->getHeader('Content-Type')[0]), 'xml') !== false) {
-                    return $this->xmlToArray($body);
-                } else {
-                    return $body;
-                }
             }
+            
+            return json_decode($content, true);
+            
         } catch (GuzzleException $e) {
             $paramString = json_encode($options, JSON_UNESCAPED_UNICODE);
-            $errorMsg    = "请求API失败，API:{$endPoint['url']}，参数:{$paramString}，错误信息:[{$e->getMessage()}]";
+            $errorMsg    = "请求API失败，API:{$url}，参数:{$paramString}，错误信息:[{$e->getMessage()}]";
 
             throw new Exception($errorMsg);
         }
