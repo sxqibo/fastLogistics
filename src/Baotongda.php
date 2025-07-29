@@ -107,7 +107,7 @@ class Baotongda
     public function getTrackingInfo(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('gettrackinfo', $params);
+        $requestParams = $this->buildBaseParams('gettrack', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -119,7 +119,7 @@ class Baotongda
     public function getOrderFee(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('getorderfee', $params);
+        $requestParams = $this->buildBaseParams('getbusinessfee', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -131,7 +131,7 @@ class Baotongda
     public function getOrderFeeDetail(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('getorderfeedetail', $params);
+        $requestParams = $this->buildBaseParams('getbusinessfee_detail', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -143,7 +143,7 @@ class Baotongda
     public function getWeight(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('getweight', $params);
+        $requestParams = $this->buildBaseParams('getbusinessweight', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -155,7 +155,7 @@ class Baotongda
     public function calculateFee(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('calculatefee', $params);
+        $requestParams = $this->buildBaseParams('feetrail', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -166,8 +166,12 @@ class Baotongda
      */
     public function getBaseData(array $params): array
     {
+        // 获取接口方法名
+        $serviceMethod = $params['method'] ?? 'getshippingmethod';
+        unset($params['method']);
+
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('getbasicdata', $params);
+        $requestParams = $this->buildBaseParams($serviceMethod, $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
