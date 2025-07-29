@@ -1,0 +1,6 @@
+<?php
+
+return [
+    'appToken' => '',
+    'appKey'   => '',
+]; 

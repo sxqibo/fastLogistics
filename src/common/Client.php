@@ -36,22 +36,15 @@ class Client
         try {
             // 设置默认请求头
             $defaultHeaders = [
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/x-www-form-urlencoded'
             ];
             $headers = array_merge($defaultHeaders, $headers);
             
             $options = [
                 'headers' => $headers,
                 'timeout' => $this->timeout,
+                'form_params' => $params
             ];
-
-            // 如果是 GET 请求，使用 query 参数
-            if (empty($body)) {
-                $options['json'] = $params;
-            } else {
-                $options['json'] = $body;
-                $options['query'] = $params;
-            }
 
             $client   = $this->getClient();
             $response = $client->request('POST', $url, $options);
@@ -61,6 +54,12 @@ class Client
             
             if ($raw) {
                 return $content;
+            }
+            
+            // 解析XML响应
+            if (strpos($content, '<?xml') !== false) {
+                $xml = simplexml_load_string($content);
+                return json_decode(json_encode($xml), true);
             }
             
             return json_decode($content, true);
