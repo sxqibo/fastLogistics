@@ -2,143 +2,61 @@
 
 namespace Sxqibo\Logistics\common;
 
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use Exception;
+use GuzzleHttp\Client as HttpClient;
 
 class Client
 {
+    private $client;
     private $timeout = 30;
-    private $baseUri = '';
-    public static $clientInstance;
 
     public function __construct()
     {
-        $this->baseUri = '';
+        $this->client = new HttpClient();
     }
 
     /**
-     * 请求API接口
-     *
-     * @param string $url 请求地址
-     * @param array $params 请求参数
-     * @param array|null $body 请求体
-     * @param array $headers 请求头
-     * @param bool $raw 是否返回原始响应
-     * @return array|mixed
-     * @throws Exception
+     * 请求API
      */
-    public function requestApi($url, $params = [], $body = null, $headers = [], $raw = false)
+    public function requestApi(string $url, array $params = [], string $method = 'GET', array $headers = [], bool $raw = false): array
     {
         try {
-            // 设置默认请求头
-            $defaultHeaders = [
-                'Content-Type' => 'application/x-www-form-urlencoded'
-            ];
-            $headers = array_merge($defaultHeaders, $headers);
-            
             $options = [
-                'headers' => $headers,
-                'timeout' => $this->timeout,
-                'form_params' => $params
+                'headers'  => array_merge([
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json; charset=utf-8',
+                    'Host' => parse_url($url, PHP_URL_HOST)
+                ], $headers),
+                'timeout'  => $this->timeout,
+                'verify'   => false  // 忽略SSL证书验证
             ];
 
-            $client   = $this->getClient();
-            $response = $client->request('POST', $url, $options);
-
-            $body = $response->getBody();
-            $content = $body->getContents();
-            
-            if ($raw) {
-                return $content;
+            // 如果是GET请求且有参数，将参数添加到URL
+            if ($method === 'GET' && !empty($params)) {
+                $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
+            } else if (in_array($method, ['POST', 'PUT']) && !empty($params)) {
+                // POST/PUT请求，将参数放在body中
+                $options['json'] = $params;
             }
-            
-            // 解析XML响应
-            if (strpos($content, '<?xml') !== false) {
-                $xml = simplexml_load_string($content);
-                return json_decode(json_encode($xml), true);
-            }
-            
-            return json_decode($content, true);
-            
-        } catch (GuzzleException $e) {
-            $paramString = json_encode($options, JSON_UNESCAPED_UNICODE);
-            $errorMsg    = "请求API失败，API:{$url}，参数:{$paramString}，错误信息:[{$e->getMessage()}]";
 
-            throw new Exception($errorMsg);
+            $response = $this->client->request($method, $url, $options);
+            $contents = $response->getBody()->getContents();
+
+            // 如果是XML响应，转换为数组
+            if (strpos($contents, '<?xml') !== false) {
+                $xml = simplexml_load_string($contents);
+                return $raw ? ['content' => $contents] : json_decode(json_encode($xml), true);
+            }
+
+            return $raw ? ['content' => $contents] : json_decode($contents, true);
+        } catch (Exception $e) {
+            $message = sprintf(
+                '请求API失败，API:%s，参数:%s，错误信息:[%s]',
+                $url,
+                json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                $e->getMessage()
+            );
+            throw new Exception($message);
         }
-    }
-
-    /**
-     * Convert an xml string to an array
-     * @param string $xmlstring
-     * @return array
-     */
-    protected function xmlToArray($xmlstring)
-    {
-        return json_decode(json_encode(simplexml_load_string($xmlstring)), true);
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getClient()
-    {
-        if (!isset(static::$clientInstance)) {
-            $handlerStack = HandlerStack::create(new CurlHandler());
-            $handlerStack->push(Middleware::retry($this->retryDecider(), $this->retryDelay()));
-
-            static::$clientInstance = new \GuzzleHttp\Client(['base_uri' => $this->baseUri, 'handler' => $handlerStack]);
-        }
-
-        return static::$clientInstance;
-    }
-
-    /**
-     * 返回一个匿名函数，该匿名函数返回下次重试的时间（毫秒）
-     * @return mixed
-     */
-    private function retryDelay()
-    {
-        return function ($numberOfRetries) {
-            return 1000 * $numberOfRetries;
-        };
-    }
-
-    /**
-     * retryDecider
-     * 返回一个匿名函数, 匿名函数若返回false 表示不重试，反之则表示继续重试
-     * @return mixed
-     */
-    private function retryDecider()
-    {
-        return function (
-            $retries,
-            \GuzzleHttp\Psr7\Request $request,
-            \GuzzleHttp\Psr7\Response $response = null,
-            \GuzzleHttp\Exception\RequestException $exception = null
-        ) {
-            // Limit the number of retries to 3
-            if ($retries >= 3) {
-                return false;
-            }
-
-            // Retry connection exceptions
-            if ($exception instanceof ConnectException) {
-                return true;
-            }
-
-            if ($response) {
-                // Retry on server errors
-                if ($response->getStatusCode() >= 500) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
     }
 }
