@@ -71,7 +71,7 @@ class Baotongda
     public function deleteOrder(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('deleteorder', $params);
+        $requestParams = $this->buildBaseParams('removeorder', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -83,7 +83,7 @@ class Baotongda
     public function getLabel(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('getlabel', $params);
+        $requestParams = $this->buildBaseParams('getnewlabel', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
@@ -95,7 +95,7 @@ class Baotongda
     public function getTrackingNumber(array $params): array
     {
         // 构建请求参数
-        $requestParams = $this->buildBaseParams('gettrackingno', $params);
+        $requestParams = $this->buildBaseParams('gettrackingnumber', $params);
 
         // 发送请求
         return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
