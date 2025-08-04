@@ -1,11 +1,11 @@
 <?php
 
-require_once '../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Sxqibo\Logistics\Yiqifei;
 
 // 获取配置
-$config = require_once './config.php';
+$config = require_once __DIR__ . '/config.php';
 
 // 初始化
 $app = new Yiqifei($config);

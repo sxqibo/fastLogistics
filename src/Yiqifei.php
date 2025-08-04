@@ -28,7 +28,7 @@ class Yiqifei
             'timestamp' => time(),
         ];
 
-        return $this->client->requestApi($url, $params);
+        return $this->client->requestApi($url, $params, 'POST');
     }
 
     /**
@@ -50,7 +50,7 @@ class Yiqifei
             'height'          => $params['height']                    // 高(CM)
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -111,7 +111,7 @@ class Yiqifei
             ]
         ];
 
-        return $this->client->requestApi($url, $orderData);
+        return $this->client->requestApi($url, $orderData, 'POST');
     }
 
     /**
@@ -129,7 +129,7 @@ class Yiqifei
             'weight'      => $params['weight'],
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -149,7 +149,7 @@ class Yiqifei
             'boxHeight'    => $params['boxHeight']               // 高(CM)
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -166,7 +166,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -183,7 +183,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -200,7 +200,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 
     /**
@@ -264,6 +264,6 @@ class Yiqifei
             ]
         ];
 
-        return $this->client->requestApi($url, $requestParams);
+        return $this->client->requestApi($url, $requestParams, 'POST');
     }
 } 

@@ -37,3 +37,6 @@ PHP7.4+ (建议)
 2. 一起飞： https://www.17feia.com/news?id=326&from=2  
 3. 宝通达： http://121.15.2.131:6005/usercenter/manager/api_document.aspx   
 4. 万邦: http://apidoc.wanbexpress.com/   
+
+
+说明： Client.php 文件是所有接口公共使用的文件，要兼容性使用，只能扩展和兼容性处理与修改BUG
