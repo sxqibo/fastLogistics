@@ -13,6 +13,8 @@ $app = new Yiqifei($config);
 // 获取可用的物流产品
 $result = $app->getProducts();
 
+print_r($result);
+
 echo "=== 可用物流产品列表 ===\n";
 if (isset($result['productInfos']) && is_array($result['productInfos'])) {
     foreach ($result['productInfos'] as $product) {

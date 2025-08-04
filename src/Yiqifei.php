@@ -14,6 +14,21 @@ class Yiqifei
     {
         $this->config = $config;
         $this->client = new Client();
+        $this->validateConfig();
+    }
+
+    /**
+     * 验证配置参数
+     * @throws \Exception
+     */
+    private function validateConfig()
+    {
+        if (empty($this->config['apiName'])) {
+            throw new \Exception('apiName 为空');
+        }
+        if (empty($this->config['apiToken'])) {
+            throw new \Exception('apiToken 为空');
+        }
     }
 
     /**
