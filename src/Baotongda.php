@@ -14,6 +14,21 @@ class Baotongda
     {
         $this->config = $config;
         $this->client = new Client();
+        $this->validateConfig();
+    }
+
+    /**
+     * 验证配置参数
+     * @throws \Exception
+     */
+    private function validateConfig()
+    {
+        if (empty($this->config['appToken'])) {
+            throw new \Exception('appToken 为空');
+        }
+        if (empty($this->config['appKey'])) {
+            throw new \Exception('appKey 为空');
+        }
     }
 
     /**
@@ -37,8 +52,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('createorder', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -49,8 +66,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('submitforecast', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -61,8 +80,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('updateorder', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -73,8 +94,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('removeorder', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -85,8 +108,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('getnewlabel', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -97,8 +122,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('gettrackingnumber', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -109,8 +136,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('gettrack', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -121,8 +150,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessfee', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -133,8 +164,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessfee_detail', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -145,8 +178,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessweight', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -157,8 +192,10 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams('feetrail', $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 
     /**
@@ -173,7 +210,9 @@ class Baotongda
         // 构建请求参数
         $requestParams = $this->buildBaseParams($serviceMethod, $params);
 
-        // 发送请求
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
+        // 发送请求，使用form-urlencoded格式
+        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ]);
     }
 } 

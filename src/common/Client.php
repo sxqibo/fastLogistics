@@ -36,7 +36,13 @@ class Client
                 $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
             } else if (in_array($method, ['POST', 'PUT']) && !empty($params)) {
                 // POST/PUT请求，将参数放在body中
-                $options['json'] = $params;
+                // 检查Content-Type，如果是form-urlencoded则使用form_params，否则使用json
+                $contentType = $options['headers']['Content-Type'] ?? '';
+                if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+                    $options['form_params'] = $params;
+                } else {
+                    $options['json'] = $params;
+                }
             }
 
             $response = $this->client->request($method, $url, $options);
