@@ -22,7 +22,7 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-soap": "*",
-    "guzzlehttp/guzzle": "6.5.8",
+    "guzzlehttp/guzzle": "7.9.3",
     "spatie/array-to-xml": " ^2.1",
     "ext-simplexml": "*"
   },
