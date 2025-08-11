@@ -2,18 +2,14 @@
 
 namespace Sxqibo\Logistics;
 
-use Sxqibo\Logistics\common\Client;
-
 class Baotongda
 {
     private $config;
-    private $client;
     private $baseUrl = 'http://121.15.2.131:6005/webservice/PublicService.asmx';
 
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->client = new Client();
         $this->validateConfig();
     }
 
@@ -45,17 +41,145 @@ class Baotongda
     }
 
     /**
+     * 发送HTTP请求
+     */
+    private function sendRequest($url, $params, $method = 'POST', $headers = [])
+    {
+        // 设置默认请求头
+        $defaultHeaders = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'User-Agent' => 'Sxqibo-Logistics/1.0'
+        ];
+        $headers = array_merge($defaultHeaders, $headers);
+
+        // 初始化cURL
+        $ch = curl_init();
+
+        // 设置cURL选项
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_HTTPHEADER => $this->buildHeaders($headers),
+            CURLOPT_POST => ($method === 'POST'),
+            CURLOPT_POSTFIELDS => ($method === 'POST') ? http_build_query($params) : null,
+        ]);
+
+        // 执行请求
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+
+        curl_close($ch);
+
+        // 检查错误
+        if ($error) {
+            throw new \Exception('cURL错误: ' . $error);
+        }
+
+        if ($httpCode !== 200) {
+            throw new \Exception('HTTP请求失败，状态码: ' . $httpCode);
+        }
+
+        // 解析响应
+        $result = $this->parseResponse($response);
+
+        return $result;
+    }
+
+    /**
+     * 构建请求头
+     */
+    private function buildHeaders($headers)
+    {
+        $headerArray = [];
+        foreach ($headers as $key => $value) {
+            $headerArray[] = $key . ': ' . $value;
+        }
+        return $headerArray;
+    }
+
+    /**
+     * 解析响应
+     */
+    private function parseResponse($response)
+    {
+        // 尝试解析XML响应
+        if (strpos($response, '<?xml') !== false || strpos($response, '<') === 0) {
+            return $this->parseXmlResponse($response);
+        }
+
+        // 尝试解析JSON响应
+        $jsonResult = json_decode($response, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $jsonResult;
+        }
+
+        // 如果都不是，返回原始响应
+        return [
+            'success' => 0,
+            'message' => '无法解析响应格式',
+            'raw_response' => $response
+        ];
+    }
+
+    /**
+     * 解析XML响应
+     */
+    private function parseXmlResponse($xmlString)
+    {
+        try {
+            $xml = simplexml_load_string($xmlString);
+            if ($xml === false) {
+                throw new \Exception('XML解析失败');
+            }
+
+            // 转换为数组
+            $result = json_decode(json_encode($xml), true);
+
+            // 检查是否包含错误信息
+            if (isset($result['error'])) {
+                return [
+                    'success' => 0,
+                    'message' => $result['error'],
+                    'data' => null
+                ];
+            }
+
+            // 检查是否包含数据
+            if (isset($result['data']) || isset($result['result'])) {
+                return [
+                    'success' => 1,
+                    'message' => '请求成功',
+                    'data' => $result['data'] ?? $result['result'] ?? $result
+                ];
+            }
+
+            return [
+                'success' => 1,
+                'message' => '请求成功',
+                'data' => $result
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'success' => 0,
+                'message' => 'XML解析异常: ' . $e->getMessage(),
+                'raw_response' => $xmlString
+            ];
+        }
+    }
+
+    /**
      * 创建订单
      */
     public function createOrder(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('createorder', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -63,13 +187,8 @@ class Baotongda
      */
     public function submitForecast(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('submitforecast', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -77,13 +196,8 @@ class Baotongda
      */
     public function updateOrder(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('updateorder', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -91,13 +205,8 @@ class Baotongda
      */
     public function deleteOrder(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('removeorder', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -105,13 +214,8 @@ class Baotongda
      */
     public function getLabel(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('getnewlabel', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -119,13 +223,8 @@ class Baotongda
      */
     public function getTrackingNumber(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('gettrackingnumber', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -133,13 +232,8 @@ class Baotongda
      */
     public function getTrackingInfo(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('gettrack', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -147,13 +241,8 @@ class Baotongda
      */
     public function getOrderFee(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessfee', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -161,13 +250,8 @@ class Baotongda
      */
     public function getOrderFeeDetail(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessfee_detail', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -175,13 +259,8 @@ class Baotongda
      */
     public function getWeight(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('getbusinessweight', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -189,13 +268,8 @@ class Baotongda
      */
     public function calculateFee(array $params): array
     {
-        // 构建请求参数
         $requestParams = $this->buildBaseParams('feetrail', $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
 
     /**
@@ -203,16 +277,10 @@ class Baotongda
      */
     public function getBaseData(array $params): array
     {
-        // 获取接口方法名
         $serviceMethod = $params['method'] ?? 'getshippingmethod';
         unset($params['method']);
 
-        // 构建请求参数
         $requestParams = $this->buildBaseParams($serviceMethod, $params);
-
-        // 发送请求，使用form-urlencoded格式
-        return $this->client->requestApi($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams, 'POST', [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
+        return $this->sendRequest($this->baseUrl . '/ServiceInterfaceUTF8', $requestParams);
     }
-} 
+}
