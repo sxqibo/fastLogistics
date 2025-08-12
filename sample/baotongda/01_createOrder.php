@@ -17,7 +17,7 @@ $params = [
     'order_weight'     => 2.0,                // 订单重量(KG)
     'order_pieces'     => 1,                  // 外包装件数
     'cargotype'        => 'W',                // 货物类型（W:包裹）
-    'order_status'     => 'D',                // 订单状态（D:草稿）
+    'order_status'     => 'P',                // 订单状态（D:草稿）
     'mail_cargo_type'  => '2',                // 包裹申报种类（2：CommercialSample 商品货样）
     
     // 收件人信息
