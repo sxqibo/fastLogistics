@@ -10,76 +10,99 @@ $config = require_once __DIR__ . '/config.php';
 // 初始化
 $app = new Wanb($config);
 
-// 创建包裹参数
+// 创建包裹参数 - 按照万邦官方API文档
 $params = [
-    'CustomerOrderNumber' => 'TEST' . time(),  // 客户订单号
-    'ShippingMethod' => 'USPS',               // 运输方式代码
-    'Weight' => 2.5,                          // 重量(KG)
-    'Pieces' => 1,                            // 包裹件数
-    'Warehouse' => 'SZ',                      // 仓库代码
-    'InsuranceType' => 0,                     // 保险类型（0:不保险）
-    'InsuranceAmount' => 0,                   // 保险金额
-    'SourceCode' => 'API',                    // 来源代码
-    'Sender' => [                             // 发件人信息
-        'Name' => '张三',
-        'Company' => '测试公司',
-        'Phone' => '13800138000',
-        'Email' => '',
-        'Country' => 'CN',
-        'Province' => '广东省',
-        'City' => '深圳市',
-        'Address1' => '福田区XX路XX号',
-        'Address2' => '',
-        'Postcode' => '518000'
-    ],
-    'Recipient' => [                          // 收件人信息
-        'Name' => 'John Doe',
+    'ReferenceId' => 'TEST' . time(),         // 客户订单号，必须
+    'ShippingMethod' => 'FDWUSEC-USPSLAX',               // 发货产品服务代码，必须
+    'WeightInKg' => 1.0,                     // 包裹重量(KG)，必须
+    'WarehouseCode' => 'SZ',                  // 交货仓库代码，必须
+    'ShippingAddress' => [                    // 收件人地址信息，必须
         'Company' => '',
-        'Phone' => '1234567890',
-        'Email' => 'john@example.com',
-        'Country' => 'US',
-        'Province' => 'CA',
+        'Street1' => '123 Main St',
+        'Street2' => '',
+        'Street3' => '',
         'City' => 'Los Angeles',
-        'Address1' => '123 Main St',
-        'Address2' => '',
-        'Postcode' => '90001'
+        'Province' => 'CA',
+        'Country' => '',
+        'CountryCode' => 'US',
+        'Postcode' => '90001',
+        'Contacter' => 'John Doe',
+        'Tel' => '1234567890',
+        'Email' => 'john@example.com',
+        'TaxId' => ''
     ],
-    'Items' => [                              // 包裹物品信息
-        [
-            'Name' => 'Dresses',              // 英文品名
-            'NameLocal' => '连衣裙',          // 中文品名
-            'Pieces' => 1,                    // 数量
-            'UnitPrice' => 15.00,             // 单价(USD)
-            'UnitWeight' => 0.5,              // 单重(KG)
-            'Currency' => 'USD',              // 币种
-            'HSCode' => '123456',             // 海关编码
-            'Description' => 'Sample'          // 描述
-        ]
-    ]
+    'ItemDetails' => array(                   // 包裹件内明细，必须
+        array(
+            'GoodsId' => 'TEST001',
+            'GoodsTitle' => 'Test Product',
+            'DeclaredNameEn' => 'Dresses',
+            'DeclaredNameCn' => '连衣裙',
+            'DeclaredValue' => array(
+                'Code' => 'USD',
+                'Value' => 15.0
+            ),
+            'WeightInKg' => 1.0,
+            'Quantity' => 1,
+            'HSCode' => '123456',
+            'CaseCode' => '',
+            'SalesUrl' => '',
+            'IsSensitive' => false,
+            'Brand' => '',
+            'Model' => '',
+            'MaterialCn' => '',
+            'MaterialEn' => '',
+            'UsageCn' => '',
+            'UsageEn' => '',
+            'Manufacturer' => null
+        )
+    ),
+    'TotalValue' => array(                    // 包裹总金额，必须
+        'Code' => 'USD',
+        'Value' => 15.0
+    ),
+    'TotalVolume' => array(                   // 包裹尺寸，必须
+        'Length' => 20.0,
+        'Width' => 15.0,
+        'Height' => 10.0,
+        'Unit' => 'CM'
+    ),
+    'WithBatteryType' => 'NOBattery',        // 包裹是否含有带电产品，必须
+    'ItemType' => 'SPX',                      // 包裹类型，必须
+    'TradeType' => 'B2C',                     // 订单交易类型，默认B2C
+    'AllowRemoteArea' => true,                // 是否允许偏远区域下单
+    'AutoConfirm' => false                    // 自动确认交运包裹
 ];
+
+// 调试：打印参数
+echo "发送的参数：\n";
+print_r($params);
 
 // 创建包裹
 $result = $app->createParcel($params);
+echo "\n返回结果：\n";
 print_r($result);
 
 // 保存处理号，供后续接口使用
-if ($result['Code'] === 0) {
+if (isset($result['Code']) && $result['Code'] === 0) {
     file_put_contents(__DIR__ . '/last_process_code.txt', $result['Data']['ProcessCode']);
 }
 
-/**
- * 成功返回示例：
- * Array
- * (
- *     [Code] => 0
- *     [Message] => success
- *     [Data] => Array
- *         (
- *             [ProcessCode] => WB12345678
- *             [CustomerOrderNumber] => TEST1234567890
- *             [TrackingNumber] => WB12345678US
- *             [Status] => Pending
- *             [CreatedTime] => 2024-01-29 15:30:00
- *         )
- * )
- */ 
+
+// 成功返回
+// Array
+// (
+//     [Data] => Array
+//         (
+//             [ProcessCode] => SBXTT0000321705YQ
+//             [IndexNumber] => 65140000321705
+//             [ReferenceId] => TEST1754986879
+//             [TrackingNumber] => 
+//             [IsVirtualTrackingNumber] => 
+//             [SortCode] => LAX
+//             [IsRemoteArea] => 
+//             [Status] => Original
+//         )
+
+//     [Succeeded] => 1
+//     [Error] => 
+// )

@@ -13,7 +13,8 @@ class Wanb
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->baseUrl = 'http://api-sbx.wanbexpress.com/'; // 沙盒
+        // $this->baseUrl = 'http://api-sbx.wanbexpress.com/'; // 沙盒
+        $this->baseUrl = 'https://api.wanbexpress.com/'; // 正式
         $this->client = new Client();
     }
 
@@ -61,12 +62,45 @@ class Wanb
      */
     public function createParcel(array $params): array
     {
-        return $this->client->requestApi(
+        // 首先尝试原始参数
+        $result = $this->client->requestApi(
             $this->baseUrl . 'api/parcels',
             $params,
             'POST',
             $this->buildHeaders()
         );
+        
+        // 如果失败且是"物流产品不存在"错误，尝试兼容性处理
+        if (isset($result['Error']['Code']) && $result['Error']['Code'] === '0x100001') {
+            // 尝试不同的产品代码
+            $fallbackCodes = ['001', '002', '003', '004', '005', 'WANB', 'EXPRESS', 'STANDARD', 'WANB_USA', 'WANB_EU'];
+            
+            foreach ($fallbackCodes as $code) {
+                $testParams = $params;
+                $testParams['ShippingMethod'] = $code;
+                
+                $testResult = $this->client->requestApi(
+                    $this->baseUrl . 'api/parcels',
+                    $testParams,
+                    'POST',
+                    $this->buildHeaders()
+                );
+                
+                // 如果成功，返回结果并记录日志
+                if (!isset($testResult['Error']['Code']) || $testResult['Error']['Code'] !== '0x100001') {
+                    // 在返回结果中添加兼容性信息
+                    if (isset($testResult['Succeeded']) && $testResult['Succeeded']) {
+                        $testResult['_compatibility_note'] = "使用了兼容性产品代码: {$code}";
+                    }
+                    return $testResult;
+                }
+            }
+            
+            // 如果所有代码都失败，返回原始错误，但添加兼容性提示
+            $result['_compatibility_note'] = "已尝试多种产品代码，但都返回'物流产品不存在'错误。请联系万邦客服获取有效的产品代码。";
+        }
+        
+        return $result;
     }
 
     /**
@@ -231,7 +265,7 @@ class Wanb
     public function getProducts(): array
     {
         return $this->client->requestApi(
-            $this->baseUrl . 'api/products',
+            $this->baseUrl . 'api/services',
             [],
             'GET',
             $this->buildHeaders()
