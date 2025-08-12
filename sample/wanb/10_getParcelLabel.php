@@ -16,29 +16,21 @@ if (!$processCode) {
     die("请先创建包裹并获取处理号！\n");
 }
 
-// 获取包裹标签参数
-$params = [
-    'LabelFormat' => 'PDF',      // 标签格式：PDF/PNG
-    'LabelSize' => '100x100',    // 标签尺寸
-    'LabelType' => 1             // 标签类型：1-标准标签，2-自定义标签
-];
-
 // 获取包裹标签
-$result = $app->getParcelLabel($processCode, $params);
+$result = $app->getParcelLabel($processCode);
 print_r($result);
 
-/**
- * 成功返回示例：
- * Array
- * (
- *     [Code] => 0
- *     [Message] => success
- *     [Data] => Array
- *         (
- *             [ProcessCode] => SBXPAA0000038638YQ
- *             [LabelUrl] => http://api-sbx.wanbexpress.com/labels/SBXPAA0000038638YQ.pdf
- *             [LabelFormat] => PDF
- *             [CreatedTime] => 2024-01-29 15:45:00
- *         )
- * )
- */ 
+
+// 成功返回示例：
+// Array
+// (
+//     [Code] => 0
+//     [Message] => success
+//     [Data] => Array
+//         (
+//              [ProcessCode] => SBXPAA0000038638YQ
+//             [LabelUrl] => http://api-sbx.wanbexpress.com/labels/SBXPAA0000038638YQ.pdf
+//             [LabelFormat] => PDF
+//             [CreatedTime] => 2024-01-29 15:45:00
+//         )
+// )
