@@ -74,7 +74,7 @@ class Yiqifei
     public function createOrder($params)
     {
         $url = $this->baseUrl . '/orders';
-        
+
         // 构建订单数据
         $orderData = [
             'apiName'   => $this->config['apiName'],
@@ -226,55 +226,53 @@ class Yiqifei
     public function calculatePrice(array $params): array
     {
         $url = $this->baseUrl . '/product/price';
-        
+
         // 构建请求数据
         $requestParams = [
             'apiName'   => $this->config['apiName'],
             'apiToken'  => $this->config['apiToken'],
             'apiOrders' => [
                 [
-                    'productCode'    => $params['productCode'],
-                    'productName'    => $params['productName'],
-                    'destinationNo'  => $params['destinationCode'],
-                    'takeAwayType'   => 'SELF',
-                    'referenceNo'    => $params['referenceNo'] ?? '',
-                    'orderFromType'  => 'API',
-                    'apiBoxes'       => [
+                    'productCode'    => $params['productCode'] ?? '', // 必填， 表 示 产 品 的 code
+                    'productName'    => $params['productName'], // 必填，表示产品(物流服务类型)的名称
+                    'destinationNo'  => $params['destinationCode'], // 必填 ，目的地的国家二字简码
+                    'takeAwayType'   => 'SELF',  // 必填，取件方式简单的将就是您已哪种方式将货物送往仓库。可用值：EXPRESS(“国内邮寄”), SELF(“自己送货”), ESHIP(“上门取货”);
+                    'referenceNo'    => $params['referenceNo'] ?? '', // 必填，参考号，如果你们当前存在系统，那么通常表示你们系统的业务号。
+                    'orderFromType'  => 'API',  // 必填，订单类型，【API 对接，填API 就行了】
+                    'apiBoxes'       => [ // 箱子列表，包裹列表
                         [
-                            'boxWeight' => $params['weight'],
-                            'boxLength' => $params['length'],
-                            'boxWidth'  => $params['width'],
-                            'boxHeight' => $params['height'],
-                            'apiGoodsList' => [
+                            'boxWeight' => $params['weight'], // （数字浮点型 必填）箱子的重量(单位：kg)
+                            'boxLength' => $params['length'] ?? 0, // （数字整形 必填） 箱子的长 单位厘米(cm)
+                            'boxWidth'  => $params['width'] ?? 0, // （数字整形 必填） 箱子的宽 单位厘米(cm)
+                            'boxHeight' => $params['height'] ?? 0, // （数字整形 必填） 箱子的高 单位厘米(cm)
+                            'apiGoodsList' => [ // 箱子里商品列表，预报列表
                                 [
-                                    'nameEn'      => $params['goods']['nameEn'],
-                                    'name'        => $params['goods']['name'],
-                                    'quantity'    => $params['goods']['quantity'],
-                                    'reportPrice' => $params['goods']['value'],
-                                    'weight'      => $params['goods']['weight']
+                                    'nameEn'      => $params['goods']['nameEn'] ?? '', // （字符串 必填）商品英文名
+                                    'name'        => $params['goods']['name'] ?? '', // （字符串 必填）商品中文名
+                                    'quantity'    => $params['goods']['quantity'] ?? 1, // （数字整形 必填）商品数量
+                                    'reportPrice' => $params['goods']['value'] ?? 60.00, // （数字浮点型 必填）单个商品申报价值 (单位：美元)
+                                    'weight'      => $params['goods']['weight'] ?? '', // （数字浮点型 必填）单个商品的重量(单位：kg)
                                 ]
                             ]
                         ]
                     ],
-                    'deliveryAddress' => [
-                        'consignee'   => $params['recipient']['name'],
-                        'province'    => $params['recipient']['state'],
-                        'city'        => $params['recipient']['city'],
-                        'address'     => $params['recipient']['address'],
-                        'postcode'    => $params['recipient']['postcode'],
-                        'cellphoneNo' => $params['recipient']['phone'],
-                        'email'       => $params['recipient']['email'] ?? ''
+                    'deliveryAddress' => [ // 表示寄送的地址信息
+                        'consignee'   => $params['recipient']['name'] ?? '', // （字符串 必填）派送地址中的收货人不能为空
+                        'province'    => $params['recipient']['state'] ?? '', // （字符串）,派送地址中的地区/州/省
+                        'city'        => $params['recipient']['city'] ?? '', // （字符串 必填）,派送地址中的城市不能为空
+                        'address'     => $params['recipient']['address'] ?? '', // （字符串 必填）派送地址中的地址不能为空
+                        'postcode'    => $params['recipient']['postcode'], // （字符串 必填）派送地址中的邮编
+                        'cellphoneNo' => $params['recipient']['phone'] ?? '', // （字符串 必填）派送地址中的电话
                     ],
-                    'senderAddress'  => [
-                        'sender'      => '寄件人',
-                        'province'    => '广东省',
-                        'city'        => '深圳市',
-                        'address'     => '福田区XX路XX号',
-                        'postcode'    => '518000',
-                        'cellphoneNo' => '13800138000',
-                        'countryCode' => 'CN',
-                        'email'       => 'sender@example.com'
-                    ]
+                    // 'senderAddress'  => [ // 文档中说以下是必填，就如下模拟几个数据，但不填也可以
+                        // 'sender'      => '寄件人', // （字符串 必填）寄件地址中的寄件人不能为空,
+                        // 'province'    => '广东省', // （字符串 必填）寄件地址中的(地区/省/州)不能为空,
+                        // 'city'        => '深圳市', // （字符串 必填）寄件地址中的(城市)不能为空,
+                        // 'address'     => '福田区XX路XX号', // （字符串 必填）寄件地址中的(地址必填)不能为空,
+                        // 'postcode'    => '518000', // （字符串 必填）寄件地址中的(邮编)不能为空,
+                        // 'cellphoneNo' => '13800138000', // （字符串 必填）寄件地址中的(联系电话)不能为空,
+                        // 'countryCode' => 'CN', // （字符串 必填）寄件地址中的(国家二字吗)不能为空
+                    // ]
                 ]
             ]
         ];
