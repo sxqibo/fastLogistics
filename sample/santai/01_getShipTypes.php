@@ -2,8 +2,10 @@
 //命名空间
 use Sxqibo\Logistics\Santai;
 
-require_once '../vendor/autoload.php';
-require_once '../config.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// 获取配置
+$config = require_once __DIR__ . '/config.php';
 
 $appKey = $config['sanTai']['appKey'];
 $token  = $config['sanTai']['token'];

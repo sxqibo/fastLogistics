@@ -12,6 +12,7 @@ class Santai
     private $appKey;
     private $token;
     private $userId;
+    private $divisionId;
 
     /**
      * 三态 constructor.
@@ -23,24 +24,20 @@ class Santai
      */
     public function __construct($appKey, $token, $userId, $divisionId = 1)
     {
-        try {
-            $this->appKey     = trim($appKey);
-            $this->token      = trim($token);
-            $this->userId     = trim($userId);
-            $this->divisionId = trim($divisionId);
-
-            if (empty($appKey)) {
-                throw new \Exception("appKey is empty");
-            }
-            if (empty($token)) {
-                throw new \Exception("token is empty");
-            }
-            if (empty($userId)) {
-                throw new \Exception("userId is empty");
-            }
-        } catch (\Exception $e) {
-            return $e->getMessage();
+        if (empty($appKey)) {
+            throw new \Exception("appKey is empty");
         }
+        if (empty($token)) {
+            throw new \Exception("token is empty");
+        }
+        if (empty($userId)) {
+            throw new \Exception("userId is empty");
+        }
+        
+        $this->appKey     = trim($appKey);
+        $this->token      = trim($token);
+        $this->userId     = trim($userId);
+        $this->divisionId = trim($divisionId);
     }
 
 
@@ -121,7 +118,7 @@ class Santai
     public function createOrder(
         $orderNo, $channelCode,
         $receiverCountryCode, $receiverName, $receiverAddress, $receiverCity, $rProvince, $receiverPostCode, $recipientEmail, $receiverMobile,
-        $goods = [], $goodsDescription, $iossCode = '', $remarks = '')
+        $goodsDescription, $goods = [], $iossCode = '', $remarks = '')
     {
         $param = [
             //step1（2）

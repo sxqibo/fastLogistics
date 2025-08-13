@@ -1,4 +1,9 @@
 <?php
-$appKey = '';
-$token = '';
-$userId = '';
+
+return [
+    'sanTai' => [
+        'appKey' => '',
+        'token' => '',
+        'userId' => ''
+    ]
+];
