@@ -390,41 +390,6 @@ class Wanb
                 ];
             }
             
-            // 如果返回的是PDF内容，保存到文件并返回文件路径
-            if (isset($result['content']) && strpos($result['content'], '%PDF-') === 0) {
-                // 创建标签目录
-                $labelDir = dirname(__DIR__) . '/labels';
-                if (!is_dir($labelDir)) {
-                    mkdir($labelDir, 0755, true);
-                }
-                
-                // 生成文件名
-                $fileName = 'label_' . $processCode . '_' . date('YmdHis') . '.pdf';
-                $filePath = $labelDir . '/' . $fileName;
-                
-                // 保存PDF文件
-                if (file_put_contents($filePath, $result['content'])) {
-                    return [
-                        'Code' => 0,
-                        'Message' => 'success',
-                        'Data' => [
-                            'ProcessCode' => $processCode,
-                            'LabelUrl' => $this->baseUrl . 'api/parcels/' . $processCode . '/label',
-                            'LabelFormat' => 'PDF',
-                            'CreatedTime' => date('Y-m-d H:i:s'),
-                            'LocalFilePath' => $filePath,
-                            'FileName' => $fileName
-                        ]
-                    ];
-                } else {
-                    return [
-                        'Code' => -1,
-                        'Message' => '保存PDF文件失败',
-                        'Data' => null
-                    ];
-                }
-            }
-            
             return $result;
         } catch (\Exception $e) {
             // 兼容性处理：捕获异常并返回有效格式

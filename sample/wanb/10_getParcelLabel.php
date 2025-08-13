@@ -28,9 +28,8 @@ print_r($result);
 //     [Message] => success
 //     [Data] => Array
 //         (
-//              [ProcessCode] => SBXPAA0000038638YQ
-//             [LabelUrl] => http://api-sbx.wanbexpress.com/labels/SBXPAA0000038638YQ.pdf
-//             [LabelFormat] => PDF
-//             [CreatedTime] => 2024-01-29 15:45:00
+//              [content] =>  %PDF-1.4
+//              [httpCode] => 200
+//              [contentType] => application/pdf
 //         )
 // )
