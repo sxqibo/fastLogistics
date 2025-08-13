@@ -25,32 +25,21 @@ $result = $app->updateOrderInfo($params);
 
 print_r($result);
 
-echo "=== 更新订单信息结果 ===\n";
-if ($result['flag']) {
-    echo "更新成功！\n";
-    if (isset($result['obj'])) {
-        echo "更新后的信息：\n";
-        print_r($result['obj']);
-    }
-} else {
-    echo "更新失败！\n";
-    echo "错误信息: " . ($result['msg'] ?? $result['obj'] ?? '未知错误') . "\n";
-}
+// Array
+// (
+//     [Code] => 0
+//     [Message] => success
+//     [Data] => Array
+//         (
+//             [code] => 
+//             [flag] => 1
+//             [msg] => 
+//             [obj] => 
+//             [rows] => Array
+//                 (
+//                 )
 
+//             [total] => 0
+//         )
 
-/**
- * Array
- * (
- * [code] =>
- * [flag] => 1
- * [msg] =>
- * [obj] =>
- * [rows] => Array
- * (
- * )
- *
- * [total] => 0
- * )
- * === 更新订单信息结果 ===
- * 更新成功！
- */
+// )

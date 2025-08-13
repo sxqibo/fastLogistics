@@ -24,28 +24,6 @@ $result = $app->checkRemoteArea($params);
 
 print_r($result);
 
-echo "=== 偏远地区检查结果 ===\n";
-echo "状态: " . ($result['flag'] ? '成功' : '失败') . "\n";
-if (isset($result['code'])) {
-    switch ($result['code']) {
-        case 'POST01':
-            echo "结果: 能正常派送，无偏远\n";
-            break;
-        case 'POST02':
-            echo "结果: 偏远地区，无法派送\n";
-            break;
-        case 'POST03':
-            echo "结果: 偏远地区，可以派送，需收取偏远费\n";
-            echo "偏远费: " . ($result['obj'] ?? 0) . " USD\n";
-            break;
-        default:
-            echo "结果: " . ($result['msg'] ?? '未知状态') . "\n";
-    }
-} else {
-    echo "错误信息: " . ($result['msg'] ?? $result['obj'] ?? '未知错误') . "\n";
-}
-
-
 /**
  * Array
  * (

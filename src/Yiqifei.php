@@ -2,18 +2,14 @@
 
 namespace Sxqibo\Logistics;
 
-use Sxqibo\Logistics\common\Client;
-
 class Yiqifei
 {
     private $config = [];
-    private $client;
     private $baseUrl = 'http://api.17feia.com/eship-api/v1';
 
     public function __construct($config = [])
     {
         $this->config = $config;
-        $this->client = new Client();
         $this->validateConfig();
     }
 
@@ -32,6 +28,128 @@ class Yiqifei
     }
 
     /**
+     * 使用curl发送HTTP请求
+     */
+    private function curlRequest(string $url, array $params = [], string $method = 'POST', array $headers = []): array
+    {
+        // 初始化curl
+        $ch = curl_init();
+        
+        // 设置基本选项
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        
+        // 设置请求方法
+        if ($method === 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            if (!empty($params)) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+            }
+        } elseif ($method === 'PUT') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+            if (!empty($params)) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+            }
+        } elseif ($method === 'DELETE') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        }
+        
+        // 设置请求头
+        $requestHeaders = [
+            'Content-Type: application/json; charset=utf-8',
+            'Accept: application/json'
+        ];
+        foreach ($headers as $key => $value) {
+            $requestHeaders[] = $key . ': ' . $value;
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
+        
+        // 执行请求
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        
+        // 获取响应头信息
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $responseHeaders = substr($response, 0, $headerSize);
+        $responseBody = substr($response, $headerSize);
+        
+        curl_close($ch);
+        
+        // 处理错误
+        if ($error) {
+            return [
+                'Code' => -1,
+                'Message' => 'CURL错误: ' . $error,
+                'Data' => null
+            ];
+        }
+        
+        // 处理HTTP状态码
+        if ($httpCode >= 400) {
+            return [
+                'Code' => $httpCode,
+                'Message' => 'HTTP错误: ' . $httpCode,
+                'Data' => null
+            ];
+        }
+        
+        // 解析JSON响应
+        $data = json_decode($responseBody, true);
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            return [
+                'Code' => -1,
+                'Message' => 'JSON解析错误: ' . json_last_error_msg(),
+                'Data' => null
+            ];
+        }
+        
+        // 如果响应为空，返回标准格式
+        if ($data === null || !is_array($data)) {
+            return [
+                'Code' => -1,
+                'Message' => 'API响应为空或格式错误',
+                'Data' => null
+            ];
+        }
+        
+        // 转换一起飞的格式为标准格式
+        if (isset($data['flag']) || isset($data['msg'])) {
+            if ($data['flag'] === true || $data['flag'] === 'true' || $data['flag'] === 1) {
+                return [
+                    'Code' => 0,
+                    'Message' => 'success',
+                    'Data' => $data
+                ];
+            } else {
+                return [
+                    'Code' => -1,
+                    'Message' => $data['msg'] ?? '未知错误',
+                    'Data' => $data
+                ];
+            }
+        }
+        
+        // 如果已经是标准格式，直接返回
+        if (isset($data['Code']) || isset($data['Message'])) {
+            return $data;
+        }
+        
+        // 其他情况，包装为标准格式
+        return [
+            'Code' => 0,
+            'Message' => 'success',
+            'Data' => $data
+        ];
+    }
+
+    /**
      * 获取可用的物流类型
      */
     public function getProducts()
@@ -43,7 +161,7 @@ class Yiqifei
             'timestamp' => time(),
         ];
 
-        return $this->client->requestApi($url, $params, 'POST');
+        return $this->curlRequest($url, $params, 'POST');
     }
 
     /**
@@ -65,7 +183,7 @@ class Yiqifei
             'height'          => $params['height']                    // 高(CM)
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -126,7 +244,7 @@ class Yiqifei
             ]
         ];
 
-        return $this->client->requestApi($url, $orderData, 'POST');
+        return $this->curlRequest($url, $orderData, 'POST');
     }
 
     /**
@@ -144,7 +262,7 @@ class Yiqifei
             'weight'      => $params['weight'],
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -164,7 +282,7 @@ class Yiqifei
             'boxHeight'    => $params['boxHeight']               // 高(CM)
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -181,7 +299,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -198,7 +316,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -215,7 +333,7 @@ class Yiqifei
             'orderNumbers' => $orderNumbers
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 
     /**
@@ -277,6 +395,6 @@ class Yiqifei
             ]
         ];
 
-        return $this->client->requestApi($url, $requestParams, 'POST');
+        return $this->curlRequest($url, $requestParams, 'POST');
     }
 } 

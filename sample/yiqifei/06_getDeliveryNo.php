@@ -18,27 +18,29 @@ $result = $app->getDeliveryNo($orderNumbers);
 
 print_r($result);
 
-/**
- * Array
- * (
- * [flag] => 1
- * [msg] =>
- * [pdfUrls] => Array
- * (
- * [0] => Array
- * (
- * [barcode] =>
- * [deliveryNumber] =>
- * [deliveryNumber2] =>
- * [deliveryNumbers] =>
- * [msg] =>
- * [orderNumber] => FEISZ1708169603YQ
- * [url] => http://api.17feia.com/label-internal/v1/label/internal/order/FEISZ1708169603YQ/pdf
- * )
- *
- * )
- *
- * )
- * === 获取派送单号和企业标签结果 ===
- * 获取成功！
- */
+// Array
+// (
+//     [Code] => 0
+//     [Message] => success
+//     [Data] => Array
+//         (
+//             [flag] => 1
+//             [msg] => 
+//             [pdfUrls] => Array
+//                 (
+//                     [0] => Array
+//                         (
+//                             [barcode] => 
+//                             [deliveryNumber] => 
+//                             [deliveryNumber2] => 
+//                             [deliveryNumbers] => 
+//                             [msg] => 
+//                             [orderNumber] => FEISZ1708169603YQ
+//                             [url] => http://api.17feia.com/label-internal/v1/label/internal/order/FEISZ1708169603YQ/pdf
+//                         )
+
+//                 )
+
+//         )
+
+// )
