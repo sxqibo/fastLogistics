@@ -11,11 +11,6 @@ $config = [
         'clientId' => '',
         'token'    => '',
     ],
-    'sanTai'  => [
-        'appKey' => '',
-        'token'  => '',
-        'userId' => '',
-    ],
     'yunTu'   => [
         'code' => '',
         'apiSecret'  => ''

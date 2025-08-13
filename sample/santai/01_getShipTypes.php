@@ -3,8 +3,6 @@
 use Sxqibo\Logistics\Santai;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-
-// 获取配置
 $config = require_once __DIR__ . '/config.php';
 
 $appKey = $config['sanTai']['appKey'];

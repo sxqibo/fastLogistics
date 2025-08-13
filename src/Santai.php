@@ -370,4 +370,79 @@ class Santai
         $result = ($this->soapClient())->createExpressWaybill($parameter);
         return $result;
     }
+
+    /**
+     * 15、打印地址标签
+     * 说明：根据三态物流官方文档，可以通过URL直接打印标签
+     * 文档URL: http://www.sfcservice.com/order/print/index/?orderCodeList=SFC单号&printType=打印类型&isPrintDeclare=1&declare=0&ismerge=1&print_type=标签类型&printSize=标签尺寸
+     * 
+     * @param string $orderNo 订单号
+     * @param int $printType 打印类型，0：普通A4，1：热敏，默认为0
+     * @param string $printTypeFormat 标签类型，pdf或html，默认为pdf
+     * @param int $printSize 标签尺寸，1:10*10，3:10*15，默认为1
+     * @return array 返回标签URL和相关信息
+     */
+    public function printAddressLabel($orderNo, $printType = 0, $printTypeFormat = 'pdf', $printSize = 1)
+    {
+        try {
+            // 根据官方文档构建正确的打印标签URL
+            $baseUrl = 'http://www.sfcservice.com/order/print/index/';
+            $labelUrl = $baseUrl . '?' . http_build_query([
+                'orderCodeList' => $orderNo,
+                'printType' => $printType,
+                'isPrintDeclare' => 1,
+                'declare' => 0,
+                'ismerge' => 1,
+                'print_type' => $printTypeFormat,
+                'printSize' => $printSize
+            ]);
+
+            return [
+                'Code' => 0,
+                'Message' => 'success',
+                'Data' => [
+                    'orderNo' => $orderNo,
+                    'printType' => $printType,
+                    'printTypeFormat' => $printTypeFormat,
+                    'printSize' => $printSize,
+                    'labelUrl' => $labelUrl,
+                    'printUrl' => $labelUrl, // 兼容性，保持与文档一致
+                    'note' => '请使用浏览器打开此URL进行打印，或集成到打印系统中'
+                ]
+            ];
+        } catch (\Exception $e) {
+            return [
+                'Code' => -1,
+                'Message' => '生成打印标签失败: ' . $e->getMessage(),
+                'Data' => null
+            ];
+        }
+    }
+
+    /**
+     * 16、获取标签打印状态
+     * 
+     * @param string $orderNo 订单号
+     * @return array
+     */
+    public function getLabelPrintStatus($orderNo)
+    {
+        try {
+            $parameter['HeaderRequest'] = $this->headerParam();
+            $parameter['orderCode'] = $orderNo;
+
+            $result = ($this->soapClient())->getLabelPrintStatus($parameter);
+            return [
+                'Code' => 0,
+                'Message' => 'success',
+                'Data' => $result
+            ];
+        } catch (\Exception $e) {
+            return [
+                'Code' => -1,
+                'Message' => '获取标签打印状态失败: ' . $e->getMessage(),
+                'Data' => null
+            ];
+        }
+    }
 }
