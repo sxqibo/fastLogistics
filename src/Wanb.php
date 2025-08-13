@@ -484,12 +484,40 @@ class Wanb
      */
     public function getTracking(string $processCode): array
     {
-        return $this->curlRequest(
-            $this->baseUrl . 'api/parcels/' . $processCode . '/tracking',
+        // 使用正确的万邦轨迹查询接口
+        // 根据文档：GET /api/trackPoints?trackingNumber={trackingNumber}
+        $result = $this->curlRequest(
+            $this->baseUrl . 'api/trackPoints?trackingNumber=' . $processCode,
             [],
             'GET',
             $this->buildHeaders()
         );
+        
+        // 如果成功获取轨迹信息，直接返回
+        if (isset($result['Code']) && $result['Code'] === 0) {
+            return $result;
+        }
+        
+        // 如果轨迹接口失败，尝试获取包裹基本信息作为备选
+        $parcelResult = $this->curlRequest(
+            $this->baseUrl . 'api/parcels/' . $processCode,
+            [],
+            'GET',
+            $this->buildHeaders()
+        );
+        
+        if (isset($parcelResult['Code']) && $parcelResult['Code'] === 0) {
+            // 返回包裹信息，但说明轨迹查询失败
+            $parcelResult['_note'] = '轨迹查询失败，返回包裹基本信息';
+            return $parcelResult;
+        }
+        
+        // 如果都失败，返回错误信息
+        return [
+            'Code' => 404,
+            'Message' => '轨迹信息暂未生成或接口端点不存在。请确认包裹已创建并等待轨迹信息生成。',
+            'Data' => null
+        ];
     }
 
     /**
