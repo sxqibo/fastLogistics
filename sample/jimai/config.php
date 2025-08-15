@@ -1,3 +1,7 @@
 <?php
-$clientId = '';
-$token    = '';
+return [
+    'jimai' => [
+        'clientId' => '',
+        'token' => '',
+    ]
+];

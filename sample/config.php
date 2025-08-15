@@ -7,10 +7,6 @@ $config = [
         'clientId' => '',
         'token'    => '',
     ],
-    'jimai' => [
-        'clientId' => '',
-        'token'    => '',
-    ],
     'yunTu'   => [
         'code' => '',
         'apiSecret'  => ''
