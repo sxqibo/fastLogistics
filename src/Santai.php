@@ -147,7 +147,7 @@ class Santai
 
             //step4:2021.7亚马逊新增iosscode
             'iossNo'             => $iossCode,
-            'orderNote'          => $remarks, // 备注
+            'orderNote'          => $orderNo.':'.$remarks, // 备注
         ];
 
         //step4:商品信息（4）

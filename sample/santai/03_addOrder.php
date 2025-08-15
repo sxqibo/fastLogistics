@@ -16,16 +16,17 @@ $data   = new Santai($appKey, $token, $userId);
  */
 //step1:订单
 $orderNo     = time();   //客户订单号
-$channelCode = 'USPE';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
+$channelCode = 'STEXPTHPH';  //运输方式代码(三种物流的方式是不一样的，一定要填对应的物流方式，否则会出错)
 $totalValue  = 50;      //云途不用填,填上也没关系
 
 //step2:收件人
-$rCountryCode   = 'US';           //收件人所在国家
-$rName          = 'tom';          //收件人姓
-$rAddress       = '02638-1915';   //收件人详细地址
-$rCity          = 'DENNIS';       //收件人所在城市
-$rProvince      = 'MA';           //收件人所在省
-$rCode          = '04222';        //发件人邮编,必填项,5位数字
+$rCountryCode   = 'CA';           //收件人所在国家
+$rName          = 'kyra';          //收件人姓
+$rAddress       = '15-3206 Shannon lake road';   //收件人详细地址
+$rCity          = 'West Kelowna';       //收件人所在城市
+$rProvince      = 'British Columbia';           //收件人所在省
+
+$rCode          = 'V1V 1V1';        //发件人邮编,必填项,加拿大邮编格式
 $recipientEmail = 'email@qq.com';        //发件人郵箱,選填项,有的渠道需要
 $rMobile        = '415-851-9136'; //发件人手机
 $remarks      = ''; //订单备注，用于打印配货单
@@ -53,6 +54,6 @@ $iossNumber = 'IM4420001201';
 $result = $data->createOrder(
     $orderNo, $channelCode,
     $rCountryCode, $rName, $rAddress, $rCity, $rProvince, $rCode, $recipientEmail, $rMobile,
-    $goods, '', $iossNumber, $remarks);
+    '商品订单', $goods, $iossNumber, $remarks);
 
 print_r($result);
