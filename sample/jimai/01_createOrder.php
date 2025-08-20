@@ -2,8 +2,8 @@
 //命名空间
 use Sxqibo\Logistics\Jimai;
 
-require_once '../../vendor/autoload.php';
-require_once '../config.php';
+require_once __DIR__.'/../../vendor/autoload.php';
+$config = require_once __DIR__.'/config.php';
 
 $clientId = $config['jimai']['clientId'];
 $token    = $config['jimai']['token'];
@@ -50,7 +50,7 @@ $goods = [
 ];
 
 // step4:
-$iossNumber = 'IM4420001201';
+$iossNumber = 'IM4420001405';
 
 $result = $data->createOrder(
     $orderNo, $channelCode,
@@ -60,3 +60,57 @@ $result = $data->createOrder(
 
 print_r($result);
 
+// 返回成功
+// Array
+// (
+//     [code] => 200
+//     [content] => Array
+//         (
+//             [statusCode] => success
+//             [returnDatas] => Array
+//                 (
+//                     [0] => Array
+//                         (
+//                             [statusCode] => success
+//                             [trackNumber] => YT2523200703023622
+//                             [corpBillid] => JM5082025520YQ
+//                             [customerNumber] => 1755660562
+//                             [childTrackingNumber] => 
+//                             [shipmentid] => 
+//                             [labelBillid] => 
+//                             [message] => 
+//                         )
+
+//                 )
+
+//         )
+
+// )
+
+
+// 返回失败
+// Array
+// (
+//     [code] => 200
+//     [content] => Array
+//         (
+//             [statusCode] => success
+//             [message] => 客户订单号:1755660468,异常:客户订单号：1755660468,获取单号失败： 订单【JM5082025515YQ】  提交代理获取单号失败：订单:JM5082025515YQ 提交异常信息：创建订单代理返回错误信息 :提交失败! ,IOSS号 IM4420001201 未备案，请先备案,
+//             [returnDatas] => Array
+//                 (
+//                     [0] => Array
+//                         (
+//                             [statusCode] => error
+//                             [corpBillid] => JM5082025515YQ
+//                             [customerNumber] => 1755660468
+//                             [childTrackingNumber] => 
+//                             [shipmentid] => 
+//                             [labelBillid] => 
+//                             [message] => 客户订单号：1755660468,获取单号失败： 订单【JM5082025515YQ】  提交代理获取单号失败：订单:JM5082025515YQ 提交异常信息：创建订单代理返回错误信息 :提交失败! ,IOSS号 IM4420001201 未备案，请先备案
+//                         )
+
+//                 )
+
+//         )
+
+// )

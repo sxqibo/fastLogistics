@@ -2,8 +2,8 @@
 //命名空间
 use Sxqibo\Logistics\Jimai;
 
-require_once '../../vendor/autoload.php';
-require_once '../config.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+$config = require_once __DIR__.'/config.php';
 
 $clientId = $config['jimai']['clientId'];
 $token    = $config['jimai']['token'];
@@ -12,7 +12,7 @@ $data     = new Jimai($clientId, $token);
 /**
  * 11、 查轨迹
  */
-$trackNumber = '564654858493';
+$trackNumber = 'JM5081123173YQ';
 
 $result = $data->getTrack($trackNumber);
 print_r($result);
