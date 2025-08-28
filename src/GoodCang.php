@@ -146,6 +146,37 @@ class GoodCang
     }
 
     /**
+     * 获取库龄列表
+     * 
+     * @param array $params 查询参数
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getInventoryAgeList($params = [])
+    {
+        $defaultParams = [
+            'page' => 1,
+            'page_size' => 20,
+            'age_from' => 1,
+            'age_to' => 9999,
+            'fifo_time_from' => date('Y-m-d H:i:s', strtotime('-180 days')),
+            'fifo_time_to' => date('Y-m-d H:i:s'),
+            'product_sku_list' => [],
+            'product_title' => '',
+            'product_title_en' => '',
+            'quantity_from' => 1,
+            'quantity_to' => 999999999,
+            'warehouse_code' => '',
+            'warning_age_type' => 1
+        ];
+
+        // 合并参数
+        $requestParams = array_merge($defaultParams, $params);
+
+        return $this->sendRequest('/inventory/inventory_age_list', $requestParams);
+    }
+
+    /**
      * 获取API基础URL
      * 
      * @return string
