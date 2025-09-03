@@ -48,6 +48,9 @@ class Client
             $response = $this->client->request($method, $url, $options);
             $contents = $response->getBody()->getContents();
 
+            // 处理字符编码
+            $contents = $this->fixResponseEncoding($contents);
+
             // 如果是XML响应，转换为数组
             if (strpos($contents, '<?xml') !== false) {
                 $xml = simplexml_load_string($contents);
@@ -64,5 +67,24 @@ class Client
             );
             throw new Exception($message);
         }
+    }
+
+    /**
+     * 修复响应内容的字符编码
+     *
+     * @param string $content 响应内容
+     * @return string
+     */
+    private function fixResponseEncoding($content)
+    {
+        // 检测编码
+        $encoding = mb_detect_encoding($content, ['UTF-8', 'GBK', 'GB2312', 'ISO-8859-1'], true);
+        
+        // 如果不是UTF-8，尝试转换
+        if ($encoding && $encoding !== 'UTF-8') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+        
+        return $content;
     }
 }
