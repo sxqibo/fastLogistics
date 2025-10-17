@@ -177,6 +177,51 @@ class GoodCang
     }
 
     /**
+     * 获取仓库信息
+     * 
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getWarehouse()
+    {
+        return $this->sendRequest('/base_data/get_warehouse');
+    }
+
+    /**
+     * 运费试算
+     * 
+     * @param array $params 查询参数
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getCalculateDeliveryFee($params = [])
+    {
+        $defaultParams = [
+            'city' => '',
+            'country_code' => '',
+            'height' => 0,
+            'insurance_amount' => 0,
+            'is_insurance_service' => 1,
+            'is_residential' => 1,
+            'is_sign_server' => 1,
+            'length' => 0,
+            'postcode' => '',
+            'property_label' => '',
+            'sku' => [],
+            'sm_code' => '',
+            'state' => '',
+            'warehouse_code' => '',
+            'weight' => 0,
+            'width' => 0
+        ];
+
+        // 合并参数
+        $requestParams = array_merge($defaultParams, $params);
+
+        return $this->sendRequest('/inventory/get_calculate_delivery_fee', $requestParams);
+    }
+
+    /**
      * 获取API基础URL
      * 
      * @return string
