@@ -1,0 +1,205 @@
+响应数据:
+{
+    "code": 0,
+    "message": "success",
+    "errors": [],
+    "data": [
+        {
+            "currency_code": "RMB",
+            "currency_name": "人民币",
+            "symbol": "¥"
+        },
+        {
+            "currency_code": "USD",
+            "currency_name": "美元",
+            "symbol": "$"
+        },
+        {
+            "currency_code": "EUR",
+            "currency_name": "欧元",
+            "symbol": "€"
+        },
+        {
+            "currency_code": "GBP",
+            "currency_name": "英镑",
+            "symbol": "￡"
+        },
+        {
+            "currency_code": "HKD",
+            "currency_name": "港币",
+            "symbol": "HK"
+        },
+        {
+            "currency_code": "AUD",
+            "currency_name": "澳大利亚元",
+            "symbol": "A$"
+        },
+        {
+            "currency_code": "JPY",
+            "currency_name": "日元",
+            "symbol": "¥JPY"
+        },
+        {
+            "currency_code": "CAD",
+            "currency_name": "加拿大元",
+            "symbol": ""
+        },
+        {
+            "currency_code": "SEK",
+            "currency_name": "瑞典克朗",
+            "symbol": ""
+        },
+        {
+            "currency_code": "PLN",
+            "currency_name": "波兰兹罗提",
+            "symbol": ""
+        },
+        {
+            "currency_code": "CZK",
+            "currency_name": "捷克克朗",
+            "symbol": ""
+        },
+        {
+            "currency_code": "THB",
+            "currency_name": "泰铢",
+            "symbol": ""
+        },
+        {
+            "currency_code": "KRW",
+            "currency_name": "韩国元",
+            "symbol": ""
+        },
+        {
+            "currency_code": "CLF",
+            "currency_name": "智利比索",
+            "symbol": ""
+        },
+        {
+            "currency_code": "CLP",
+            "currency_name": "智利比索",
+            "symbol": ""
+        },
+        {
+            "currency_code": "SGD",
+            "currency_name": "新加坡元",
+            "symbol": ""
+        },
+        {
+            "currency_code": "RUB",
+            "currency_name": "俄罗斯卢布",
+            "symbol": ""
+        },
+        {
+            "currency_code": "TRY",
+            "currency_name": "土耳其里拉",
+            "symbol": ""
+        },
+        {
+            "currency_code": "MXN",
+            "currency_name": "墨西哥比索",
+            "symbol": ""
+        }
+    ],
+    "http_code": 200,
+    "error_id": "PTHSVS",
+    "cached_time": null
+}
+
+=== 货币列表解析 ===
+货币数量: 19
+
+货币 1:
+  货币缩写: RMB
+  货币名称: 人民币
+  标识符: ¥
+
+货币 2:
+  货币缩写: USD
+  货币名称: 美元
+  标识符: $
+
+货币 3:
+  货币缩写: EUR
+  货币名称: 欧元
+  标识符: €
+
+货币 4:
+  货币缩写: GBP
+  货币名称: 英镑
+  标识符: ￡
+
+货币 5:
+  货币缩写: HKD
+  货币名称: 港币
+  标识符: HK
+
+货币 6:
+  货币缩写: AUD
+  货币名称: 澳大利亚元
+  标识符: A$
+
+货币 7:
+  货币缩写: JPY
+  货币名称: 日元
+  标识符: ¥JPY
+
+货币 8:
+  货币缩写: CAD
+  货币名称: 加拿大元
+  标识符: 
+
+货币 9:
+  货币缩写: SEK
+  货币名称: 瑞典克朗
+  标识符: 
+
+货币 10:
+  货币缩写: PLN
+  货币名称: 波兰兹罗提
+  标识符: 
+
+货币 11:
+  货币缩写: CZK
+  货币名称: 捷克克朗
+  标识符: 
+
+货币 12:
+  货币缩写: THB
+  货币名称: 泰铢
+  标识符: 
+
+货币 13:
+  货币缩写: KRW
+  货币名称: 韩国元
+  标识符: 
+
+货币 14:
+  货币缩写: CLF
+  货币名称: 智利比索
+  标识符: 
+
+货币 15:
+  货币缩写: CLP
+  货币名称: 智利比索
+  标识符: 
+
+货币 16:
+  货币缩写: SGD
+  货币名称: 新加坡元
+  标识符: 
+
+货币 17:
+  货币缩写: RUB
+  货币名称: 俄罗斯卢布
+  标识符: 
+
+货币 18:
+  货币缩写: TRY
+  货币名称: 土耳其里拉
+  标识符: 
+
+货币 19:
+  货币缩写: MXN
+  货币名称: 墨西哥比索
+  标识符: 
+

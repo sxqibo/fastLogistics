@@ -1,0 +1,396 @@
+响应数据:
+{
+    "code": 0,
+    "message": "success",
+    "errors": [],
+    "data": [
+        {
+            "account_code": "01",
+            "overall_financial": {
+                "total_available_balance": "40669.75",
+                "total_account_balance": "40669.75",
+                "total_fixed_quota": "0",
+                "total_temporary_quota": "0",
+                "total_frozen_amount": "0"
+            },
+            "currency_details": [
+                {
+                    "currency": "CAD",
+                    "available_amount": "-50.560",
+                    "account_balance": "-50.56",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "RMB",
+                    "available_amount": "8.310",
+                    "account_balance": "8.31",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "GBP",
+                    "available_amount": "174.040",
+                    "account_balance": "174.04",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "USD",
+                    "available_amount": "200.000",
+                    "account_balance": "200",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "EUR",
+                    "available_amount": "4615.570",
+                    "account_balance": "4615.57",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "HKD",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "AUD",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "JPY",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "CZK",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "CLP",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "MXN",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "PLN",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "CLF",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "RUB",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "SEK",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "SGD",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "THB",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "TRY",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                },
+                {
+                    "currency": "KRW",
+                    "available_amount": "0.000",
+                    "account_balance": "0",
+                    "fixed_quota": "0",
+                    "temporary_quota": "0",
+                    "remaining_days": 0,
+                    "frozen_amount": "0",
+                    "deposit": "0"
+                }
+            ]
+        }
+    ],
+    "http_code": 200,
+    "error_id": "PVIPKB",
+    "cached_time": null
+}
+
+=== 账户金额明细解析 ===
+账户 1:
+  账户编码: 01
+  币种明细数量: 19
+    币种 1:
+      货币: CAD
+      账户余额: -50.56
+      可用金额: -50.560
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 2:
+      货币: RMB
+      账户余额: 8.31
+      可用金额: 8.310
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 3:
+      货币: GBP
+      账户余额: 174.04
+      可用金额: 174.040
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 4:
+      货币: USD
+      账户余额: 200
+      可用金额: 200.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 5:
+      货币: EUR
+      账户余额: 4615.57
+      可用金额: 4615.570
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 6:
+      货币: HKD
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 7:
+      货币: AUD
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 8:
+      货币: JPY
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 9:
+      货币: CZK
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 10:
+      货币: CLP
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 11:
+      货币: MXN
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 12:
+      货币: PLN
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 13:
+      货币: CLF
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 14:
+      货币: RUB
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 15:
+      货币: SEK
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 16:
+      货币: SGD
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 17:
+      货币: THB
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 18:
+      货币: TRY
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+    币种 19:
+      货币: KRW
+      账户余额: 0
+      可用金额: 0.000
+      固定额度: 0
+      临时额度: 0
+      临时额度剩余天数: 0
+      冻结金额: 0
+      押金金额: 0
+  === 汇总信息 ===
+    总可用余额: 40669.75
+    账户总余额: 40669.75
+    固定总额度: 0
+    总临时额度: 0
+    总冻结金额: 0
+

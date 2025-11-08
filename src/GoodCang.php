@@ -177,6 +177,47 @@ class GoodCang
     }
 
     /**
+     * 获取公司账户列表
+     *
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getAccountList()
+    {
+        return $this->sendRequest('/base_data/get_account_list');
+    }
+
+    /**
+     * 获取账户金额明细
+     *
+     * @param array $params 查询参数
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getAccountDetail($params = [])
+    {
+        $defaultParams = [
+            'account_code' => '',
+            'account_codes' => [],
+        ];
+
+        $requestParams = array_merge($defaultParams, $params);
+
+        return $this->sendRequest('/finance/get_account_detail', $requestParams);
+    }
+
+    /**
+     * 获取货币列表
+     *
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getCurrencyRateList()
+    {
+        return $this->sendRequest('/finance/currency_rate_list');
+    }
+
+    /**
      * 获取仓库信息
      * 
      * @return array 返回响应数据

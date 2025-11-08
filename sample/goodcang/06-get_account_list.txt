@@ -1,0 +1,297 @@
+响应数据:
+{
+    "ask": "Success",
+    "message": "Success",
+    "data": {
+        "customer_code": "XXX ",
+        "account_list": [
+            {
+                "firm_name": "XXX",
+                "firm_status": 2,
+                "server_firm_name": "XXX",
+                "business_type_list": [
+                    0
+                ],
+                "account_code": "XXX",
+                "balance_list": [
+                    {
+                        "currency_code": "AUD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CAD",
+                        "amount": "-50.56"
+                    },
+                    {
+                        "currency_code": "CLF",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CLP",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CZK",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "EUR",
+                        "amount": "4615.57"
+                    },
+                    {
+                        "currency_code": "GBP",
+                        "amount": "174.04"
+                    },
+                    {
+                        "currency_code": "HKD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "JPY",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "KRW",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "MXN",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "PLN",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "RMB",
+                        "amount": "8.31"
+                    },
+                    {
+                        "currency_code": "RUB",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "SEK",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "SGD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "THB",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "TRY",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "USD",
+                        "amount": "200"
+                    }
+                ]
+            },
+            {
+                "firm_name": "XXX",
+                "firm_status": 2,
+                "server_firm_name": "XXX",
+                "business_type_list": [
+                    1
+                ],
+                "account_code": "XXX",
+                "balance_list": [
+                    {
+                        "currency_code": "AUD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CAD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CLF",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CLP",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "CZK",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "EUR",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "GBP",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "HKD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "JPY",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "KRW",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "MXN",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "PLN",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "RMB",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "RUB",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "SEK",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "SGD",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "THB",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "TRY",
+                        "amount": "0"
+                    },
+                    {
+                        "currency_code": "USD",
+                        "amount": "0"
+                    }
+                ]
+            },
+            {
+                "firm_name": "XXX",
+                "firm_status": 5,
+                "server_firm_name": "XX",
+                "business_type_list": [],
+                "account_code": "XXX",
+                "balance_list": []
+            }
+        ]
+    }
+}
+
+=== 公司账户解析 ===
+客户代码: G9407
+账户数量: 3
+
+账户 1:
+  账户编号: 01
+  签约主体名称: XXX
+  服务主体名称: XXX
+  签约主体状态: 2
+  签约业务类型: 0
+  账户余额信息:
+    币种: AUD
+    金额: 0
+    币种: CAD
+    金额: -50.56
+    币种: CLF
+    金额: 0
+    币种: CLP
+    金额: 0
+    币种: CZK
+    金额: 0
+    币种: EUR
+    金额: 4615.57
+    币种: GBP
+    金额: 174.04
+    币种: HKD
+    金额: 0
+    币种: JPY
+    金额: 0
+    币种: KRW
+    金额: 0
+    币种: MXN
+    金额: 0
+    币种: PLN
+    金额: 0
+    币种: RMB
+    金额: 8.31
+    币种: RUB
+    金额: 0
+    币种: SEK
+    金额: 0
+    币种: SGD
+    金额: 0
+    币种: THB
+    金额: 0
+    币种: TRY
+    金额: 0
+    币种: USD
+    金额: 200
+
+账户 2:
+  账户编号: 02
+  签约主体名称: XXX
+  服务主体名称: XXX
+  签约主体状态: 2
+  签约业务类型: 1
+  账户余额信息:
+    币种: AUD
+    金额: 0
+    币种: CAD
+    金额: 0
+    币种: CLF
+    金额: 0
+    币种: CLP
+    金额: 0
+    币种: CZK
+    金额: 0
+    币种: EUR
+    金额: 0
+    币种: GBP
+    金额: 0
+    币种: HKD
+    金额: 0
+    币种: JPY
+    金额: 0
+    币种: KRW
+    金额: 0
+    币种: MXN
+    金额: 0
+    币种: PLN
+    金额: 0
+    币种: RMB
+    金额: 0
+    币种: RUB
+    金额: 0
+    币种: SEK
+    金额: 0
+    币种: SGD
+    金额: 0
+    币种: THB
+    金额: 0
+    币种: TRY
+    金额: 0
+    币种: USD
+    金额: 0
+
+账户 3:
+  账户编号: 03
+  签约主体名称: XXX
+  服务主体名称: XXX
+  签约主体状态: 5
+  签约业务类型: 无
+  账户余额信息:
+
