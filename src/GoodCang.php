@@ -249,6 +249,55 @@ class GoodCang
     }
 
     /**
+     * 获取订单列表
+     * @doc https://open.goodcang.com/docs_api/order/get_order_list
+     * 
+     * @param array $params 查询参数
+     * @return array 返回响应数据
+     * @throws \Exception
+     */
+    public function getOrderList($params = [])
+    {
+        // 必填参数默认值
+        $defaultParams = [
+            'page' => 1,
+            'pageSize' => 20,
+        ];
+
+        // 合并参数（用户传入的参数会覆盖默认值）
+        $requestParams = array_merge($defaultParams, $params);
+
+        // 清理空字符串的可选参数（避免传递不必要的参数）
+        $optionalParams = ['code_type', 'create_date_from', 'create_date_to', 'date_shipping_from', 
+                          'date_shipping_to', 'modify_date_from', 'modify_date_to', 'ooh_code', 
+                          'order_code', 'order_code_arr', 'order_status', 'shipping_method', 'ship_status'];
+        
+        foreach ($optionalParams as $key) {
+            // 如果参数值为空字符串或空数组，则删除
+            if (isset($requestParams[$key])) {
+                if ($requestParams[$key] === '' || (is_array($requestParams[$key]) && empty($requestParams[$key]))) {
+                    unset($requestParams[$key]);
+                }
+            }
+        }
+
+        // 确保 page 和 pageSize 是整数类型
+        if (isset($requestParams['page'])) {
+            $requestParams['page'] = (int)$requestParams['page'];
+        }
+        if (isset($requestParams['pageSize'])) {
+            $requestParams['pageSize'] = (int)$requestParams['pageSize'];
+        }
+        
+        // 确保 ship_status 是整数类型（如果存在）
+        if (isset($requestParams['ship_status']) && $requestParams['ship_status'] !== '') {
+            $requestParams['ship_status'] = (int)$requestParams['ship_status'];
+        }
+
+        return $this->sendRequest('/order/get_order_list', $requestParams);
+    }
+
+    /**
      * 运费试算
      * 
      * @param array $params 查询参数
