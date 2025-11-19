@@ -2,3 +2,4 @@
 /autoload.php
 /vendor
 php-beast.log
+*.txt

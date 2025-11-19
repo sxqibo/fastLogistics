@@ -92,6 +92,7 @@ class GoodCang
 
     /**
      * 获取成本流水列表
+     * @doc https://open.goodcang.com/docs_api/finance/cost_flow_list
      * 
      * @param array $params 查询参数
      * @return array 返回响应数据
@@ -99,24 +100,43 @@ class GoodCang
      */
     public function getCostFlowList($params = [])
     {
+        // 必填参数默认值
         $defaultParams = [
-            'types_of_fee' => '0',
-            'flow_type' => '0',
-            'order_number' => '',
-            'account_code' => '',
-            'business_type' => '0',
-            'currency_code' => 'USD',
-            'charge_type' => '0',
-            'search_after' => '',
             'page' => 1,
-            'page_size' => 10,
-            'happen_start_time' => date('Y-m-d H:i:s', strtotime('-30 days')),
-            'happen_end_time' => date('Y-m-d H:i:s'),
-            'number_type' => 'order_number'
+            'page_size' => 20,
+            'happen_start_time' => date('Y-m-d 00:00:00', strtotime('-30 days')),
+            'happen_end_time' => date('Y-m-d 23:59:59'),
         ];
 
-        // 合并参数
+        // 合并参数（用户传入的参数会覆盖默认值）
         $requestParams = array_merge($defaultParams, $params);
+
+        // 清理空字符串的可选参数（避免传递不必要的参数）
+        $optionalParams = ['account_code', 'business_type', 'charge_type', 'currency_code', 
+                          'flow_type', 'next_page_token', 'prev_page_token', 'number_type', 
+                          'order_number', 'types_of_fee'];
+        
+        foreach ($optionalParams as $key) {
+            // 如果参数值为空字符串，则删除（不传递给API）
+            if (isset($requestParams[$key]) && $requestParams[$key] === '') {
+                // number_type 和 order_number 必须成对出现
+                if ($key === 'number_type' && (empty($requestParams['order_number']) || $requestParams['order_number'] === '')) {
+                    unset($requestParams['number_type']);
+                } elseif ($key === 'order_number' && (empty($requestParams['number_type']) || $requestParams['number_type'] === '')) {
+                    unset($requestParams['order_number']);
+                } elseif ($key !== 'number_type' && $key !== 'order_number') {
+                    unset($requestParams[$key]);
+                }
+            }
+        }
+
+        // 确保 business_type 和 charge_type 是整数类型（如果存在且不为空）
+        if (isset($requestParams['business_type']) && $requestParams['business_type'] !== '') {
+            $requestParams['business_type'] = (int)$requestParams['business_type'];
+        }
+        if (isset($requestParams['charge_type']) && $requestParams['charge_type'] !== '') {
+            $requestParams['charge_type'] = (int)$requestParams['charge_type'];
+        }
 
         return $this->sendRequest('/finance/cost_flow_list', $requestParams);
     }
