@@ -332,6 +332,58 @@ class GoodCang
     }
 
     /**
+     * 获取商品列表（SKU维度）
+     * 对应接口：/product/get_product_sku_list
+     *
+     * @param array $params 查询参数
+     * @return array
+     * @throws \Exception
+     */
+    public function getProductSkuList($params = [])
+    {
+        $defaultParams = [
+            'page' => 1,
+            'pageSize' => 20,
+            'product_sku' => '',
+            'product_sku_arr' => [],
+            'product_update_time_from' => '',
+            'product_update_time_to' => '',
+        ];
+
+        // 合并参数
+        $requestParams = array_merge($defaultParams, $params);
+
+        // 清理可选参数中的空值
+        $optionalParams = ['product_sku', 'product_sku_arr', 'product_update_time_from', 'product_update_time_to'];
+        foreach ($optionalParams as $key) {
+            if (!isset($requestParams[$key])) {
+                continue;
+            }
+
+            // 空字符串
+            if (is_string($requestParams[$key]) && $requestParams[$key] === '') {
+                unset($requestParams[$key]);
+                continue; // 已删除，跳过后续检查
+            }
+
+            // 空数组（需要再次检查键是否存在，因为可能在上一步被删除了）
+            if (isset($requestParams[$key]) && is_array($requestParams[$key]) && empty($requestParams[$key])) {
+                unset($requestParams[$key]);
+            }
+        }
+
+        // 确保分页参数为整数
+        if (isset($requestParams['page'])) {
+            $requestParams['page'] = (int)$requestParams['page'];
+        }
+        if (isset($requestParams['pageSize'])) {
+            $requestParams['pageSize'] = (int)$requestParams['pageSize'];
+        }
+
+        return $this->sendRequest('/product/get_product_sku_list', $requestParams);
+    }
+
+    /**
      * 获取API基础URL
      * 
      * @return string
