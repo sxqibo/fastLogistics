@@ -17,6 +17,7 @@ class Fpx
     private $client;
     private $baseUrl;
     private $accessToken;
+    private $language = 'cn'; // 响应语言，默认中文
 
     /**
      * 递四方构造函数
@@ -130,9 +131,14 @@ class Fpx
         $bodyData = json_encode($businessData, JSON_UNESCAPED_UNICODE);
         $params = $this->buildCommonParams($method, $businessData);
         
-        // 如果有access_token，添加到参数中
+        // 如果有access_token，添加到参数中（不参与签名）
         if (!empty($this->accessToken)) {
             $params['access_token'] = $this->accessToken;
+        }
+
+        // 添加language参数（不参与签名）
+        if (!empty($this->language)) {
+            $params['language'] = $this->language;
         }
 
         // 构建请求URL（公共参数放在URL后面）
@@ -190,12 +196,13 @@ class Fpx
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => $bodyData,
                 CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
-                    'Accept: application/json'
+                    'Content-Type: application/json; charset=utf-8',
+                    'Accept: application/json; charset=utf-8'
                 ],
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_ENCODING => '' // 自动处理响应编码
             ]);
             
             $response = curl_exec($curl);
@@ -212,9 +219,114 @@ class Fpx
                 throw new Exception("HTTP错误: " . $httpCode . ", 响应: " . $response);
             }
             
+            // 保存原始响应用于调试和编码修复
+            $originalResponse = $response;
+            
+            // 在JSON解码前，先检测响应字符串中是否包含乱码特征
+            // 如果响应中包含 "?-" 后跟多个问号，可能是GBK编码的JSON
+            if (preg_match('/"sku_name"\s*:\s*"\?-\?+/', $response) || 
+                preg_match('/"[\w_]+"\s*:\s*"\?-\?+/', $response)) {
+                // 检测到可能的乱码模式，尝试从GBK转换
+                $response = @mb_convert_encoding($response, 'UTF-8', 'GBK');
+                // 如果转换失败，尝试其他编码
+                if ($response === false || $response === $originalResponse) {
+                    $response = @mb_convert_encoding($originalResponse, 'UTF-8', 'GB2312');
+                }
+                if ($response === false || $response === $originalResponse) {
+                    $response = @mb_convert_encoding($originalResponse, 'UTF-8', 'GB18030');
+                }
+                // 如果还是失败，使用原始响应
+                if ($response === false) {
+                    $response = $originalResponse;
+                }
+            }
+            
+            // 策略1：先尝试正常JSON解码
             $result = json_decode($response, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception("JSON解析错误: " . json_last_error_msg());
+            $jsonError = json_last_error();
+            
+            // 如果JSON解码成功，检查是否包含乱码（连续问号）
+            if ($jsonError === JSON_ERROR_NONE && is_array($result)) {
+                $hasGarbled = false;
+                $garbledCount = 0;
+                array_walk_recursive($result, function($value) use (&$hasGarbled, &$garbledCount) {
+                    if (is_string($value) && preg_match('/\?{2,}/', $value) && mb_strlen($value) > 2) {
+                        $hasGarbled = true;
+                        $garbledCount++;
+                    }
+                });
+                
+                // 如果检测到乱码，尝试多种编码转换方式
+                if ($hasGarbled) {
+                    // 策略2：尝试将响应从GBK转换为UTF-8，然后重新解码
+                    $encodingsToTry = ['GBK', 'GB2312', 'GB18030', 'Windows-1252'];
+                    
+                    foreach ($encodingsToTry as $encoding) {
+                        $responseFixed = @mb_convert_encoding($originalResponse, 'UTF-8', $encoding);
+                        if ($responseFixed !== false && $responseFixed !== $originalResponse) {
+                            $resultFixed = json_decode($responseFixed, true);
+                            if (json_last_error() === JSON_ERROR_NONE && is_array($resultFixed)) {
+                                // 检查修复后的结果是否还有乱码
+                                $stillGarbled = false;
+                                $fixedGarbledCount = 0;
+                                array_walk_recursive($resultFixed, function($value) use (&$stillGarbled, &$fixedGarbledCount) {
+                                    if (is_string($value) && preg_match('/\?{2,}/', $value) && mb_strlen($value) > 2) {
+                                        $stillGarbled = true;
+                                        $fixedGarbledCount++;
+                                    }
+                                });
+                                
+                                // 如果修复后乱码减少了，使用修复后的结果
+                                if ($fixedGarbledCount < $garbledCount) {
+                                    $result = $resultFixed;
+                                    $garbledCount = $fixedGarbledCount;
+                                    if (!$stillGarbled) {
+                                        // 完全没有乱码了，直接使用
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 策略3：如果还有乱码，尝试使用iconv转换
+                    if ($garbledCount > 0) {
+                        foreach ($encodingsToTry as $encoding) {
+                            $responseFixed = @iconv($encoding, 'UTF-8//IGNORE', $originalResponse);
+                            if ($responseFixed !== false && $responseFixed !== $originalResponse) {
+                                $resultFixed = json_decode($responseFixed, true);
+                                if (json_last_error() === JSON_ERROR_NONE && is_array($resultFixed)) {
+                                    $stillGarbled = false;
+                                    $fixedGarbledCount = 0;
+                                    array_walk_recursive($resultFixed, function($value) use (&$stillGarbled, &$fixedGarbledCount) {
+                                        if (is_string($value) && preg_match('/\?{2,}/', $value) && mb_strlen($value) > 2) {
+                                            $stillGarbled = true;
+                                            $fixedGarbledCount++;
+                                        }
+                                    });
+                                    
+                                    if ($fixedGarbledCount < $garbledCount) {
+                                        $result = $resultFixed;
+                                        if (!$stillGarbled) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } elseif ($jsonError !== JSON_ERROR_NONE) {
+                // JSON解码失败，尝试从GBK转换后重新解码
+                $responseFixed = @mb_convert_encoding($originalResponse, 'UTF-8', 'GBK');
+                if ($responseFixed !== false) {
+                    $result = json_decode($responseFixed, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        throw new Exception("JSON解析错误: " . json_last_error_msg());
+                    }
+                } else {
+                    throw new Exception("JSON解析错误: " . json_last_error_msg());
+                }
             }
             
             return $result;
@@ -311,7 +423,7 @@ class Fpx
 
     /**
      * 修复字符编码问题
-     * 递归处理数组中的字符串编码
+     * 递归处理数组中的字符串编码，特别处理包含问号的乱码
      *
      * @param array $data 需要处理的数据
      * @return array
@@ -323,10 +435,30 @@ class Fpx
                 $data[$key] = $this->fixEncoding($value);
             }
         } elseif (is_string($data)) {
-            // 尝试检测和转换编码
-            $encoding = mb_detect_encoding($data, ['UTF-8', 'GBK', 'GB2312', 'ISO-8859-1'], true);
-            if ($encoding && $encoding !== 'UTF-8') {
-                $data = mb_convert_encoding($data, 'UTF-8', $encoding);
+            // 检查是否包含连续的问号（乱码特征）
+            if (preg_match('/\?{2,}/', $data)) {
+                // 包含乱码，尝试修复
+                // 递四方API可能返回GBK编码的JSON，但被错误解析为UTF-8
+                // 我们需要重新从原始字节转换
+                // 但由于已经JSON解码，我们只能尝试从GBK转换
+                $converted = @mb_convert_encoding($data, 'UTF-8', 'GBK');
+                if ($converted !== false && !preg_match('/\?{2,}/', $converted)) {
+                    // 转换后没有乱码，使用转换后的结果
+                    $data = $converted;
+                } else {
+                    // 如果直接转换不行，尝试其他方式
+                    // 将问号替换为可能的原始字节，然后转换
+                    // 但这种方法不可靠，所以先尝试直接转换
+                }
+            } elseif (!mb_check_encoding($data, 'UTF-8')) {
+                // 不是有效的UTF-8，尝试检测和转换编码
+                $encoding = mb_detect_encoding($data, ['UTF-8', 'GBK', 'GB2312', 'ISO-8859-1', 'Windows-1252'], true);
+                if ($encoding && $encoding !== 'UTF-8') {
+                    $converted = @mb_convert_encoding($data, 'UTF-8', $encoding);
+                    if ($converted !== false) {
+                        $data = $converted;
+                    }
+                }
             }
         }
         return $data;
@@ -341,6 +473,21 @@ class Fpx
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * 设置响应语言
+     * 设置API响应信息的语言
+     *
+     * @param string $language 语言代码，支持 'cn'（中文）或 'en'（英文），默认为 'cn'
+     */
+    public function setLanguage($language = 'cn')
+    {
+        if (in_array($language, ['cn', 'en'])) {
+            $this->language = $language;
+        } else {
+            throw new Exception('语言参数必须是 "cn" 或 "en"');
+        }
     }
 
     /**
@@ -540,5 +687,101 @@ class Fpx
                 'inventory_list' => $formattedData
             ]
         ];
+    }
+
+    /**
+     * 查询库存库龄
+     * 查询指定SKU的库存库龄信息，如果不传SKU则查询全部
+     *
+     * @param string|array|null $skuCodes SKU编号，可以是字符串或数组（单次最大支持100种SKU种类查询），传null或空字符串则查询全部
+     * @param string $customerCode 客户操作账号（可选）
+     * @param string $warehouseCode 仓库代码（可选）
+     * @return array
+     */
+    public function getInventoryAge($skuCodes = null, $customerCode = '', $warehouseCode = '')
+    {
+        $params = [];
+
+        // 客户操作账号
+        if (!empty($customerCode)) {
+            $params['customer_code'] = $customerCode;
+        }
+
+        // 仓库代码
+        if (!empty($warehouseCode)) {
+            $params['warehouse_code'] = $warehouseCode;
+        }
+
+        // 处理SKU编号
+        // 如果 $skuCodes 为 null 或空字符串，则不传 lstsku 参数，查询全部
+        if ($skuCodes !== null && $skuCodes !== '') {
+            // 根据API文档，lstsku支持多个SKU（单次最大支持100种）
+            // 参考 getInventory 方法，直接传递数组格式（会被JSON编码为数组）
+            if (is_array($skuCodes)) {
+                if (count($skuCodes) > 100) {
+                    throw new Exception('单次最大支持100种SKU种类查询');
+                }
+                $params['lstsku'] = $skuCodes; // 直接传递数组，会被JSON编码为数组格式
+            } elseif (is_string($skuCodes)) {
+                // 如果是字符串，先尝试按逗号分割（支持逗号分隔的字符串）
+                if (strpos($skuCodes, ',') !== false) {
+                    $params['lstsku'] = array_map('trim', explode(',', $skuCodes));
+                } else {
+                    $params['lstsku'] = [$skuCodes]; // 单个SKU也转为数组
+                }
+            } else {
+                throw new Exception('SKU编号必须是字符串或数组');
+            }
+        }
+        // 如果 $skuCodes 为 null 或空字符串，则不添加 lstsku 参数，让API返回全部
+
+        return $this->request('fu.wms.inventory.getdetail', $params);
+    }
+
+    /**
+     * 批量查询SKU
+     * 查询SKU信息集合
+     *
+     * @param string|array $skuCodes SKU编号，可以是字符串或数组（最大支持100个SKU查询）
+     * @param string $customerCode 客户操作账号（可选）
+     * @return array
+     */
+    public function getSkuList($skuCodes, $customerCode = '')
+    {
+        $params = [];
+
+        // 客户操作账号
+        if (!empty($customerCode)) {
+            $params['customer_code'] = $customerCode;
+        }
+
+        // 处理SKU编号
+        if (is_array($skuCodes)) {
+            if (count($skuCodes) > 100) {
+                throw new Exception('每次只能查询最多100个SKU');
+            }
+            if (empty($skuCodes)) {
+                throw new Exception('SKU编号不能为空');
+            }
+            $params['lstsku'] = $skuCodes;
+        } elseif (is_string($skuCodes)) {
+            if (empty($skuCodes)) {
+                throw new Exception('SKU编号不能为空');
+            }
+            // 如果是字符串，先尝试按逗号分割（支持逗号分隔的字符串）
+            if (strpos($skuCodes, ',') !== false) {
+                $skuArray = array_map('trim', explode(',', $skuCodes));
+                if (count($skuArray) > 100) {
+                    throw new Exception('每次只能查询最多100个SKU');
+                }
+                $params['lstsku'] = $skuArray;
+            } else {
+                $params['lstsku'] = [$skuCodes]; // 单个SKU也转为数组
+            }
+        } else {
+            throw new Exception('SKU编号必须是字符串或数组');
+        }
+
+        return $this->request('fu.wms.sku.getlist', $params);
     }
 }

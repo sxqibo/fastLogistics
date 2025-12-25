@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GoodCang API 示例 - 根据SKU获取商品长宽高
+ * GoodCang API 示例 - 根据SKU获取商品长宽高和重量
  */
 
 // 引入配置文件
@@ -20,12 +20,12 @@ try {
     /** @var GoodCang $goodCang */
     $goodCang = new GoodCang($appToken, $appKey);
 
-    echo "=== GoodCang API 根据SKU获取商品长宽高 ===\n";
+    echo "=== GoodCang API 根据SKU获取商品长宽高和重量 ===\n";
     echo "App Token: " . $appToken . "\n";
     echo "App Key: " . $appKey . "\n\n";
 
     // 要查询的SKU
-    $sku = 'XXX';
+    $sku = 'DE-MAOSHAPEN1+DIANZI';
 
     // 设置查询参数（必填：page, pageSize；精确SKU）
     $params = [
@@ -78,7 +78,7 @@ try {
     $rows = $result['data'];
     echo "返回记录数: " . count($rows) . "\n\n";
 
-    // 查找匹配SKU，并输出长宽高
+    // 查找匹配SKU，并输出长宽高和重量
     $found = false;
     foreach ($rows as $index => $row) {
         $rowSku = $row['product_sku'] ?? '';
@@ -94,30 +94,36 @@ try {
         $realLength = $row['Product_real_length'] ?? null;
         $realWidth  = $row['Product_real_width'] ?? null;
         $realHeight = $row['Product_real_height'] ?? null;
+        $realWeight = $row['Product_real_weight'] ?? null;
 
         $stdLength  = $row['product_length'] ?? null;
         $stdWidth   = $row['product_width'] ?? null;
         $stdHeight  = $row['product_height'] ?? null;
+        $stdWeight  = $row['product_weight'] ?? null;
 
-        echo "--- 实收尺寸（单位CM，如存在）---\n";
-        echo "实收长(Product_real_length): " . ($realLength !== null && $realLength !== '' ? $realLength : '无') . "\n";
-        echo "实收宽(Product_real_width): " . ($realWidth  !== null && $realWidth  !== '' ? $realWidth  : '无') . "\n";
-        echo "实收高(Product_real_height): " . ($realHeight !== null && $realHeight !== '' ? $realHeight : '无') . "\n\n";
+        echo "--- 实收尺寸和重量（如存在）---\n";
+        echo "实收长(Product_real_length): " . ($realLength !== null && $realLength !== '' ? $realLength : '无') . " CM\n";
+        echo "实收宽(Product_real_width): " . ($realWidth  !== null && $realWidth  !== '' ? $realWidth  : '无') . " CM\n";
+        echo "实收高(Product_real_height): " . ($realHeight !== null && $realHeight !== '' ? $realHeight : '无') . " CM\n";
+        echo "实收重(Product_real_weight): " . ($realWeight !== null && $realWeight !== '' ? $realWeight : '无') . " KG\n\n";
 
-        echo "--- 标准尺寸（单位CM）---\n";
-        echo "长(product_length): " . ($stdLength !== null && $stdLength !== '' ? $stdLength : '无') . "\n";
-        echo "宽(product_width): " . ($stdWidth  !== null && $stdWidth  !== '' ? $stdWidth  : '无') . "\n";
-        echo "高(product_height): " . ($stdHeight !== null && $stdHeight !== '' ? $stdHeight : '无') . "\n\n";
+        echo "--- 标准尺寸和重量 ---\n";
+        echo "长(product_length): " . ($stdLength !== null && $stdLength !== '' ? $stdLength : '无') . " CM\n";
+        echo "宽(product_width): " . ($stdWidth  !== null && $stdWidth  !== '' ? $stdWidth  : '无') . " CM\n";
+        echo "高(product_height): " . ($stdHeight !== null && $stdHeight !== '' ? $stdHeight : '无') . " CM\n";
+        echo "重(product_weight): " . ($stdWeight !== null && $stdWeight !== '' ? $stdWeight : '无') . " KG\n\n";
 
-        // 如果需要“最终使用尺寸”，可按优先级选择
+        // 如果需要“最终使用尺寸和重量”，可按优先级选择
         $finalLength = $realLength !== null && $realLength !== '' ? $realLength : $stdLength;
         $finalWidth  = $realWidth  !== null && $realWidth  !== '' ? $realWidth  : $stdWidth;
         $finalHeight = $realHeight !== null && $realHeight !== '' ? $realHeight : $stdHeight;
+        $finalWeight = $realWeight !== null && $realWeight !== '' ? $realWeight : $stdWeight;
 
-        echo "=== 最终使用的长宽高（优先使用实收尺寸，其次标准尺寸）===\n";
+        echo "=== 最终使用的长宽高和重量（优先使用实收值，其次标准值）===\n";
         echo "长: " . ($finalLength !== null && $finalLength !== '' ? $finalLength : '无') . " CM\n";
         echo "宽: " . ($finalWidth  !== null && $finalWidth  !== '' ? $finalWidth  : '无') . " CM\n";
         echo "高: " . ($finalHeight !== null && $finalHeight !== '' ? $finalHeight : '无') . " CM\n";
+        echo "重: " . ($finalWeight !== null && $finalWeight !== '' ? $finalWeight : '无') . " KG\n";
         echo "==============================================\n\n";
     }
 

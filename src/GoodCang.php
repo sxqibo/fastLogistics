@@ -162,6 +162,33 @@ class GoodCang
         // 合并参数
         $requestParams = array_merge($defaultParams, $params);
 
+        // 清理空字符串和空数组的可选参数
+        $optionalParams = ['product_sku', 'product_sku_arr', 'warehouse_code', 'warehouse_code_arr'];
+        foreach ($optionalParams as $key) {
+            if (!isset($requestParams[$key])) {
+                continue;
+            }
+
+            // 空字符串
+            if (is_string($requestParams[$key]) && $requestParams[$key] === '') {
+                unset($requestParams[$key]);
+                continue;
+            }
+
+            // 空数组
+            if (is_array($requestParams[$key]) && empty($requestParams[$key])) {
+                unset($requestParams[$key]);
+            }
+        }
+
+        // 确保分页参数为整数
+        if (isset($requestParams['page'])) {
+            $requestParams['page'] = (int)$requestParams['page'];
+        }
+        if (isset($requestParams['pageSize'])) {
+            $requestParams['pageSize'] = (int)$requestParams['pageSize'];
+        }
+
         return $this->sendRequest('/inventory/get_product_inventory', $requestParams);
     }
 
