@@ -784,4 +784,69 @@ class Fpx
 
         return $this->request('fu.wms.sku.getlist', $params);
     }
+
+    /**
+     * 查询仓库信息
+     * 调用此接口可查询4PX所有仓库信息
+     *
+     * @param string $serviceCode 业务类型，可选值：F(订单履约)、S(自发服务)、T(转运服务)、R(退件服务)
+     * @param string $country 国家二字码，例如：CN、US等
+     * @return array
+     */
+    public function getWarehouseList($serviceCode = '', $country = '')
+    {
+        $params = [];
+
+        // 业务类型
+        if (!empty($serviceCode)) {
+            $validServiceCodes = ['F', 'S', 'T', 'R'];
+            if (!in_array($serviceCode, $validServiceCodes)) {
+                throw new Exception('业务类型必须是 F(订单履约)、S(自发服务)、T(转运服务)、R(退件服务) 之一');
+            }
+            $params['service_code'] = $serviceCode;
+        }
+
+        // 国家二字码
+        if (!empty($country)) {
+            if (strlen($country) !== 2) {
+                throw new Exception('国家代码必须是二字码，例如：CN、US');
+            }
+            $params['country'] = strtoupper($country);
+        }
+
+        return $this->request('com.basis.warehouse.getlist', $params);
+    }
+
+    /**
+     * 费用查询
+     * 使用此接口可根据业务单号和业务类型查询出业务单的详细费用项
+     *
+     * @param string $businessType 业务类型，必填。可选值：I（入库委托）、O（出库委托）、T（调拨委托）、L（尾程共享订单）
+     * @param string $orderNo 业务单号（与参考号二选一，优先使用业务单号）
+     * @param string $refNo 参考号（与业务单号二选一，如果同时传入则只使用业务单号）
+     * @return array
+     */
+    public function getBilling($businessType, $orderNo = '', $refNo = '')
+    {
+        // 验证业务类型
+        $validBusinessTypes = ['I', 'O', 'T', 'L'];
+        if (!in_array($businessType, $validBusinessTypes)) {
+            throw new Exception('业务类型必须是 I（入库委托）、O（出库委托）、T（调拨委托）、L（尾程共享订单） 之一');
+        }
+
+        $params = [
+            'business_type' => $businessType
+        ];
+
+        // 业务单号和参考号二选一，优先使用业务单号
+        if (!empty($orderNo)) {
+            $params['order_no'] = $orderNo;
+        } elseif (!empty($refNo)) {
+            $params['ref_no'] = $refNo;
+        } else {
+            throw new Exception('业务单号（order_no）和参考号（ref_no）必须至少提供一个');
+        }
+
+        return $this->request('com.basis.billing.getbilling', $params);
+    }
 }
