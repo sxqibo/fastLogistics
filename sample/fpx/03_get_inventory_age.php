@@ -26,7 +26,7 @@ try {
     echo "=== 递四方 - 查询全部库存库龄 ===\n\n";
 
     // 设置查询参数
-    $customerCode = '900278';          // 客户操作账号（可选，留空则查询所有账号）
+    $customerCode = '';          // 客户操作账号（可选，留空则查询所有账号）
     $warehouseCode = '';                // 仓库代码（可选，留空则查询所有仓库）
 
     echo "查询参数:\n";
@@ -43,7 +43,7 @@ try {
     while ($hasMore) {
         echo "  正在获取第 {$currentPage} 页库存数据...\n";
         $inventoryResult = $fpx->getAllInventory($customerCode, $warehouseCode, $currentPage, $pageSize);
-        
+
         if (isset($inventoryResult['result']) && ($inventoryResult['result'] === '1' || $inventoryResult['result'] === 'success') 
             && isset($inventoryResult['data']['data']) && is_array($inventoryResult['data']['data'])) {
             
@@ -310,7 +310,7 @@ try {
 
     // 设置查询参数
     $skuCode2 = 'CES-ST0';              // 指定SKU编号
-    $customerCode2 = '900278';           // 客户操作账号
+    $customerCode2 = '';           // 客户操作账号
     $warehouseCode2 = '';                // 仓库代码（可选）
 
     echo "查询参数:\n";
