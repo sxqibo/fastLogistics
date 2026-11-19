@@ -195,4 +195,67 @@ class Oms
 
         return $this->request('/integratedInventory/pageStockAge', $data, $debug);
     }
+
+    /**
+     * 分页查询业务流水
+     *
+     * @param array $params 查询参数
+     *   - whCodeList: array 查询的仓库编码列表
+     *   - currencyCodeList: array 查询的币种列表
+     *   - costStatusList: array 查询的计费状态列表：1-未计费；2-已计费；3-计费异常；4-重新计费中；5-计费中
+     *   - billStatusList: array 查询的账单状态列表：1-未出账；2-已出账
+     *   - moduleTypeList: array 查询的业务类型列表：1-入库；2-出库；5-工单；6-仓租；7-其他
+     *   - timeType: string 查询的时间范围类型：createTime-创建时间；costTime-计费时间；statisticDate-仓租时间
+     *   - startTime: string 起始时间（yyyy-MM-dd HH:mm:ss）
+     *   - endTime: string 结束时间（yyyy-MM-dd HH:mm:ss）
+     *   - queryOrderNo: string 关联的单据号
+     *   - queryOrderType: int 查询的关联单据类型：1-OMS单据号；2-费用单据号
+     *   - page: int 页码，默认第一页
+     *   - pageSize: int 每页条数，默认50条
+     * @param bool $debug 是否输出调试信息
+     * @return array 返回响应数据
+     * @throws Exception
+     */
+    public function pageFundsFlow(array $params = [], bool $debug = false): array
+    {
+        $defaultParams = [
+            'page' => 1,
+            'pageSize' => 50,
+        ];
+
+        $data = array_merge($defaultParams, $params);
+
+        $data = array_filter($data, function ($value) {
+            return $value !== '' && $value !== null;
+        });
+
+        return $this->request('/cost/pageFundsFlow', $data, $debug);
+    }
+
+    /**
+     * 费用详情查询
+     *
+     * @param array $params 查询参数
+     *   - queryOrderNo: string 关联的单据号（必填）
+     *   - queryOrderType: int 查询的关联单据类型：1-OMS单据号；2-费用单据号（必填）
+     *   - moduleType: int 模块类型：1-入库；2-出库；5-工单；6-仓租；7-其他
+     * @param bool $debug 是否输出调试信息
+     * @return array 返回响应数据，data.costItemList 为计费项明细
+     * @throws Exception
+     */
+    public function queryCostDetail(array $params, bool $debug = false): array
+    {
+        if (empty($params['queryOrderNo'])) {
+            throw new Exception('queryOrderNo is required');
+        }
+        if (!isset($params['queryOrderType'])) {
+            throw new Exception('queryOrderType is required');
+        }
+
+        $data = array_filter($params, function ($value) {
+            return $value !== '' && $value !== null;
+        });
+
+        return $this->request('/cost/costDetail', $data, $debug);
+    }
 }
