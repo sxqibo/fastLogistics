@@ -14,8 +14,8 @@ use Sxqibo\Logistics\common\Utility;
  */
 class Yanwen
 {
-    private $serviceEndPoint     = 'HTTP://ONLINE.YW56.COM.CN/SERVICE';
-    private $testServiceEndPoint = 'HTTP://47.96.220.163:802/SERVICE';
+    private $serviceEndPoint     = 'http://online.yw56.com.cn/service';
+    private $testServiceEndPoint = 'http://47.96.220.163:802/service';
     private $userId              = '100000'; // $userId 客户号。正式环境：贵司在我司客户号；测试环境为100000。
     private $aipToken;
     private $headers;
@@ -119,9 +119,7 @@ class Yanwen
     {
         $endPoint = $this->getEndPoint('getShipTypes', $isDebug);
 
-        $result = $this->client->requestApi($endPoint, [], [], $this->headers);
-
-        return $result;
+        return $this->client->requestApi($endPoint, [], [], $this->headers);
     }
 
     /**
@@ -144,6 +142,22 @@ class Yanwen
         $result   = $this->client->requestApi($endPoint, [], $body, $this->headers);
 
         return $this->handleResult($result);
+    }
+
+    /**
+     * 同步 uri 变更到完整 url（避免只改 uri 导致仍打旧地址）
+     *
+     * @param array $endPoint
+     * @param bool $isDebug
+     * @return array
+     */
+    protected function syncEndPointUrl(array $endPoint, $isDebug = false)
+    {
+        $base = $isDebug ? $this->testServiceEndPoint : $this->serviceEndPoint;
+        $uri = (string)($endPoint['uri'] ?? '');
+        $endPoint['url'] = rtrim($base, '/') . '/' . ltrim($uri, '/');
+
+        return $endPoint;
     }
 
     /**
@@ -279,6 +293,7 @@ class Yanwen
 
         $uri             = $endPoint['uri'];
         $endPoint['uri'] = sprintf($uri, $status);
+        $endPoint        = $this->syncEndPointUrl($endPoint, $isDebug);
 
         $body = "<string>" . $epCode . "</string>";
 
@@ -306,6 +321,7 @@ class Yanwen
         $endPoint        = $this->getEndPoint('getCountry', $isDebug);
         $uri             = $endPoint['uri'];
         $endPoint['uri'] = sprintf($uri, $channelId);
+        $endPoint        = $this->syncEndPointUrl($endPoint, $isDebug);
 
         $result = $this->client->requestApi($endPoint, [], [], $this->headers);
 
@@ -345,7 +361,7 @@ class Yanwen
     {
         $endPoint = [
             'url'    => 'http://trackapi.yanwentech.com/api/tracking',
-            'method' => 'GET'
+            'method' => 'GET',
         ];
 
         $header = [
@@ -353,7 +369,7 @@ class Yanwen
         ];
 
         $params = [
-            'nums' => $trackNumber
+            'nums' => $trackNumber,
         ];
 
         $result = $this->client->requestApi($endPoint, $params, [], $header, true);
