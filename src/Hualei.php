@@ -216,6 +216,61 @@ class Hualei
     }
 
     /**
+     * 运费试算 / 查价
+     *
+     * 官方：GET defaultPriceSearchJson.htm
+     * 文档：http://www.hl56t.com/products/76.html
+     *
+     * @param string $country 目的国二字码，如 US
+     * @param float|string $weight 重量 KG
+     * @param array{
+     *   length?:float|string,
+     *   width?:float|string,
+     *   height?:float|string,
+     *   postcode?:string,
+     *   cargoType?:string,
+     *   group_code?:string,
+     *   express_type?:string
+     * } $options
+     * @return array{code:int,message:string,data:list<array<string,mixed>>}
+     * @throws Exception
+     */
+    public function getPrice($country, $weight, array $options = [])
+    {
+        $country = strtoupper(trim((string)$country));
+        $weight = trim((string)$weight);
+        if ($country === '' || $weight === '') {
+            throw new Exception('华磊查价需要国家与重量');
+        }
+
+        $auth = $this->selectAuth();
+        $query = [
+            'weight'          => $weight,
+            'country'         => $country,
+            'cargoType'       => trim((string)($options['cargoType'] ?? 'P')) ?: 'P',
+            'customer_id'     => $auth['customer_id'],
+            'customer_userid' => $auth['customer_userid'],
+        ];
+        foreach (['length', 'width', 'height', 'postcode', 'group_code', 'express_type'] as $field) {
+            if (!isset($options[$field]) || $options[$field] === '' || $options[$field] === null) {
+                continue;
+            }
+            $query[$field] = trim((string)$options[$field]);
+        }
+
+        $url = $this->apiBase . '/defaultPriceSearchJson.htm?' . http_build_query($query);
+        $raw = $this->getJson($url);
+        $decoded = $this->decodeLooseJson($raw);
+        $list = $this->normalizePriceRows($decoded);
+
+        return [
+            'code'    => 0,
+            'message' => '成功',
+            'data'    => $list,
+        ];
+    }
+
+    /**
      * 拼标签 PDF 地址
      *
      * @param string $orderId 华磊内部 order_id
@@ -286,6 +341,79 @@ class Hualei
         }
 
         return $list;
+    }
+
+    /**
+     * @param mixed $decoded
+     * @return list<array<string, mixed>>
+     */
+    private function normalizePriceRows($decoded)
+    {
+        if (!is_array($decoded)) {
+            return [];
+        }
+        $rows = $decoded;
+        if (!$this->isList($decoded)) {
+            $rows = $decoded['data'] ?? $decoded['Data'] ?? $decoded['list'] ?? [];
+            if (!is_array($rows)) {
+                return [];
+            }
+        }
+        $list = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $list[] = [
+                'product_name'   => trim((string)($row['product_name'] ?? $row['productName'] ?? '')),
+                'charge_weight'  => $row['charge_weight'] ?? $row['chargeWeight'] ?? '',
+                'freight_amount' => $row['freight_amount'] ?? $row['freightAmount'] ?? '',
+                'oil_amount'     => $row['oil_amount'] ?? $row['oilAmount'] ?? '',
+                'other_amount'   => $row['other_amount'] ?? $row['otherAmount'] ?? '',
+                'total_amount'   => $row['total_amount'] ?? $row['totalAmount'] ?? '',
+                'price_formula'  => trim((string)($row['price_formula'] ?? $row['priceFormula'] ?? '')),
+                'price_note'     => trim((string)($row['price_note'] ?? $row['priceNote'] ?? '')),
+                'product_note'   => trim((string)($row['product_note'] ?? $row['productNote'] ?? '')),
+                'product_tracking' => $row['product_tracking'] ?? $row['productTracking'] ?? '',
+                'raw'            => $row,
+            ];
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     * @throws Exception
+     */
+    private function getJson($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: application/json, text/plain, */*',
+            'Accept-Language: zh-cn',
+            'Connection: Keep-Alive',
+            'Cache-Control: no-cache',
+        ]);
+        $response = curl_exec($ch);
+        $errno = curl_errno($ch);
+        $error = curl_error($ch);
+        $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($errno) {
+            throw new Exception('华磊请求失败：' . ($error !== '' ? $error : ('errno ' . $errno)));
+        }
+        if ($httpCode >= 400) {
+            throw new Exception('华磊返回异常 HTTP ' . $httpCode);
+        }
+
+        return (string)$response;
     }
 
     /**

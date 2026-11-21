@@ -480,6 +480,69 @@ class Wanb
     }
 
     /**
+     * 计价查询 / 运费试算
+     *
+     * POST api/services/calculateShippingOffers
+     * 文档：http://apidoc.wanbexpress.com/parcels/Product-Calculate-Shipping-Offers/
+     *
+     * @param array{
+     *   CountryCode:string,
+     *   WarehouseCode?:string,
+     *   WeightInKg:float|int|string,
+     *   TotalVolume?:array{Length?:float|int,Width?:float|int,Height?:float|int,Unit?:string},
+     *   DeclareValue?:array{Code?:string,Value?:float|int},
+     *   PostCode?:string
+     * } $params
+     */
+    public function calculateShippingOffers(array $params): array
+    {
+        $country = strtoupper(trim((string)($params['CountryCode'] ?? '')));
+        $weight = $params['WeightInKg'] ?? null;
+        if ($country === '' || $weight === null || $weight === '') {
+            throw new \InvalidArgumentException('万邦计价需要 CountryCode 与 WeightInKg');
+        }
+
+        $warehouseCode = trim((string)($params['WarehouseCode'] ?? ''));
+        if ($warehouseCode === '') {
+            $warehouses = $this->getWarehouses();
+            $list = $warehouses['Data'] ?? [];
+            if (is_array($list) && $list !== []) {
+                $first = $list[0];
+                if (is_array($first)) {
+                    $warehouseCode = trim((string)($first['Code'] ?? $first['WarehouseCode'] ?? ''));
+                } elseif (is_string($first)) {
+                    $warehouseCode = trim($first);
+                }
+            }
+        }
+        if ($warehouseCode === '') {
+            $warehouseCode = 'SZ';
+        }
+
+        $body = [
+            'CountryCode'   => $country,
+            'WarehouseCode' => $warehouseCode,
+            'WeightInKg'    => (float)$weight,
+        ];
+        if (!empty($params['TotalVolume']) && is_array($params['TotalVolume'])) {
+            $body['TotalVolume'] = array_merge(['Unit' => 'CM'], $params['TotalVolume']);
+        }
+        if (!empty($params['DeclareValue']) && is_array($params['DeclareValue'])) {
+            $body['DeclareValue'] = $params['DeclareValue'];
+        }
+        if (isset($params['PostCode']) && trim((string)$params['PostCode']) !== '') {
+            $body['PostCode'] = trim((string)$params['PostCode']);
+        }
+
+        return $this->curlRequest(
+            $this->baseUrl . 'api/services/calculateShippingOffers',
+            $body,
+            'POST',
+            $this->buildHeaders()
+        );
+    }
+
+    /**
      * 查询轨迹
      */
     public function getTracking(string $processCode): array
