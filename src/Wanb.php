@@ -504,15 +504,27 @@ class Wanb
 
         $warehouseCode = trim((string)($params['WarehouseCode'] ?? ''));
         if ($warehouseCode === '') {
-            $warehouses = $this->getWarehouses();
-            $list = $warehouses['Data'] ?? [];
-            if (is_array($list) && $list !== []) {
-                $first = $list[0];
-                if (is_array($first)) {
-                    $warehouseCode = trim((string)($first['Code'] ?? $first['WarehouseCode'] ?? ''));
-                } elseif (is_string($first)) {
-                    $warehouseCode = trim($first);
+            try {
+                $warehouses = $this->getWarehouses();
+                $list = $warehouses['Data'] ?? [];
+                if (is_array($list)) {
+                    // Data 可能是列表，也可能是单仓对象；禁止直接取 [0]
+                    if (isset($list['Code']) || isset($list['WarehouseCode'])) {
+                        $list = [$list];
+                    }
+                    foreach ($list as $row) {
+                        if (is_array($row)) {
+                            $warehouseCode = trim((string)($row['Code'] ?? $row['WarehouseCode'] ?? ''));
+                        } elseif (is_string($row)) {
+                            $warehouseCode = trim($row);
+                        }
+                        if ($warehouseCode !== '') {
+                            break;
+                        }
+                    }
                 }
+            } catch (\Throwable $e) {
+                // 拉仓库失败时回退默认仓
             }
         }
         if ($warehouseCode === '') {
